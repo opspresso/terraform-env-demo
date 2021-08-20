@@ -1,0 +1,25 @@
+#
+# CircleCI 2.0
+#
+version: 2
+jobs:
+  apply:
+    docker:
+      - image: hashicorp/terraform:light
+    steps:
+      - checkout
+      - run: terraform init
+      - run: terraform apply -auto-approve
+  destroy:
+    docker:
+      - image: hashicorp/terraform:light
+    steps:
+      - checkout
+      - run: terraform init
+      - run: terraform destroy -auto-approve
+
+workflows:
+  version: 2
+  apply:
+    jobs:
+      - apply
