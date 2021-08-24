@@ -11,13 +11,6 @@ terraform {
     encrypt        = true
   }
 
-  #   backend "remote" {
-  #     organization = "bruce"
-  #     workspaces {
-  #       name = "efs-demo"
-  #     }
-  #   }
-
   required_providers {
     aws = {
       source  = "hashicorp/aws"

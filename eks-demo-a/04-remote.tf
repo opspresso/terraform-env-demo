@@ -7,12 +7,4 @@ data "terraform_remote_state" "vpc" {
     bucket = "terraform-workshop-082867736673"
     key    = "backend/terraform-env-bruce/demo/vpc-demo/terraform.tfstate"
   }
-
-  #   backend = "remote"
-  #   config = {
-  #     organization = "bruce"
-  #     workspaces = {
-  #       name = "vpc-demo"
-  #     }
-  #   }
 }
