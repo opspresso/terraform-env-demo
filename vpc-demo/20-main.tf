@@ -3,6 +3,7 @@
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
+  version = "3.6.0"
 
   name = var.name
   cidr = var.cidr
@@ -16,24 +17,28 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
-  enable_s3_endpoint       = true
-  enable_dynamodb_endpoint = true
+  # enable_s3_endpoint       = true
+  # enable_dynamodb_endpoint = true
 
   tags = {
     "kubernetes.io/cluster/eks-demo" = "shared"
   }
 
   vpc_tags = {
-    "Name" = "vpc-demo"
+    "Name" = var.name
   }
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/eks-demo" = "shared"
-    "kubernetes.io/role/elb"         = "1"
+    "kubernetes.io/cluster/eks-demo"   = "shared"
+    "kubernetes.io/cluster/eks-demo-a" = "shared"
+    "kubernetes.io/cluster/eks-demo-b" = "shared"
+    "kubernetes.io/role/elb"           = "1"
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/eks-demo"  = "shared"
-    "kubernetes.io/role/internal-elb" = "1"
+    "kubernetes.io/cluster/eks-demo"   = "shared"
+    "kubernetes.io/cluster/eks-demo-a" = "shared"
+    "kubernetes.io/cluster/eks-demo-b" = "shared"
+    "kubernetes.io/role/internal-elb"  = "1"
   }
 }
