@@ -10,6 +10,8 @@ locals {
   vpc_id     = data.terraform_remote_state.vpc.outputs.vpc_id
   subnet_ids = data.terraform_remote_state.vpc.outputs.private_subnets
 
+  provider_url = module.eks.cluster_oidc_url
+
   worker_role_name = module.eks.worker_role_name
 
   worker_security_groups = [

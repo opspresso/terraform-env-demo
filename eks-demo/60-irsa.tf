@@ -49,14 +49,15 @@ locals {
 
 module "irsa" {
   source  = "nalbam/eks-irsa/aws"
-  version = "0.14.2"
+  version = "0.15.1"
 
   for_each = {
     for irsa in local.irsa :
     irsa.service_name => irsa
   }
 
-  cluster_name = module.eks.cluster_name
+  cluster_name = local.cluster_name
+  provider_url = local.provider_url
 
   service_name    = each.key
   namespace       = try(each.value.namespace, "")
