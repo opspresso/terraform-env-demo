@@ -1,11 +1,11 @@
 # worker
 
-module "worker-v2" {
+module "worker-v3" {
   source  = "nalbam/eks-worker/aws"
-  version = "0.14.1"
+  version = "0.14.2"
 
   name    = "workers"
-  subname = "v2"
+  subname = "v3"
 
   cluster_info = module.eks.cluster_info
 
@@ -20,6 +20,7 @@ module "worker-v2" {
 
   enable_autoscale = true
   enable_taints    = false
+  enable_spot      = true
 
   instance_type = "c5.large"
   volume_type   = "gp3"
