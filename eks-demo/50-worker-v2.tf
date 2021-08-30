@@ -24,7 +24,7 @@ module "worker-v3" {
 
   instance_type = "c5.large"
   volume_type   = "gp3"
-  volume_size   = "100"
+  volume_size   = "50"
 
   min = 3
   max = 6
