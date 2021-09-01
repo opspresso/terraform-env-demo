@@ -1,11 +1,11 @@
 # worker
 
-module "worker-arm-v3" {
+module "worker-v3a" {
   source  = "nalbam/eks-worker/aws"
   version = "0.14.2"
 
-  name    = "arm"
-  subname = "v3"
+  name    = "workers"
+  subname = "v3a"
 
   cluster_info = module.eks.cluster_info
 
@@ -19,14 +19,14 @@ module "worker-arm-v3" {
   key_name = var.key_name
 
   enable_autoscale = true
-  enable_taints    = true
+  enable_taints    = false
   enable_spot      = true
 
   instance_type = "c5a.large"
   volume_type   = "gp3"
   volume_size   = "50"
 
-  min = 1
+  min = 3
   max = 6
 
   tags = local.tags

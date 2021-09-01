@@ -1,11 +1,11 @@
 # worker
 
-module "worker-monitoring-v2" {
+module "worker-monitoring-v3a" {
   source  = "nalbam/eks-worker/aws"
   version = "0.14.2"
 
   name    = "monitoring"
-  subname = "v2"
+  subname = "v3a"
 
   cluster_info = module.eks.cluster_info
 
@@ -21,7 +21,7 @@ module "worker-monitoring-v2" {
   enable_autoscale = true
   enable_taints    = true
 
-  instance_type = "c5.large"
+  instance_type = "c5a.large"
   volume_type   = "gp3"
   volume_size   = "50"
 
