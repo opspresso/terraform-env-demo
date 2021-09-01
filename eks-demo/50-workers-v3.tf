@@ -1,17 +1,17 @@
 # worker
 
-module "worker-monitoring-v3a" {
+module "workers-v3" {
   source  = "nalbam/eks-worker/aws"
   version = "0.14.2"
 
-  name    = "monitoring"
-  subname = "v3a"
+  name    = "workers"
+  subname = "v3"
 
   cluster_info = module.eks.cluster_info
 
   role_name         = local.worker_role_name
   security_groups   = local.worker_security_groups
-  subnet_ids        = data.aws_subnet_ids.b.ids
+  subnet_ids        = local.subnet_ids
   target_group_arns = []
 
   worker_ami_keyword = var.worker_ami_keyword
@@ -19,14 +19,15 @@ module "worker-monitoring-v3a" {
   key_name = var.key_name
 
   enable_autoscale = true
-  enable_taints    = true
+  enable_taints    = false
+  enable_spot      = true
 
-  instance_type = "c5a.large"
+  instance_type = "c5.large"
   volume_type   = "gp3"
   volume_size   = "50"
 
-  min = 1
-  max = 1
+  min = 3
+  max = 6
 
   tags = local.tags
 }
