@@ -15,10 +15,6 @@ variable "cluster_version" {
   default     = "1.21"
 }
 
-variable "worker_ami_keyword" {
-  default = "v20210722"
-}
-
 variable "key_name" {
   default = "bruce-seoul"
 }

@@ -14,7 +14,7 @@ module "workers-v2" {
   subnet_ids        = local.subnet_ids
   target_group_arns = []
 
-  worker_ami_keyword = var.worker_ami_keyword
+  # worker_ami_keyword = "*"
 
   key_name = var.key_name
 
