@@ -23,7 +23,7 @@ module "monitoring-v3" {
   enable_taints    = true
   enable_spot      = true
 
-  instance_type = "c6g.large"
+  instance_type = "r6g.large"
   volume_type   = "gp3"
   volume_size   = "50"
 
