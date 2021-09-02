@@ -1,11 +1,11 @@
 # worker
 
-module "workers-v2g" {
+module "graviton-v2" {
   source  = "nalbam/eks-worker/aws"
   version = "0.14.2"
 
-  name    = "workers"
-  subname = "v2g"
+  name    = "graviton"
+  subname = "v2"
 
   cluster_info = module.eks.cluster_info
 
