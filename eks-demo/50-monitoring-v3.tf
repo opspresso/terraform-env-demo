@@ -1,11 +1,11 @@
 # worker
 
-module "monitoring-v2" {
+module "monitoring-v3" {
   source  = "nalbam/eks-worker/aws"
   version = "0.14.2"
 
   name    = "monitoring"
-  subname = "v2"
+  subname = "v3"
 
   cluster_info = module.eks.cluster_info
 
@@ -14,7 +14,8 @@ module "monitoring-v2" {
   subnet_ids        = data.aws_subnet_ids.b.ids
   target_group_arns = []
 
-  # worker_ami_keyword = "*"
+  worker_ami_arch    = "arm64"
+  worker_ami_keyword = "*"
 
   key_name = var.key_name
 
@@ -22,7 +23,7 @@ module "monitoring-v2" {
   enable_taints    = true
   enable_spot      = true
 
-  instance_type = "c5.large"
+  instance_type = "c6g.large"
   volume_type   = "gp3"
   volume_size   = "50"
 
