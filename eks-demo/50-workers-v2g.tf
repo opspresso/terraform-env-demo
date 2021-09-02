@@ -14,12 +14,13 @@ module "workers-v2g" {
   subnet_ids        = local.subnet_ids
   target_group_arns = []
 
-  worker_ami_keyword = var.worker_ami_keyword
+  worker_ami_arch    = "arm64"
+  worker_ami_keyword = "*"
 
   key_name = var.key_name
 
   enable_autoscale = true
-  enable_taints    = false
+  enable_taints    = true
   enable_spot      = true
 
   instance_type = "c6g.large"
