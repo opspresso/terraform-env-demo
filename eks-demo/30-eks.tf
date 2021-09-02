@@ -2,7 +2,7 @@
 
 module "eks" {
   source  = "nalbam/eks/aws"
-  version = "0.14.2"
+  version = "0.14.5"
 
   cluster_name = var.cluster_name
 
@@ -15,8 +15,6 @@ module "eks" {
 
   iam_group = local.iam_group
   iam_roles = local.iam_roles
-
-  # save_local_files = true
 
   tags = local.tags
 }
