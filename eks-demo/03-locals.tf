@@ -12,6 +12,7 @@ locals {
 
   provider_url = module.eks.cluster_oidc_url
 
+  worker_role_arn  = module.eks.worker_role_arn
   worker_role_name = module.eks.worker_role_name
 
   worker_security_groups = [
