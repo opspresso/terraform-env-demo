@@ -21,6 +21,12 @@ locals {
       iam_policy      = file("policies/aws-load-balancer-controller.json")
     },
     {
+      service_name    = "aws-node-termination-handler"
+      namespace       = "addon-aws-node-termination-handler"
+      service_account = "aws-node-termination-handler"
+      iam_policy      = file("policies/aws-node-termination-handler.json")
+    },
+    {
       service_name    = "cluster-autoscaler"
       namespace       = "addon-cluster-autoscaler"
       service_account = "cluster-autoscaler"
