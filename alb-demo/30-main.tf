@@ -15,10 +15,11 @@ module "alb" {
 
   target_groups = [
     {
-      name_prefix      = format("%s-", var.name)
-      backend_protocol = "HTTP"
-      backend_port     = 8080
-      target_type      = "ip"
+      name_prefix          = format("%s-", var.name)
+      backend_protocol     = "HTTP"
+      backend_port         = 8080
+      target_type          = "ip"
+      deregistration_delay = 5
       health_check = {
         path     = "/healthz"
         matcher  = "200-499"
@@ -38,14 +39,9 @@ module "alb" {
 
   http_tcp_listeners = [
     {
-      port        = 8080
-      protocol    = "HTTP"
-      action_type = "redirect"
-      redirect = {
-        port        = "443"
-        protocol    = "HTTPS"
-        status_code = "HTTP_301"
-      }
+      port               = 80
+      protocol           = "HTTP"
+      target_group_index = 0
     }
   ]
 
