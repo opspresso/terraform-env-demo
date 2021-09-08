@@ -15,7 +15,7 @@ module "alb" {
 
   target_groups = [
     {
-      name_prefix      = format("%s", var.name)
+      name             = format("%s", var.name)
       backend_protocol = "HTTP"
       backend_port     = 80
       target_type      = "ip"
