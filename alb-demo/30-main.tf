@@ -15,24 +15,24 @@ module "alb" {
 
   target_groups = [
     {
-      name_prefix      = format("%s-", var.name)
+      name_prefix      = format("%s", var.name)
       backend_protocol = "HTTP"
       backend_port     = 80
-      target_type      = "instance"
+      target_type      = "ip"
       targets          = []
     },
     # {
-    #   name_prefix      = format("%s-a-", var.name)
+    #   name             = format("%s-a", var.name)
     #   backend_protocol = "HTTP"
     #   backend_port     = 80
-    #   target_type      = "instance"
+    #   target_type      = "ip"
     #   targets          = []
     # },
     # {
-    #   name_prefix      = format("%s-b-", var.name)
+    #   name             = format("%s-b", var.name)
     #   backend_protocol = "HTTP"
     #   backend_port     = 80
-    #   target_type      = "instance"
+    #   target_type      = "ip"
     #   targets          = []
     # },
   ]
@@ -41,18 +41,25 @@ module "alb" {
     {
       port               = 443
       protocol           = "HTTPS"
-      certificate_arn    = data.aws_acm_certificate.bruce_spic_me.arn
+      certificate_arn    = data.aws_acm_certificate.this.arn
       target_group_index = 0
     },
   ]
 
   http_tcp_listeners = [
     {
-      port               = 80
-      protocol           = "HTTP"
-      target_group_index = 0
-    },
+      port        = 80
+      protocol    = "HTTP"
+      action_type = "redirect"
+      redirect = {
+        port        = "443"
+        protocol    = "HTTPS"
+        status_code = "HTTP_301"
+      }
+    }
   ]
+
+  enable_cross_zone_load_balancing = true
 
   tags = {
     Environment = "demo"
