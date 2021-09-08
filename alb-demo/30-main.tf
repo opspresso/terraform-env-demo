@@ -15,9 +15,9 @@ module "alb" {
 
   target_groups = [
     {
-      name             = format("%s", var.name)
+      name_prefix      = format("%s-", var.name)
       backend_protocol = "HTTP"
-      backend_port     = 80
+      backend_port     = 8080
       target_type      = "ip"
       health_check = {
         path     = "/healthz"

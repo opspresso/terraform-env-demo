@@ -2,7 +2,7 @@
 # https://github.com/terraform-aws-modules/terraform-aws-vpc
 
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
   version = "3.6.0"
 
   name = var.name
