@@ -7,5 +7,5 @@ variable "region" {
 
 variable "name" {
   description = "생성될 ALB 이름을 입력합니다."
-  default     = "alb-demo"
+  default     = "demo"
 }

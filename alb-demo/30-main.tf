@@ -9,24 +9,32 @@ module "alb" {
 
   load_balancer_type = "application"
 
-  vpc_id  = local.vpc_id
-  subnets = local.subnet_ids
+  vpc_id          = local.vpc_id
+  subnets         = local.subnet_ids
+  security_groups = local.security_groups
 
   target_groups = [
     {
-      name_prefix      = "${var.name}-a"
+      name_prefix      = format("%s-", var.name)
       backend_protocol = "HTTP"
       backend_port     = 80
       target_type      = "instance"
       targets          = []
     },
-    {
-      name_prefix      = "${var.name}-b"
-      backend_protocol = "HTTP"
-      backend_port     = 80
-      target_type      = "instance"
-      targets          = []
-    },
+    # {
+    #   name_prefix      = format("%s-a-", var.name)
+    #   backend_protocol = "HTTP"
+    #   backend_port     = 80
+    #   target_type      = "instance"
+    #   targets          = []
+    # },
+    # {
+    #   name_prefix      = format("%s-b-", var.name)
+    #   backend_protocol = "HTTP"
+    #   backend_port     = 80
+    #   target_type      = "instance"
+    #   targets          = []
+    # },
   ]
 
   https_listeners = [
