@@ -38,7 +38,7 @@ module "alb" {
 
   http_tcp_listeners = [
     {
-      port        = 80
+      port        = 8080
       protocol    = "HTTP"
       action_type = "redirect"
       redirect = {
@@ -49,7 +49,7 @@ module "alb" {
     }
   ]
 
-  # enable_cross_zone_load_balancing = true
+  enable_cross_zone_load_balancing = true
 
   tags = {
     Environment = "demo"
