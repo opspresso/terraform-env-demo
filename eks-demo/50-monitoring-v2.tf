@@ -1,34 +1,34 @@
-# # worker
+# worker
 
-# module "monitoring-v2" {
-#   source  = "nalbam/eks-worker/aws"
-#   version = "0.14.5"
+module "monitoring-v2" {
+  source  = "nalbam/eks-worker/aws"
+  version = "0.14.5"
 
-#   name    = "monitoring"
-#   subname = "v2"
+  name    = "monitoring"
+  subname = "v2"
 
-#   cluster_info = module.eks.cluster_info
+  cluster_info = module.eks.cluster_info
 
-#   role_name         = local.worker_role_name
-#   security_groups   = local.worker_security_groups
-#   subnet_ids        = data.aws_subnet_ids.b.ids
-#   target_group_arns = []
+  role_name         = local.worker_role_name
+  security_groups   = local.worker_security_groups
+  subnet_ids        = data.aws_subnet_ids.b.ids
+  target_group_arns = []
 
-#   worker_ami_arch    = "arm64"
-#   worker_ami_keyword = "*"
+  worker_ami_arch    = "arm64"
+  worker_ami_keyword = "*"
 
-#   key_name = var.key_name
+  key_name = var.key_name
 
-#   enable_autoscale = true
-#   enable_taints    = true
-#   # enable_spot      = true
+  enable_autoscale = true
+  enable_taints    = true
+  # enable_spot      = true
 
-#   instance_type = "r6g.large"
-#   volume_type   = "gp3"
-#   volume_size   = "50"
+  instance_type = "r6g.large"
+  volume_type   = "gp3"
+  volume_size   = "50"
 
-#   min = 1
-#   max = 1
+  min = 1
+  max = 1
 
-#   tags = local.tags
-# }
+  tags = local.tags
+}
