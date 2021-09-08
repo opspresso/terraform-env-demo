@@ -49,7 +49,7 @@ module "alb" {
     }
   ]
 
-  enable_cross_zone_load_balancing = true
+  # enable_cross_zone_load_balancing = true
 
   tags = {
     Environment = "demo"
