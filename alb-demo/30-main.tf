@@ -19,22 +19,12 @@ module "alb" {
       backend_protocol = "HTTP"
       backend_port     = 80
       target_type      = "ip"
-      targets          = []
+      health_check = {
+        path     = "/healthz"
+        matcher  = "200-499"
+        interval = 10
+      }
     },
-    # {
-    #   name             = format("%s-a", var.name)
-    #   backend_protocol = "HTTP"
-    #   backend_port     = 80
-    #   target_type      = "ip"
-    #   targets          = []
-    # },
-    # {
-    #   name             = format("%s-b", var.name)
-    #   backend_protocol = "HTTP"
-    #   backend_port     = 80
-    #   target_type      = "ip"
-    #   targets          = []
-    # },
   ]
 
   https_listeners = [
