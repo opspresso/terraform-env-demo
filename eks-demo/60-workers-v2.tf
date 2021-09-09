@@ -9,10 +9,9 @@ module "workers-v2" {
 
   cluster_info = module.eks.cluster_info
 
-  role_name         = local.worker_role_name
-  security_groups   = local.worker_security_groups
-  subnet_ids        = local.subnet_ids
-  target_group_arns = []
+  role_name       = local.worker_role_name
+  security_groups = local.worker_security_groups
+  subnet_ids      = local.subnet_ids
 
   worker_ami_arch    = "x86_64"
   worker_ami_keyword = "*"
