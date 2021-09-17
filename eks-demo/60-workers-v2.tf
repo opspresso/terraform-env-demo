@@ -24,9 +24,9 @@ module "workers-v2" {
 
   instance_type = "c5.large"
   volume_type   = "gp3"
-  volume_size   = "50"
+  volume_size   = "30"
 
-  min = 2
+  min = 3
   max = 6
 
   tags = local.tags

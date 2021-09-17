@@ -2,7 +2,7 @@
 
 module "eks" {
   source  = "nalbam/eks/aws"
-  version = "0.14.8"
+  version = "0.14.9"
 
   cluster_name = var.cluster_name
 
@@ -16,9 +16,8 @@ module "eks" {
   iam_group = local.iam_group
   iam_roles = local.iam_roles
 
-  worker_policies = [
-    aws_iam_policy.worker-ce.arn,
-  ]
+  worker_policies   = local.worker_policies
+  worker_source_sgs = local.worker_source_sgs
 
   tags = local.tags
 }
