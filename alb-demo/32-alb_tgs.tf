@@ -47,14 +47,14 @@ resource "aws_lb_target_group" "b" {
 
 # output
 
-output "alb_tg_0" {
+output "target_group_0" {
   value = aws_lb_target_group.default.arn
 }
 
-output "alb_tg_a" {
+output "target_group_a" {
   value = aws_lb_target_group.a.arn
 }
 
-output "alb_tg_b" {
+output "target_group_b" {
   value = aws_lb_target_group.b.arn
 }

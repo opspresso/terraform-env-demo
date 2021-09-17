@@ -16,8 +16,9 @@ locals {
   worker_role_name = module.eks.worker_role_name
 
   worker_security_groups = [
-    data.terraform_remote_state.vpc.outputs.default_security_group_id,
     module.eks.worker_security_group,
+    data.terraform_remote_state.vpc.outputs.default_security_group_id,
+    data.terraform_remote_state.alb.outputs.security_group_id,
   ]
 
   tags = {
