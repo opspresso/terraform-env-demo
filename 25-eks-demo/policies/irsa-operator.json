@@ -7,8 +7,8 @@
         "iam:*"
       ],
       "Resource": [
-        "arn:aws:iam::*:policy/irsa-operator/*",
-        "arn:aws:iam::*:role/irsa-op-*"
+        "arn:aws:iam:::policy/irsa-operator/*",
+        "arn:aws:iam:::role/irsa-op-*"
       ]
     },
     {
