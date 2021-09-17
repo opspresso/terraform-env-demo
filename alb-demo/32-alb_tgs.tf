@@ -8,7 +8,7 @@ resource "aws_lb_target_group" "default" {
   vpc_id      = local.vpc_id
 
   health_check {
-    path    = "/health_check"
+    path    = "/healthz"
     matcher = "200-499"
   }
 
@@ -23,7 +23,7 @@ resource "aws_lb_target_group" "a" {
   vpc_id      = local.vpc_id
 
   health_check {
-    path    = "/health_check"
+    path    = "/healthz"
     matcher = "200-499"
   }
 
@@ -38,7 +38,7 @@ resource "aws_lb_target_group" "b" {
   vpc_id      = local.vpc_id
 
   health_check {
-    path    = "/health_check"
+    path    = "/healthz"
     matcher = "200-499"
   }
 
