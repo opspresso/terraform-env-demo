@@ -8,8 +8,9 @@ resource "aws_lb_target_group" "default" {
   vpc_id      = local.vpc_id
 
   health_check {
-    path    = "/healthz"
-    matcher = "200-499"
+    port    = 15021
+    path    = "/healthz/ready"
+    matcher = "200"
   }
 
   deregistration_delay = 5
@@ -23,8 +24,9 @@ resource "aws_lb_target_group" "a" {
   vpc_id      = local.vpc_id
 
   health_check {
-    path    = "/healthz"
-    matcher = "200-499"
+    port    = 15021
+    path    = "/healthz/ready"
+    matcher = "200"
   }
 
   deregistration_delay = 5
@@ -38,8 +40,9 @@ resource "aws_lb_target_group" "b" {
   vpc_id      = local.vpc_id
 
   health_check {
-    path    = "/healthz"
-    matcher = "200-499"
+    port    = 15021
+    path    = "/healthz/ready"
+    matcher = "200"
   }
 
   deregistration_delay = 5
