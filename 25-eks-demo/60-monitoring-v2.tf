@@ -27,7 +27,7 @@ module "monitoring-v2" {
   volume_size   = "30"
 
   min = 1
-  max = 2
+  max = 1
 
   tags = local.tags
 }
