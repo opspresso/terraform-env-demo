@@ -1,11 +1,11 @@
 # worker
 
-module "workers-v2" {
+module "workers-v3" {
   source  = "nalbam/eks-worker/aws"
-  version = "0.14.6"
+  version = "0.14.7"
 
   name    = "workers"
-  subname = "v2"
+  subname = "v3"
 
   cluster_info = module.eks.cluster_info
 
