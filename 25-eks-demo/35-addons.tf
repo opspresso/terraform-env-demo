@@ -1,4 +1,5 @@
 # addons
+# aws eks describe-addon-versions
 
 resource "aws_eks_addon" "kube-proxy" {
   cluster_name  = module.eks.cluster_name
