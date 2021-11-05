@@ -1,4 +1,4 @@
-# # worker
+# # nodegroup worker
 
 # module "graviton" {
 #   source  = "nalbam/eks-nodegroup/aws"

@@ -1,4 +1,4 @@
-# # worker
+# # nodegroup worker
 
 # module "monitoring" {
 #   source  = "nalbam/eks-nodegroup/aws"

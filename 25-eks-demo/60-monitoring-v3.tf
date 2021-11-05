@@ -1,4 +1,4 @@
-# worker
+# worker monitoring
 
 module "monitoring-v3" {
   source  = "nalbam/eks-worker/aws"

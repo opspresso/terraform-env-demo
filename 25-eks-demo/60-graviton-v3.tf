@@ -1,4 +1,4 @@
-# # worker
+# # worker graviton
 
 # module "graviton-v3" {
 #   source  = "nalbam/eks-worker/aws"

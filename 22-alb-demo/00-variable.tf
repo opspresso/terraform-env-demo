@@ -10,7 +10,10 @@ variable "name" {
   default     = "demo"
 }
 
-variable "domain" {
+variable "domains" {
   description = "생성될 ALB 도메인을 입력합니다."
-  default     = "bruce.spic.me"
+  default = [
+    "bruce.spic.me",
+    "bruce.opspresso.com",
+  ]
 }

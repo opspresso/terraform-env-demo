@@ -1,4 +1,4 @@
-# # worker
+# # nodegroup workers
 
 # module "workers" {
 #   source  = "nalbam/eks-nodegroup/aws"

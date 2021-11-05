@@ -1,4 +1,4 @@
-# worker
+# worker workers
 
 module "workers-v3" {
   source  = "nalbam/eks-worker/aws"

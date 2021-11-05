@@ -6,7 +6,7 @@ resource "aws_lb_listener" "https" {
   port            = "443"
   protocol        = "HTTPS"
   ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = data.aws_acm_certificate.this.arn
+  certificate_arn = data.aws_acm_certificate.this[0].arn
 
   default_action {
     type = "forward"
@@ -26,4 +26,11 @@ resource "aws_lb_listener" "https" {
       }
     }
   }
+}
+
+resource "aws_lb_listener_certificate" "https" {
+  count = length(var.domains) > 1 ? length(var.domains) - 1 : 0
+
+  listener_arn    = aws_lb_listener.https.arn
+  certificate_arn = data.aws_acm_certificate.this[count.index + 1].arn
 }
