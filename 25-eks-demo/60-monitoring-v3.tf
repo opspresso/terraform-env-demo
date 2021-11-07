@@ -2,7 +2,7 @@
 
 module "monitoring-v3" {
   source  = "nalbam/eks-worker/aws"
-  version = "0.14.7"
+  version = "0.14.8"
 
   name    = "monitoring"
   subname = "v3"
