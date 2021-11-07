@@ -27,6 +27,6 @@ resource "aws_eks_addon" "coredns" {
   addon_version = "v1.8.4-eksbuild.1"
 
   depends_on = [
-    module.workers-v3.worker_asg_id
+    aws_eks_addon.vpc-cni
   ]
 }
