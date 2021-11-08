@@ -32,7 +32,7 @@ resource "aws_lb_listener_rule" "internal--a" {
 
   condition {
     host_header {
-      values = ["*.demo-a.internal"]
+      values = ["*.in.demo-a.spic.me"]
     }
   }
 
@@ -48,7 +48,7 @@ resource "aws_lb_listener_rule" "internal--b" {
 
   condition {
     host_header {
-      values = ["*.demo-b.internal"]
+      values = ["*.in.demo-b.spic.me"]
     }
   }
 
