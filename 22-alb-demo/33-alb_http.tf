@@ -25,3 +25,35 @@ resource "aws_lb_listener" "http" {
     }
   }
 }
+
+resource "aws_lb_listener_rule" "http--a" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 101
+
+  condition {
+    host_header {
+      values = ["demo-a.spic.me"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.a.arn
+  }
+}
+
+resource "aws_lb_listener_rule" "http--ab" {
+  listener_arn = aws_lb_listener.http.arn
+  priority     = 102
+
+  condition {
+    host_header {
+      values = ["demo-b.spic.me"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.b.arn
+  }
+}

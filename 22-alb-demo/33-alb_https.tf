@@ -28,6 +28,38 @@ resource "aws_lb_listener" "https" {
   }
 }
 
+resource "aws_lb_listener_rule" "https--a" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 101
+
+  condition {
+    host_header {
+      values = ["demo-a.spic.me"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.a.arn
+  }
+}
+
+resource "aws_lb_listener_rule" "https--ab" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 102
+
+  condition {
+    host_header {
+      values = ["demo-b.spic.me"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.b.arn
+  }
+}
+
 resource "aws_lb_listener_certificate" "https" {
   count = length(var.domains) > 1 ? length(var.domains) - 1 : 0
 
