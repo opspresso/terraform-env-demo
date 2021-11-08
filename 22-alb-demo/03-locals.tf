@@ -12,7 +12,7 @@ locals {
   target_groups = [
     {
       arn    = aws_lb_target_group.default.arn
-      weight = 100
+      weight = 1
     },
     {
       arn    = aws_lb_target_group.a.arn
