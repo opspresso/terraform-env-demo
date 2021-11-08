@@ -5,7 +5,7 @@ resource "aws_lb" "this" {
 
   internal           = false
   load_balancer_type = "application"
-  subnets            = local.subnet_ids
+  subnets            = local.public_subnets
   security_groups    = local.security_groups
 
   enable_cross_zone_load_balancing = true
@@ -23,6 +23,6 @@ resource "aws_lb" "this" {
 
 # output
 
-output "dns_name" {
+output "public" {
   value = aws_lb.this.dns_name
 }

@@ -11,7 +11,7 @@ resource "aws_lb_listener" "http" {
 
     forward {
       dynamic "target_group" {
-        for_each = local.target_groups
+        for_each = local.public_tgs
         content {
           arn    = target_group.value.arn
           weight = target_group.value.weight
@@ -38,7 +38,7 @@ resource "aws_lb_listener_rule" "http--a" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.a.arn
+    target_group_arn = aws_lb_target_group.public_tg_a.arn
   }
 }
 
@@ -54,6 +54,6 @@ resource "aws_lb_listener_rule" "http--b" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.b.arn
+    target_group_arn = aws_lb_target_group.public_tg_b.arn
   }
 }

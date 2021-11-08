@@ -1,7 +1,7 @@
 # aws_lb_target_group
 
-resource "aws_lb_target_group" "default" {
-  name        = format("%s-0", var.name)
+resource "aws_lb_target_group" "internal_tg_0" {
+  name        = format("%s-in-0", var.name)
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
@@ -16,8 +16,8 @@ resource "aws_lb_target_group" "default" {
   deregistration_delay = 5
 }
 
-resource "aws_lb_target_group" "a" {
-  name        = format("%s-a", var.name)
+resource "aws_lb_target_group" "internal_tg_a" {
+  name        = format("%s-in-a", var.name)
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
@@ -32,8 +32,8 @@ resource "aws_lb_target_group" "a" {
   deregistration_delay = 5
 }
 
-resource "aws_lb_target_group" "b" {
-  name        = format("%s-b", var.name)
+resource "aws_lb_target_group" "internal_tg_b" {
+  name        = format("%s-in-b", var.name)
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
@@ -50,14 +50,14 @@ resource "aws_lb_target_group" "b" {
 
 # output
 
-output "target_group_0" {
-  value = aws_lb_target_group.default.arn
+output "internal_tg_0" {
+  value = aws_lb_target_group.internal_tg_0.arn
 }
 
-output "target_group_a" {
-  value = aws_lb_target_group.a.arn
+output "internal_tg_a" {
+  value = aws_lb_target_group.internal_tg_a.arn
 }
 
-output "target_group_b" {
-  value = aws_lb_target_group.b.arn
+output "internal_tg_b" {
+  value = aws_lb_target_group.internal_tg_b.arn
 }
