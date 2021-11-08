@@ -11,7 +11,7 @@ module "monitoring-v3" {
 
   role_name       = local.worker_role_name
   security_groups = local.worker_security_groups
-  subnet_ids      = data.aws_subnet_ids.b.ids
+  subnet_ids      = data.aws_subnet_ids.c.ids
 
   worker_ami_arch    = "arm64"
   worker_ami_keyword = "*"
