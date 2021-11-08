@@ -28,11 +28,11 @@ resource "aws_lb_listener" "http" {
 
 resource "aws_lb_listener_rule" "http--a" {
   listener_arn = aws_lb_listener.http.arn
-  priority     = 101
+  priority     = 11
 
   condition {
     host_header {
-      values = ["demo-a.spic.me"]
+      values = ["*.demo-a.spic.me"]
     }
   }
 
@@ -42,13 +42,13 @@ resource "aws_lb_listener_rule" "http--a" {
   }
 }
 
-resource "aws_lb_listener_rule" "http--ab" {
+resource "aws_lb_listener_rule" "http--b" {
   listener_arn = aws_lb_listener.http.arn
-  priority     = 102
+  priority     = 12
 
   condition {
     host_header {
-      values = ["demo-b.spic.me"]
+      values = ["*.demo-b.spic.me"]
     }
   }
 
