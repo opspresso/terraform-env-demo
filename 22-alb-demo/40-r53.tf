@@ -6,14 +6,6 @@ data "aws_route53_zone" "this" {
   name = var.domains[count.index]
 }
 
-data "aws_acm_certificate" "this" {
-  count = length(var.domains)
-
-  domain      = var.domains[count.index]
-  types       = ["AMAZON_ISSUED"]
-  most_recent = true
-}
-
 resource "aws_route53_record" "this" {
   count = length(var.domains)
 

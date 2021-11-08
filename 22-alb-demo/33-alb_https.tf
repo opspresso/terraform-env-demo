@@ -60,6 +60,16 @@ resource "aws_lb_listener_rule" "https--b" {
   }
 }
 
+# acm
+
+data "aws_acm_certificate" "this" {
+  count = length(var.domains)
+
+  domain      = var.domains[count.index]
+  types       = ["AMAZON_ISSUED"]
+  most_recent = true
+}
+
 resource "aws_lb_listener_certificate" "https" {
   count = length(var.domains) > 1 ? length(var.domains) - 1 : 0
 
