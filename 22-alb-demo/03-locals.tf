@@ -13,11 +13,11 @@ locals {
   public_tgs = [
     {
       arn    = aws_lb_target_group.public_tg_0.arn
-      weight = 1
+      weight = 0
     },
     {
       arn    = aws_lb_target_group.public_tg_a.arn
-      weight = 0
+      weight = 1
     },
     {
       arn    = aws_lb_target_group.public_tg_b.arn
@@ -28,11 +28,11 @@ locals {
   internal_tgs = [
     {
       arn    = aws_lb_target_group.internal_tg_0.arn
-      weight = 1
+      weight = 0
     },
     {
       arn    = aws_lb_target_group.internal_tg_a.arn
-      weight = 0
+      weight = 1
     },
     {
       arn    = aws_lb_target_group.internal_tg_b.arn
