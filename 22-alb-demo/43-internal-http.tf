@@ -28,11 +28,27 @@ resource "aws_lb_listener" "internal" {
 
 resource "aws_lb_listener_rule" "internal--loki" {
   listener_arn = aws_lb_listener.internal.arn
-  priority     = 10
+  priority     = 1
 
   condition {
     host_header {
       values = ["loki.in.demo.spic.me"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.internal_tg_0.arn
+  }
+}
+
+resource "aws_lb_listener_rule" "internal--prom" {
+  listener_arn = aws_lb_listener.internal.arn
+  priority     = 2
+
+  condition {
+    host_header {
+      values = ["prom.in.demo.spic.me"]
     }
   }
 
