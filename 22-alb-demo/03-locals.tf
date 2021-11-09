@@ -21,7 +21,7 @@ locals {
     },
     {
       arn    = aws_lb_target_group.public_tg_b.arn
-      weight = 0
+      weight = 1
     },
   ]
 
@@ -36,7 +36,7 @@ locals {
     },
     {
       arn    = aws_lb_target_group.internal_tg_b.arn
-      weight = 0
+      weight = 1
     },
   ]
 
