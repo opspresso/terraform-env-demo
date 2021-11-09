@@ -18,7 +18,7 @@ module "monitoring-v1" {
 
   key_name = var.key_name
 
-  enable_autoscale = true
+  enable_autoscale = false
   enable_taints    = true
   enable_spot      = false
 

@@ -20,14 +20,14 @@ module "workers-v1" {
 
   enable_autoscale = true
   enable_taints    = false
-  enable_spot      = true
+  enable_spot      = false
 
-  instance_type = "c6i.xlarge"
+  instance_type = "c5.xlarge"
   volume_type   = "gp3"
   volume_size   = "30"
 
   min = 2
-  max = 9
+  max = 6
 
   tags = local.tags
 }
