@@ -22,7 +22,7 @@ module "workers-v3" {
   enable_taints    = false
   enable_spot      = true
 
-  instance_type = "c5.large"
+  instance_type = "c6i.xlarge"
   volume_type   = "gp3"
   volume_size   = "30"
 

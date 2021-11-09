@@ -18,7 +18,7 @@
 #   enable_spot   = true
 
 #   ami_type       = "AL2_x86_64"
-#   instance_types = ["c5.large"]
+#   instance_types = ["c6i.large"]
 
 #   volume_type = "gp3"
 #   volume_size = "30"

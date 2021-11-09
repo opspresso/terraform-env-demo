@@ -22,7 +22,7 @@
 #   enable_taints    = true
 #   enable_spot      = true
 
-#   instance_type = "c6g.large"
+#   instance_type = "c6g.xlarge"
 #   volume_type   = "gp3"
 #   volume_size   = "30"
 
