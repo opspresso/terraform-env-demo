@@ -10,7 +10,7 @@
 #   addon_version = "v1.21.2-eksbuild.2"
 
 #   depends_on = [
-#     module.workers-v3.worker_asg_id
+#     module.workers-v1.worker_asg_id
 #   ]
 # }
 
@@ -20,7 +20,7 @@
 #   addon_version = "v1.8.4-eksbuild.1"
 
 #   depends_on = [
-#     module.workers-v3.worker_asg_id
+#     module.workers-v1.worker_asg_id
 #   ]
 # }
 
@@ -30,6 +30,6 @@
 #   addon_version = "v1.9.3-eksbuild.1"
 
 #   depends_on = [
-#     module.workers-v3.worker_asg_id
+#     module.workers-v1.worker_asg_id
 #   ]
 # }

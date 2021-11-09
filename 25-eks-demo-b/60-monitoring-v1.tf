@@ -1,11 +1,11 @@
 # worker monitoring
 
-module "monitoring-v3" {
+module "monitoring-v1" {
   source  = "nalbam/eks-worker/aws"
   version = "0.14.8"
 
   name    = "monitoring"
-  subname = "v3"
+  subname = "v1"
 
   cluster_info = module.eks.cluster_info
 
