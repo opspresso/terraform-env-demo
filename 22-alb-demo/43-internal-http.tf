@@ -32,7 +32,7 @@ resource "aws_lb_listener_rule" "internal--loki" {
 
   condition {
     host_header {
-      values = ["loki.in.demo.spic.me"]
+      values = ["loki.in.demo.krsre.com"]
     }
   }
 
@@ -48,7 +48,7 @@ resource "aws_lb_listener_rule" "internal--prom" {
 
   condition {
     host_header {
-      values = ["prom.in.demo.spic.me"]
+      values = ["prom.in.demo.krsre.com"]
     }
   }
 
@@ -64,7 +64,7 @@ resource "aws_lb_listener_rule" "internal--a" {
 
   condition {
     host_header {
-      values = ["*.in.demo-a.spic.me"]
+      values = ["*.in.demo-a.krsre.com"]
     }
   }
 
@@ -80,7 +80,7 @@ resource "aws_lb_listener_rule" "internal--b" {
 
   condition {
     host_header {
-      values = ["*.in.demo-b.spic.me"]
+      values = ["*.in.demo-b.krsre.com"]
     }
   }
 
