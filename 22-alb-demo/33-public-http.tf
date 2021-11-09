@@ -32,7 +32,7 @@ resource "aws_lb_listener_rule" "http--grafana" {
 
   condition {
     host_header {
-      values = ["grafana.demo.krsre.com"]
+      values = ["grafana.demo.spic.me"]
     }
   }
 
@@ -48,7 +48,7 @@ resource "aws_lb_listener_rule" "http--a" {
 
   condition {
     host_header {
-      values = ["*.demo-a.krsre.com"]
+      values = ["*.demo-a.spic.me"]
     }
   }
 
@@ -64,7 +64,7 @@ resource "aws_lb_listener_rule" "http--b" {
 
   condition {
     host_header {
-      values = ["*.demo-b.krsre.com"]
+      values = ["*.demo-b.spic.me"]
     }
   }
 

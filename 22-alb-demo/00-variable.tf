@@ -13,8 +13,8 @@ variable "name" {
 variable "domains" {
   description = "생성될 ALB 도메인을 입력합니다."
   default = [
-    "demo.krsre.com",
-    "demo-a.krsre.com",
-    "demo-b.krsre.com",
+    "demo.spic.me",
+    "demo-a.spic.me",
+    "demo-b.spic.me",
   ]
 }
