@@ -28,9 +28,25 @@ resource "aws_lb_listener" "https" {
   }
 }
 
+resource "aws_lb_listener_rule" "https--argocd" {
+  listener_arn = aws_lb_listener.https.arn
+  priority     = 1
+
+  condition {
+    host_header {
+      values = ["argocd.demo.spic.me"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.public_tg_0.arn
+  }
+}
+
 resource "aws_lb_listener_rule" "https--grafana" {
   listener_arn = aws_lb_listener.https.arn
-  priority     = 10
+  priority     = 2
 
   condition {
     host_header {
