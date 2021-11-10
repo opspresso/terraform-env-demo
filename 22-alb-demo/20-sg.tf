@@ -28,9 +28,7 @@ resource "aws_security_group" "public" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Environment = "demo"
-  }
+  tags = local.tags
 }
 
 # output

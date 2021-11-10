@@ -41,6 +41,7 @@ locals {
   ]
 
   tags = {
+    Name        = var.name
     Environment = "demo"
   }
 }

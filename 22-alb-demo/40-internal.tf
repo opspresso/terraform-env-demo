@@ -18,7 +18,12 @@ resource "aws_lb" "internal" {
   #   enabled = true
   # }
 
-  tags = local.tags
+  tags = merge(
+    local.tags,
+    {
+      "Name" = format("%s-in", var.name)
+    },
+  )
 }
 
 # output

@@ -29,6 +29,7 @@ locals {
   ]
 
   tags = {
+    Name        = local.cluster_name
     Environment = "demo"
   }
 }
