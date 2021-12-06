@@ -50,6 +50,12 @@ locals {
       service_account = "irsa-operator"
       iam_policy      = file("policies/irsa-operator.json")
     },
+    {
+      service_name    = "karpenter"
+      namespace       = "addon-karpenter"
+      service_account = "karpenter"
+      iam_policy      = file("policies/karpenter.json")
+    },
   ]
 }
 
