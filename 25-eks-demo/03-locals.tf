@@ -15,6 +15,8 @@ locals {
   worker_role_arn  = module.eks.worker_role_arn
   worker_role_name = module.eks.worker_role_name
 
+  instance_profile_name = module.eks.worker_instance_profile_name
+
   worker_policies = [
     aws_iam_policy.worker-ce.arn,
   ]

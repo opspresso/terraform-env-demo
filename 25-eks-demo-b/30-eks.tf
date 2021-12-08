@@ -2,11 +2,11 @@
 
 module "eks" {
   source  = "nalbam/eks/aws"
-  version = "0.14.9"
+  version = "0.14.10"
 
   cluster_name = var.cluster_name
 
-  kubernetes_version = var.cluster_version
+  kubernetes_version = var.kubernetes_version
 
   vpc_id     = local.vpc_id
   subnet_ids = local.subnet_ids

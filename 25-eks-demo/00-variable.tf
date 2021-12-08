@@ -6,11 +6,11 @@ variable "region" {
 }
 
 variable "cluster_name" {
-  description = "EKS Cluster 이름을 입력합니다."
+  description = "EKS 클러스터 이름을 입력합니다."
   default     = "eks-demo"
 }
 
-variable "cluster_version" {
+variable "kubernetes_version" {
   description = "쿠버네티스 버전을 입력합니다."
   default     = "1.21"
 }
