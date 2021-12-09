@@ -2,7 +2,7 @@
 
 module "workers-v1" {
   source  = "nalbam/eks-worker/aws"
-  version = "0.14.9"
+  version = "0.14.10"
 
   name    = "workers"
   subname = "v1"
@@ -22,11 +22,11 @@ module "workers-v1" {
   enable_taints    = false
   enable_spot      = false
 
-  instance_type = "c5.xlarge"
+  instance_type = "c5.large"
   volume_type   = "gp3"
   volume_size   = "30"
 
-  min = 2
+  min = 1
   max = 6
 
   tags = local.tags
