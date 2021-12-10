@@ -20,7 +20,7 @@ module "workers-v1" {
 
   enable_autoscale = true
   enable_taints    = false
-  enable_spot      = false
+  enable_spot      = true
 
   instance_type = "c5.large"
   volume_type   = "gp3"
