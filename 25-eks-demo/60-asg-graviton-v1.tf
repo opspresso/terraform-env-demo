@@ -21,6 +21,7 @@
 #   enable_autoscale = false
 #   enable_taints    = true
 #   enable_spot      = false
+#   enable_event     = true
 
 #   instance_type = "c6g.large"
 #   volume_type   = "gp3"

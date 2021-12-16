@@ -21,6 +21,7 @@ module "monitoring-v1" {
   enable_autoscale = false
   enable_taints    = true
   enable_spot      = false
+  enable_event     = true
 
   instance_type = "c6g.xlarge"
   volume_type   = "gp3"

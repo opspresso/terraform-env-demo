@@ -21,3 +21,6 @@ module "eks" {
 
   tags = local.tags
 }
+
+# tf state rm module.eks.kubernetes_config_map.aws_auth
+# tf import module.eks.kubernetes_config_map.aws_auth kube-system/aws-auth
