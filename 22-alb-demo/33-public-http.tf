@@ -11,9 +11,9 @@ resource "aws_lb_listener" "http" {
 
     forward {
       dynamic "target_group" {
-        for_each = local.public_tgs
+        for_each = local.tgs
         content {
-          arn    = target_group.value.arn
+          arn    = target_group.value.public_http
           weight = target_group.value.weight
         }
       }
@@ -38,7 +38,7 @@ resource "aws_lb_listener_rule" "http--argocd" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.public_tg_0.arn
+    target_group_arn = aws_lb_target_group.public_http_0.arn
   }
 }
 
@@ -54,7 +54,7 @@ resource "aws_lb_listener_rule" "http--grafana" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.public_tg_0.arn
+    target_group_arn = aws_lb_target_group.public_http_0.arn
   }
 }
 
@@ -70,7 +70,7 @@ resource "aws_lb_listener_rule" "http--a" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.public_tg_a.arn
+    target_group_arn = aws_lb_target_group.public_http_a.arn
   }
 }
 
@@ -86,6 +86,6 @@ resource "aws_lb_listener_rule" "http--b" {
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.public_tg_b.arn
+    target_group_arn = aws_lb_target_group.public_http_b.arn
   }
 }
