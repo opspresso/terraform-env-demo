@@ -3,8 +3,10 @@
 resource "aws_lb_listener" "grpc" {
   load_balancer_arn = aws_lb.this.arn
 
-  port     = "80"
-  protocol = "HTTP"
+  port            = "50051"
+  protocol        = "HTTPS"
+  ssl_policy      = "ELBSecurityPolicy-2016-08"
+  certificate_arn = data.aws_acm_certificate.this[0].arn
 
   default_action {
     type = "forward"
@@ -27,7 +29,7 @@ resource "aws_lb_listener" "grpc" {
 }
 
 resource "aws_lb_listener_rule" "grpc--a" {
-  listener_arn = aws_lb_listener.http.arn
+  listener_arn = aws_lb_listener.grpc.arn
   priority     = 11
 
   condition {
@@ -43,7 +45,7 @@ resource "aws_lb_listener_rule" "grpc--a" {
 }
 
 resource "aws_lb_listener_rule" "grpc--b" {
-  listener_arn = aws_lb_listener.http.arn
+  listener_arn = aws_lb_listener.grpc.arn
   priority     = 12
 
   condition {
