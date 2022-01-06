@@ -6,7 +6,7 @@ resource "aws_lb_listener" "https" {
   port            = "443"
   protocol        = "HTTPS"
   ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = data.aws_acm_certificate.this[0].arn
+  certificate_arn = data.aws_acm_certificate.public[0].arn
 
   default_action {
     type = "forward"
@@ -94,7 +94,7 @@ resource "aws_lb_listener_rule" "https--b" {
 
 # acm
 
-data "aws_acm_certificate" "this" {
+data "aws_acm_certificate" "public" {
   count = length(var.domains)
 
   domain      = var.domains[count.index]
@@ -102,9 +102,9 @@ data "aws_acm_certificate" "this" {
   most_recent = true
 }
 
-resource "aws_lb_listener_certificate" "https" {
+resource "aws_lb_listener_certificate" "public" {
   count = length(var.domains) > 1 ? length(var.domains) - 1 : 0
 
   listener_arn    = aws_lb_listener.https.arn
-  certificate_arn = data.aws_acm_certificate.this[count.index + 1].arn
+  certificate_arn = data.aws_acm_certificate.public[count.index + 1].arn
 }
