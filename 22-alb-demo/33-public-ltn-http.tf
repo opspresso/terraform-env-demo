@@ -1,7 +1,7 @@
 # aws_lb_listener
 
-resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.this.arn
+resource "aws_lb_listener" "public_http" {
+  load_balancer_arn = aws_lb.public.arn
 
   port     = "80"
   protocol = "HTTP"

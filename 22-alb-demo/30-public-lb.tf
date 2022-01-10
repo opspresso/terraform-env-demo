@@ -1,6 +1,6 @@
 # aws_lb
 
-resource "aws_lb" "this" {
+resource "aws_lb" "public" {
   name = var.name
 
   internal           = false
@@ -24,5 +24,5 @@ resource "aws_lb" "this" {
 # output
 
 output "public" {
-  value = aws_lb.this.dns_name
+  value = aws_lb.public.dns_name
 }

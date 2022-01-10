@@ -1,12 +1,12 @@
 # aws_lb_listener
 
-resource "aws_lb_listener" "https" {
-  load_balancer_arn = aws_lb.this.arn
+resource "aws_lb_listener" "public_https" {
+  load_balancer_arn = aws_lb.public.arn
 
   port            = "443"
   protocol        = "HTTPS"
   ssl_policy      = "ELBSecurityPolicy-2016-08"
-  certificate_arn = data.aws_acm_certificate.public[0].arn
+  certificate_arn = data.aws_acm_certificate.public_https[0].arn
 
   default_action {
     type = "forward"
@@ -28,8 +28,8 @@ resource "aws_lb_listener" "https" {
   }
 }
 
-resource "aws_lb_listener_rule" "https--argocd" {
-  listener_arn = aws_lb_listener.https.arn
+resource "aws_lb_listener_rule" "public_https--argocd" {
+  listener_arn = aws_lb_listener.public_https.arn
   priority     = 1
 
   condition {
@@ -44,8 +44,8 @@ resource "aws_lb_listener_rule" "https--argocd" {
   }
 }
 
-resource "aws_lb_listener_rule" "https--grafana" {
-  listener_arn = aws_lb_listener.https.arn
+resource "aws_lb_listener_rule" "public_https--grafana" {
+  listener_arn = aws_lb_listener.public_https.arn
   priority     = 2
 
   condition {
@@ -60,8 +60,8 @@ resource "aws_lb_listener_rule" "https--grafana" {
   }
 }
 
-resource "aws_lb_listener_rule" "https--a" {
-  listener_arn = aws_lb_listener.https.arn
+resource "aws_lb_listener_rule" "public_https--a" {
+  listener_arn = aws_lb_listener.public_https.arn
   priority     = 11
 
   condition {
@@ -76,8 +76,8 @@ resource "aws_lb_listener_rule" "https--a" {
   }
 }
 
-resource "aws_lb_listener_rule" "https--b" {
-  listener_arn = aws_lb_listener.https.arn
+resource "aws_lb_listener_rule" "public_https--b" {
+  listener_arn = aws_lb_listener.public_https.arn
   priority     = 12
 
   condition {
@@ -94,7 +94,7 @@ resource "aws_lb_listener_rule" "https--b" {
 
 # acm
 
-data "aws_acm_certificate" "public" {
+data "aws_acm_certificate" "public_https" {
   count = length(var.domains)
 
   domain      = var.domains[count.index]
@@ -102,9 +102,9 @@ data "aws_acm_certificate" "public" {
   most_recent = true
 }
 
-resource "aws_lb_listener_certificate" "public" {
+resource "aws_lb_listener_certificate" "public_https" {
   count = length(var.domains) > 1 ? length(var.domains) - 1 : 0
 
-  listener_arn    = aws_lb_listener.https.arn
-  certificate_arn = data.aws_acm_certificate.public[count.index + 1].arn
+  listener_arn    = aws_lb_listener.public_https.arn
+  certificate_arn = data.aws_acm_certificate.public_https[count.index + 1].arn
 }

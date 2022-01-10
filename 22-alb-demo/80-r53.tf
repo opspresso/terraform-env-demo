@@ -6,7 +6,7 @@ data "aws_route53_zone" "this" {
   name = var.domains[count.index]
 }
 
-resource "aws_route53_record" "this" {
+resource "aws_route53_record" "public" {
   count = length(var.domains)
 
   zone_id = data.aws_route53_zone.this[count.index].zone_id
@@ -14,8 +14,8 @@ resource "aws_route53_record" "this" {
   type    = "A"
 
   alias {
-    zone_id                = aws_lb.this.zone_id
-    name                   = aws_lb.this.dns_name
+    zone_id                = aws_lb.public.zone_id
+    name                   = aws_lb.public.dns_name
     evaluate_target_health = false
   }
 }
