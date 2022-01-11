@@ -1,4 +1,5 @@
 # addons
+
 # aws eks describe-addon-versions | jq .
 # aws eks describe-addon-versions | jq '.addons[] | select(.addonName=="kube-proxy") | .addonVersions[].addonVersion' -r | sort -V -r | head -1
 # aws eks describe-addon-versions | jq '.addons[] | select(.addonName=="coredns") | .addonVersions[].addonVersion' -r | sort -V -r | head -1
