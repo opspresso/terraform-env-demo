@@ -6,7 +6,7 @@ terraform {
   backend "s3" {
     region         = "ap-northeast-2"
     bucket         = "terraform-workshop-082867736673"
-    key            = "backend/terraform-env-bruce/demo/eks-demo/terraform.tfstate"
+    key            = "backend/terraform-env-bruce/demo/eks-demo/terraform.tfstate" # for eks-demo
     dynamodb_table = "terraform-resource-lock"
     encrypt        = true
   }

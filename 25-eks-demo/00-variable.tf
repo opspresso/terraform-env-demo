@@ -7,7 +7,7 @@ variable "region" {
 
 variable "cluster_name" {
   description = "EKS 클러스터 이름을 입력합니다."
-  default     = "eks-demo"
+  default     = "eks-demo" # for eks-demo
 }
 
 variable "kubernetes_version" {
