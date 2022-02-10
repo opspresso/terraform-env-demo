@@ -11,6 +11,7 @@ module "vpc" {
   azs             = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c"]
   private_subnets = ["10.10.1.0/24", "10.10.2.0/24", "10.10.3.0/24"]
   public_subnets  = ["10.10.5.0/24", "10.10.6.0/24", "10.10.7.0/24"]
+  intra_subnets   = ["10.10.15.0/24", "10.10.16.0/24", "10.10.17.0/24"]
 
   enable_ipv6 = true
 

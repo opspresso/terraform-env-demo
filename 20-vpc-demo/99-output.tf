@@ -20,6 +20,11 @@ output "public_subnets" {
   value       = module.vpc.public_subnets
 }
 
+output "intra_subnets" {
+  description = "List of IDs of intra subnets"
+  value       = module.vpc.public_subnets
+}
+
 output "nat_public_ips" {
   description = "List of public Elastic IPs created for AWS NAT Gateway"
   value       = module.vpc.nat_public_ips
