@@ -11,7 +11,7 @@ module "workers-v1" {
 
   role_name       = local.worker_role_name
   security_groups = local.worker_security_groups
-  subnet_ids      = local.subnet_ids
+  subnet_ids      = local.private_subnets
 
   worker_ami_arch    = "x86_64"
   worker_ami_keyword = "*"
@@ -23,7 +23,7 @@ module "workers-v1" {
   enable_spot      = true
   enable_event     = true
 
-  instance_type = "c5.large"
+  instance_type = "c6i.large"
   volume_type   = "gp3"
   volume_size   = "30"
 

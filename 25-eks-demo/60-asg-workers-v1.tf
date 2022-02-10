@@ -23,7 +23,7 @@ module "workers-v1" {
   enable_spot      = true
   enable_event     = true
 
-  instance_type = "c5.large"
+  instance_type = "c6i.large"
   volume_type   = "gp3"
   volume_size   = "30"
 

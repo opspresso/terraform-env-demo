@@ -10,7 +10,7 @@
 
 #   node_role_arn   = local.worker_role_arn
 #   security_groups = local.worker_security_groups
-#   subnet_ids      = local.subnet_ids
+#   subnet_ids      = local.private_subnets
 
 #   key_name = var.key_name
 
