@@ -42,4 +42,10 @@ module "vpc" {
     "kubernetes.io/cluster/eks-demo-b" = "shared"
     "kubernetes.io/role/internal-elb"  = "1"
   }
+
+  intra_subnet_tags = {
+    "kubernetes.io/cluster/eks-demo"   = "shared"
+    "kubernetes.io/cluster/eks-demo-a" = "shared"
+    "kubernetes.io/cluster/eks-demo-b" = "shared"
+  }
 }
