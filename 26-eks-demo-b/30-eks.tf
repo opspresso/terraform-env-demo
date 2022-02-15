@@ -13,6 +13,8 @@ module "eks" {
 
   endpoint_public_access = true
 
+  cluster_log_types = []
+
   iam_group = local.iam_group
   iam_roles = local.iam_roles
 
