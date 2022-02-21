@@ -25,7 +25,7 @@ output "cluster_oidc_url" {
 }
 
 output "cluster_vpc_config" {
-  value = module.eks.cluster_vpc_config
+  value = module.eks.cluster_vpc_config.0
 }
 
 output "worker_role_name" {
