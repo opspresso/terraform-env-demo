@@ -5,7 +5,7 @@ module "vpc_endpoints" {
   version = "3.12.0"
 
   vpc_id             = module.vpc.vpc_id
-  security_group_ids = [data.aws_security_group.default.id]
+  security_group_ids = [module.vpc.default_security_group_id]
 
   endpoints = {
     s3 = {
@@ -95,11 +95,6 @@ module "vpc_endpoints" {
   }
 
   tags = local.tags
-}
-
-data "aws_security_group" "default" {
-  name   = "default"
-  vpc_id = module.vpc.vpc_id
 }
 
 resource "aws_vpc_endpoint_route_table_association" "intra_s3" {
