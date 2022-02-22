@@ -4,21 +4,18 @@ module "vpc_endpoints" {
   source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
   version = "3.12.0"
 
-  # source = "../../modules/vpc-endpoints"
-
   vpc_id             = module.vpc.vpc_id
   security_group_ids = [data.aws_security_group.default.id]
 
   endpoints = {
     s3 = {
-      service = "s3"
-      tags    = { Name = "s3-vpc-endpoint" }
+      service      = "s3"
+      service_type = "Gateway"
     },
     ssm = {
       service             = "ssm"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
-      security_group_ids  = [aws_security_group.vpc_tls.id]
     },
     ssmmessages = {
       service             = "ssmmessages"
@@ -44,7 +41,6 @@ module "vpc_endpoints" {
       service             = "ec2"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
-      security_group_ids  = [aws_security_group.vpc_tls.id]
     },
     ec2messages = {
       service             = "ec2messages"
@@ -55,43 +51,46 @@ module "vpc_endpoints" {
       service             = "ecr.api"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
-      policy              = data.aws_iam_policy_document.generic_endpoint_policy.json
     },
     ecr_dkr = {
       service             = "ecr.dkr"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
-      policy              = data.aws_iam_policy_document.generic_endpoint_policy.json
     },
     kms = {
       service             = "kms"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
-      security_group_ids  = [aws_security_group.vpc_tls.id]
     },
     sts = {
       service             = "sts"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
-      security_group_ids  = [aws_security_group.vpc_tls.id]
     },
     elasticfilesystem = {
       service             = "elasticfilesystem"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
-      security_group_ids  = [aws_security_group.vpc_tls.id]
     },
     logs = {
       service             = "logs"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
-      security_group_ids  = [aws_security_group.vpc_tls.id]
     },
     monitoring = {
       service             = "monitoring"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
-      security_group_ids  = [aws_security_group.vpc_tls.id]
+    },
+    sqs = {
+      service             = "sqs"
+      private_dns_enabled = true
+      subnet_ids          = module.vpc.intra_subnets
+    },
+    sns = {
+      service             = "sns"
+      private_dns_enabled = true
+      subnet_ids          = module.vpc.intra_subnets
     },
   }
 
@@ -103,38 +102,7 @@ data "aws_security_group" "default" {
   vpc_id = module.vpc.vpc_id
 }
 
-data "aws_iam_policy_document" "generic_endpoint_policy" {
-  statement {
-    effect    = "Deny"
-    actions   = ["*"]
-    resources = ["*"]
-
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-
-    condition {
-      test     = "StringNotEquals"
-      variable = "aws:SourceVpc"
-      values   = [module.vpc.vpc_id]
-    }
-  }
-}
-
-resource "aws_security_group" "vpc_tls" {
-  name_prefix = "${var.name}-vpc_tls"
-  description = "Allow TLS inbound traffic"
-
-  vpc_id = module.vpc.vpc_id
-
-  ingress {
-    description = "TLS from VPC"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = [module.vpc.vpc_cidr_block]
-  }
-
-  tags = local.tags
+resource "aws_vpc_endpoint_route_table_association" "intra_s3" {
+  vpc_endpoint_id = module.vpc_endpoints.endpoints.s3.id
+  route_table_id  = module.vpc.intra_route_table_ids.0
 }
