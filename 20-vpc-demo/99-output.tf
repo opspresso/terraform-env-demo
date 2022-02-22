@@ -22,7 +22,7 @@ output "public_subnets" {
 
 output "intra_subnets" {
   description = "List of IDs of intra subnets"
-  value       = module.vpc.public_subnets
+  value       = module.vpc.intra_subnets
 }
 
 output "nat_public_ips" {

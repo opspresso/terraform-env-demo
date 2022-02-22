@@ -3,7 +3,7 @@
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.6.0"
+  version = "3.12.0"
 
   name = var.name
   cidr = var.cidr
@@ -18,34 +18,24 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
-  # enable_s3_endpoint       = true
-  # enable_dynamodb_endpoint = true
+  tags = local.tags
 
-  tags = {
-    "kubernetes.io/cluster/eks-demo" = "shared"
-  }
+  vpc_tags = local.eks_tags
 
-  vpc_tags = {
-    "Name" = var.name
-  }
+  public_subnet_tags = merge(
+    { "kubernetes.io/role/elb" = "1" },
+    local.tags,
+    local.eks_tags,
+  )
 
-  public_subnet_tags = {
-    "kubernetes.io/cluster/eks-demo"   = "shared"
-    "kubernetes.io/cluster/eks-demo-a" = "shared"
-    "kubernetes.io/cluster/eks-demo-b" = "shared"
-    "kubernetes.io/role/elb"           = "1"
-  }
+  private_subnet_tags = merge(
+    { "kubernetes.io/role/internal-elb" = "1" },
+    local.tags,
+    local.eks_tags,
+  )
 
-  private_subnet_tags = {
-    "kubernetes.io/cluster/eks-demo"   = "shared"
-    "kubernetes.io/cluster/eks-demo-a" = "shared"
-    "kubernetes.io/cluster/eks-demo-b" = "shared"
-    "kubernetes.io/role/internal-elb"  = "1"
-  }
-
-  intra_subnet_tags = {
-    "kubernetes.io/cluster/eks-demo"   = "shared"
-    "kubernetes.io/cluster/eks-demo-a" = "shared"
-    "kubernetes.io/cluster/eks-demo-b" = "shared"
-  }
+  intra_subnet_tags = merge(
+    local.tags,
+    local.eks_tags,
+  )
 }
