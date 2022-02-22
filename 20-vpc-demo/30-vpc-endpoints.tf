@@ -63,6 +63,36 @@ module "vpc_endpoints" {
       subnet_ids          = module.vpc.intra_subnets
       policy              = data.aws_iam_policy_document.generic_endpoint_policy.json
     },
+    kms = {
+      service             = "kms"
+      private_dns_enabled = true
+      subnet_ids          = module.vpc.intra_subnets
+      security_group_ids  = [aws_security_group.vpc_tls.id]
+    },
+    sts = {
+      service             = "sts"
+      private_dns_enabled = true
+      subnet_ids          = module.vpc.intra_subnets
+      security_group_ids  = [aws_security_group.vpc_tls.id]
+    },
+    elasticfilesystem = {
+      service             = "elasticfilesystem"
+      private_dns_enabled = true
+      subnet_ids          = module.vpc.intra_subnets
+      security_group_ids  = [aws_security_group.vpc_tls.id]
+    },
+    logs = {
+      service             = "logs"
+      private_dns_enabled = true
+      subnet_ids          = module.vpc.intra_subnets
+      security_group_ids  = [aws_security_group.vpc_tls.id]
+    },
+    monitoring = {
+      service             = "monitoring"
+      private_dns_enabled = true
+      subnet_ids          = module.vpc.intra_subnets
+      security_group_ids  = [aws_security_group.vpc_tls.id]
+    },
   }
 
   tags = local.tags
