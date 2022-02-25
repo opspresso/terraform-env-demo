@@ -22,18 +22,13 @@ module "vpc_endpoints" {
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
     },
-    lambda = {
-      service             = "lambda"
+    logs = {
+      service             = "logs"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
     },
-    ecs = {
-      service             = "ecs"
-      private_dns_enabled = true
-      subnet_ids          = module.vpc.intra_subnets
-    },
-    ecs_telemetry = {
-      service             = "ecs-telemetry"
+    monitoring = {
+      service             = "monitoring"
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
     },
@@ -67,31 +62,36 @@ module "vpc_endpoints" {
       private_dns_enabled = true
       subnet_ids          = module.vpc.intra_subnets
     },
-    elasticfilesystem = {
-      service             = "elasticfilesystem"
-      private_dns_enabled = true
-      subnet_ids          = module.vpc.intra_subnets
-    },
-    logs = {
-      service             = "logs"
-      private_dns_enabled = true
-      subnet_ids          = module.vpc.intra_subnets
-    },
-    monitoring = {
-      service             = "monitoring"
-      private_dns_enabled = true
-      subnet_ids          = module.vpc.intra_subnets
-    },
-    sqs = {
-      service             = "sqs"
-      private_dns_enabled = true
-      subnet_ids          = module.vpc.intra_subnets
-    },
-    sns = {
-      service             = "sns"
-      private_dns_enabled = true
-      subnet_ids          = module.vpc.intra_subnets
-    },
+    # elasticfilesystem = {
+    #   service             = "elasticfilesystem"
+    #   private_dns_enabled = true
+    #   subnet_ids          = module.vpc.intra_subnets
+    # },
+    # sqs = {
+    #   service             = "sqs"
+    #   private_dns_enabled = true
+    #   subnet_ids          = module.vpc.intra_subnets
+    # },
+    # sns = {
+    #   service             = "sns"
+    #   private_dns_enabled = true
+    #   subnet_ids          = module.vpc.intra_subnets
+    # },
+    # lambda = {
+    #   service             = "lambda"
+    #   private_dns_enabled = true
+    #   subnet_ids          = module.vpc.intra_subnets
+    # },
+    # ecs = {
+    #   service             = "ecs"
+    #   private_dns_enabled = true
+    #   subnet_ids          = module.vpc.intra_subnets
+    # },
+    # ecs_telemetry = {
+    #   service             = "ecs-telemetry"
+    #   private_dns_enabled = true
+    #   subnet_ids          = module.vpc.intra_subnets
+    # },
   }
 
   tags = local.tags
