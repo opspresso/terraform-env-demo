@@ -18,9 +18,9 @@
 
 #   key_name = var.key_name
 
-#   enable_autoscale = false
+#   enable_autoscale = true
 #   enable_taints    = true
-#   enable_spot      = false
+#   enable_spot      = true
 #   enable_event     = true
 
 #   instance_type = "c6g.large"
@@ -28,7 +28,7 @@
 #   volume_size   = "30"
 
 #   min = 1
-#   max = 1
+#   max = 2
 
 #   tags = local.tags
 # }
