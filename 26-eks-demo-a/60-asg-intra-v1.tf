@@ -1,10 +1,10 @@
-# worker workers
+# worker intra
 
-module "private-v1" {
+module "intra-v1" {
   source  = "nalbam/eks-worker/aws"
   version = "0.14.14"
 
-  name    = "private"
+  name    = "intra"
   subname = "v1"
 
   cluster_info = module.eks.cluster_info
