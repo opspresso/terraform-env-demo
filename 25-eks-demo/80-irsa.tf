@@ -61,7 +61,7 @@ locals {
 
 module "irsa" {
   source  = "nalbam/eks-irsa/aws"
-  version = "0.15.1"
+  # version = "0.15.1"
 
   for_each = {
     for irsa in local.irsa :

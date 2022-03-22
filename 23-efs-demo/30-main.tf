@@ -2,7 +2,7 @@
 
 module "efs" {
   source  = "nalbam/efs/aws"
-  version = "0.14.2"
+  # version = "0.14.2"
 
   name = var.name
 
