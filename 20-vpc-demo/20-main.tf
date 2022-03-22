@@ -21,6 +21,9 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
+  enable_vpn_gateway = true
+  amazon_side_asn    = 64620
+
   tags = local.tags
 
   vpc_tags = local.eks_tags

@@ -25,6 +25,16 @@ output "intra_subnets" {
   value       = module.vpc.intra_subnets
 }
 
+output "public_route_table_ids" {
+  description = "List of IDs of public route tables"
+  value       = module.vpc.public_route_table_ids
+}
+
+output "private_route_table_ids" {
+  description = "List of IDs of private route tables"
+  value       = module.vpc.private_route_table_ids
+}
+
 output "nat_public_ips" {
   description = "List of public Elastic IPs created for AWS NAT Gateway"
   value       = module.vpc.nat_public_ips
@@ -33,4 +43,9 @@ output "nat_public_ips" {
 output "default_security_group_id" {
   description = "The ID of the security group created by default on VPC creation"
   value       = module.vpc.default_security_group_id
+}
+
+output "vgw_id" {
+  description = "The ID of the VPN Gateway"
+  value       = module.vpc.vgw_id
 }
