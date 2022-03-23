@@ -1,7 +1,7 @@
 # eks
 
 module "eks" {
-  source  = "nalbam/eks/aws"
+  source = "nalbam/eks/aws"
   # version = "0.14.12"
 
   cluster_name = var.cluster_name
