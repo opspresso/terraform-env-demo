@@ -18,7 +18,7 @@ module "monitoring-v1" {
 
   key_name = var.key_name
 
-  enable_autoscale = false
+  enable_autoscale = true
   enable_taints    = true
   enable_spot      = true
   enable_event     = true
@@ -28,7 +28,7 @@ module "monitoring-v1" {
   volume_size   = "30"
 
   min = 1
-  max = 1
+  max = 2
 
   tags = local.tags
 }
