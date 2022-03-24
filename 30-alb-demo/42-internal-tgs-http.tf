@@ -5,6 +5,7 @@ resource "aws_lb_target_group" "internal_http_0" {
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
+  slow_start  = 30
   vpc_id      = local.vpc_id
 
   health_check {
@@ -21,6 +22,7 @@ resource "aws_lb_target_group" "internal_http_a" {
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
+  slow_start  = 30
   vpc_id      = local.vpc_id
 
   health_check {
@@ -37,6 +39,7 @@ resource "aws_lb_target_group" "internal_http_b" {
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
+  slow_start  = 30
   vpc_id      = local.vpc_id
 
   health_check {

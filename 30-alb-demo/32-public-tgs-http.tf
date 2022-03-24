@@ -5,6 +5,7 @@ resource "aws_lb_target_group" "public_http_0" {
   port             = 80
   protocol         = "HTTP"
   protocol_version = "HTTP2"
+  slow_start       = 30
   target_type      = "ip"
   vpc_id           = local.vpc_id
 
@@ -22,6 +23,7 @@ resource "aws_lb_target_group" "public_http_a" {
   port             = 80
   protocol         = "HTTP"
   protocol_version = "HTTP2"
+  slow_start       = 30
   target_type      = "ip"
   vpc_id           = local.vpc_id
 
@@ -39,6 +41,7 @@ resource "aws_lb_target_group" "public_http_b" {
   port             = 80
   protocol         = "HTTP"
   protocol_version = "HTTP2"
+  slow_start       = 30
   target_type      = "ip"
   vpc_id           = local.vpc_id
 
