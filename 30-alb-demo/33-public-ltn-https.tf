@@ -44,45 +44,13 @@ resource "aws_lb_listener_rule" "public_https--argocd" {
   }
 }
 
-resource "aws_lb_listener_rule" "public_https--rollouts" {
-  listener_arn = aws_lb_listener.public_https.arn
-  priority     = 2
-
-  condition {
-    host_header {
-      values = ["rollouts.demo.nalbam.com"]
-    }
-  }
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.public_http_0.arn
-  }
-}
-
 resource "aws_lb_listener_rule" "public_https--applicationset" {
   listener_arn = aws_lb_listener.public_https.arn
   priority     = 3
 
   condition {
     host_header {
-      values = ["applicationset.demo.nalbam.com"]
-    }
-  }
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.public_http_0.arn
-  }
-}
-
-resource "aws_lb_listener_rule" "public_https--workflows" {
-  listener_arn = aws_lb_listener.public_https.arn
-  priority     = 4
-
-  condition {
-    host_header {
-      values = ["workflows.demo.nalbam.com"]
+      values = ["appset.demo.nalbam.com"]
     }
   }
 
