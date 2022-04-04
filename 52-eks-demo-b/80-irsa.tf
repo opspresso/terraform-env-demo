@@ -27,6 +27,12 @@ locals {
       iam_policy      = file("policies/aws-node-termination-handler.json")
     },
     {
+      service_name    = "aws-node"
+      namespace       = "kube-system"
+      service_account = "aws-node"
+      iam_policy      = file("policies/aws-node.json")
+    },
+    {
       service_name    = "cluster-autoscaler"
       namespace       = "addon-cluster-autoscaler"
       service_account = "cluster-autoscaler"

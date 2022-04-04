@@ -13,8 +13,7 @@ module "eks" {
 
   endpoint_public_access = true
 
-  create_cni_ipv6_iam_policy = true
-  ip_family                  = "ipv6"
+  ip_family = "ipv6"
 
   cluster_log_types = []
 
