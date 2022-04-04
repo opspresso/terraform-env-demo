@@ -26,8 +26,9 @@ resource "aws_eks_addon" "coredns" {
 }
 
 resource "aws_eks_addon" "vpc-cni" {
-  cluster_name = local.cluster_name
-  addon_name   = "vpc-cni"
+  cluster_name             = local.cluster_name
+  addon_name               = "vpc-cni"
+  service_account_role_arn = format("arn:aws:iam::%s:role/irsa--%s--aws-node", local.account_id, local.cluster_name)
   # addon_version = "v1.10.2-eksbuild.1"
 
   # depends_on = [
