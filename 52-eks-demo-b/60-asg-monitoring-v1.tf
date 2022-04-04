@@ -13,7 +13,7 @@ module "monitoring-v1" {
   security_groups = local.worker_security_groups
   subnet_ids      = data.aws_subnet_ids.c.ids
 
-  worker_ami_arch    = "arm64"
+  worker_ami_arch    = "x86_64"
   worker_ami_keyword = "*"
 
   key_name = var.key_name
@@ -23,7 +23,7 @@ module "monitoring-v1" {
   enable_spot      = true
   enable_event     = true
 
-  instance_type = "c6g.large"
+  instance_type = "m6i.large"
   volume_type   = "gp3"
   volume_size   = "30"
 
