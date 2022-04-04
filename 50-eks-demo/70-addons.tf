@@ -8,7 +8,7 @@
 resource "aws_eks_addon" "kube-proxy" {
   cluster_name = local.cluster_name
   addon_name   = "kube-proxy"
-  # addon_version = "v1.22.6-eksbuild.1"
+  # addon_version = "v1.21.2-eksbuild.2"
 
   # depends_on = [
   #   module.workers-v1.worker_asg_id

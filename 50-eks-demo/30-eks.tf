@@ -2,7 +2,7 @@
 
 module "eks" {
   source = "nalbam/eks/aws"
-  # version = "0.14.12"
+  # version = "0.15.3"
 
   cluster_name = var.cluster_name
 
@@ -12,6 +12,9 @@ module "eks" {
   subnet_ids = local.private_subnets
 
   endpoint_public_access = true
+
+  create_cni_ipv6_iam_policy = true
+  ip_family                  = "ipv6"
 
   cluster_log_types = []
 
