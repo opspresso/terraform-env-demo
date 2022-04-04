@@ -8,12 +8,24 @@ module "vpc" {
   name = var.name
   cidr = var.cidr
 
-  azs             = ["ap-northeast-2a", "ap-northeast-2b", "ap-northeast-2c"]
+  azs = [
+    format("%sa", var.region),
+    format("%sb", var.region),
+    format("%sc", var.region),
+  ]
+
   public_subnets  = ["10.10.11.0/24", "10.10.12.0/24", "10.10.13.0/24"]
   private_subnets = ["10.10.21.0/24", "10.10.22.0/24", "10.10.23.0/24"]
   intra_subnets   = ["10.10.31.0/24", "10.10.32.0/24", "10.10.33.0/24"]
 
-  enable_ipv6 = true
+  public_subnet_ipv6_prefixes  = [11, 12, 13]
+  private_subnet_ipv6_prefixes = [21, 22, 23]
+  intra_subnet_ipv6_prefixes   = [31, 32, 33]
+
+  enable_ipv6                     = true
+  assign_ipv6_address_on_creation = true
+
+  private_subnet_assign_ipv6_address_on_creation = false
 
   enable_nat_gateway = true
   single_nat_gateway = true
