@@ -18,8 +18,6 @@ module "workers-v1" {
 
   key_name = var.key_name
 
-  ipv6_address_count = 1
-
   enable_autoscale = true
   enable_taints    = false
   enable_spot      = true
