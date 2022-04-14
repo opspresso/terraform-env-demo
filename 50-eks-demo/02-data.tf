@@ -3,8 +3,8 @@
 data "aws_caller_identity" "current" {
 }
 
-data "aws_subnet_ids" "a" {
-  vpc_id = local.vpc_id
+data "aws_subnets" "a" {
+  # vpc_id = local.vpc_id
   # filter {
   #   name   = format("tag:kubernetes.io/cluster/%s", local.cluster_name)
   #   values = ["shared"]
@@ -15,8 +15,8 @@ data "aws_subnet_ids" "a" {
   }
 }
 
-data "aws_subnet_ids" "b" {
-  vpc_id = local.vpc_id
+data "aws_subnets" "b" {
+  # vpc_id = local.vpc_id
   # filter {
   #   name   = format("tag:kubernetes.io/cluster/%s", local.cluster_name)
   #   values = ["shared"]
@@ -27,8 +27,8 @@ data "aws_subnet_ids" "b" {
   }
 }
 
-data "aws_subnet_ids" "c" {
-  vpc_id = local.vpc_id
+data "aws_subnets" "c" {
+  # vpc_id = local.vpc_id
   # filter {
   #   name   = format("tag:kubernetes.io/cluster/%s", local.cluster_name)
   #   values = ["shared"]

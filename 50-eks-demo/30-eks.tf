@@ -2,7 +2,7 @@
 
 module "eks" {
   source = "nalbam/eks/aws"
-  # version = "0.15.3"
+  # version = "1.0.1"
 
   cluster_name = var.cluster_name
 
@@ -13,7 +13,7 @@ module "eks" {
 
   endpoint_public_access = true
 
-  ip_family = "ipv6"
+  ip_family = var.ip_family
 
   cluster_log_types = []
 

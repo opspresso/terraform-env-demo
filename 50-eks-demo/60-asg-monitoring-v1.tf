@@ -2,7 +2,7 @@
 
 # module "monitoring-v1" {
 #   source = "nalbam/eks-worker/aws"
-#   # version = "0.14.14"
+#   # version = "1.0.1"
 
 #   name    = "monitoring"
 #   subname = "v1"
@@ -11,7 +11,7 @@
 
 #   role_name       = local.worker_role_name
 #   security_groups = local.worker_security_groups
-#   subnet_ids      = data.aws_subnet_ids.c.ids
+#   subnet_ids      = data.aws_subnets.c.ids
 
 #   worker_ami_arch    = "x86_64"
 #   worker_ami_keyword = "*"

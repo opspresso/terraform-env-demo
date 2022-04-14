@@ -2,7 +2,7 @@
 
 module "monitoring" {
   source = "nalbam/eks-nodegroup/aws"
-  # version = "0.14.3"
+  # version = "1.0.1"
 
   name = "monitoring"
 
@@ -10,7 +10,7 @@ module "monitoring" {
 
   node_role_arn   = local.worker_role_arn
   security_groups = local.worker_security_groups
-  subnet_ids      = data.aws_subnet_ids.a.ids
+  subnet_ids      = data.aws_subnets.a.ids
 
   key_name = var.key_name
 
