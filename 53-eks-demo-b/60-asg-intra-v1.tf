@@ -1,8 +1,8 @@
 # # worker intra
 
 # module "intra-v1" {
-#   source  = "nalbam/eks-worker/aws"
-#   # version = "0.14.14"
+#   source = "nalbam/eks-worker/aws"
+#   # version = "1.0.1"
 
 #   name    = "intra"
 #   subname = "v1"

@@ -1,8 +1,8 @@
 # # worker graviton
 
 # module "graviton-v1" {
-#   source  = "nalbam/eks-worker/aws"
-#   # version = "0.14.14"
+#   source = "nalbam/eks-worker/aws"
+#   # version = "1.0.1"
 
 #   name    = "graviton"
 #   subname = "v1"

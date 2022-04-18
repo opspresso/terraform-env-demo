@@ -15,10 +15,6 @@ variable "kubernetes_version" {
   default     = "1.22"
 }
 
-variable "ip_family" {
-  default = "ipv6"
-}
-
 variable "key_name" {
   default = "bruce-seoul"
 }

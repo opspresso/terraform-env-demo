@@ -18,7 +18,7 @@ resource "aws_eks_addon" "kube-proxy" {
 resource "aws_eks_addon" "coredns" {
   cluster_name = local.cluster_name
   addon_name   = "coredns"
-  # addon_version = "v1.8.7-eksbuild.1"
+  # addon_version = "v1.8.4-eksbuild.1"
 
   # depends_on = [
   #   module.workers-v1.worker_asg_id
@@ -35,3 +35,13 @@ resource "aws_eks_addon" "vpc-cni" {
   #   module.workers-v1.worker_asg_id
   # ]
 }
+
+# resource "aws_eks_addon" "aws-ebs-csi-driver" {
+#   cluster_name = local.cluster_name
+#   addon_name   = "aws-ebs-csi-driver"
+#   # addon_version = "v1.5.2-eksbuild.1"
+
+#   # depends_on = [
+#   #   module.workers-v1.worker_asg_id
+#   # ]
+# }
