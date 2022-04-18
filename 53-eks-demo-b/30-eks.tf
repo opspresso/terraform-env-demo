@@ -23,6 +23,8 @@ module "eks" {
   worker_policies   = local.worker_policies
   worker_source_sgs = local.worker_source_sgs
 
+  addons_version = var.addons_version
+
   tags = local.tags
 }
 
