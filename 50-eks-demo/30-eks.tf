@@ -24,6 +24,9 @@ module "eks" {
   worker_source_sgs = local.worker_source_sgs
 
   addons_version = var.addons_version
+  # addons_irsa_role = {
+  #   "vpc-cni" : format("arn:aws:iam::%s:role/irsa--%s--aws-node", local.account_id, var.cluster_name)
+  # }
 
   tags = local.tags
 }
