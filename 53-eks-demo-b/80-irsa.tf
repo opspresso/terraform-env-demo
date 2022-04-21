@@ -74,8 +74,7 @@ module "irsa" {
     irsa.service_name => irsa
   }
 
-  cluster_name = local.cluster_name
-  provider_url = local.provider_url
+  cluster_name = module.eks.cluster_name
 
   service_name    = each.key
   namespace       = try(each.value.namespace, "")
