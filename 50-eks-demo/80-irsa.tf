@@ -77,8 +77,8 @@ module "irsa" {
   cluster_name = module.eks.cluster_name
 
   service_name    = each.key
-  namespace       = try(each.value.namespace, "")
-  service_account = try(each.value.service_account, "")
+  namespace       = try(each.value.namespace, null)
+  service_account = try(each.value.service_account, null)
   iam_policy      = each.value.iam_policy
 }
 
