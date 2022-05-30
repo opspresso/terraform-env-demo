@@ -5,6 +5,6 @@ data "terraform_remote_state" "vpc" {
   config = {
     region = "ap-northeast-2"
     bucket = "terraform-workshop-082867736673"
-    key    = "backend/terraform-env-bruce/demo/vpc-demo/terraform.tfstate"
+    key    = "backend/demo/vpc-demo/terraform.tfstate"
   }
 }
