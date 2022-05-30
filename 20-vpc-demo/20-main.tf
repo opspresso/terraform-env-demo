@@ -16,21 +16,21 @@ module "vpc" {
 
   public_subnets  = ["10.10.11.0/24", "10.10.12.0/24", "10.10.13.0/24"]
   private_subnets = ["10.10.21.0/24", "10.10.22.0/24", "10.10.23.0/24"]
-  intra_subnets   = ["10.10.31.0/24", "10.10.32.0/24", "10.10.33.0/24"]
+  # intra_subnets   = ["10.10.31.0/24", "10.10.32.0/24", "10.10.33.0/24"]
 
   public_subnet_ipv6_prefixes  = [11, 12, 13]
   private_subnet_ipv6_prefixes = [21, 22, 23]
-  intra_subnet_ipv6_prefixes   = [31, 32, 33]
+  # intra_subnet_ipv6_prefixes   = [31, 32, 33]
 
-  enable_ipv6                     = true
-  assign_ipv6_address_on_creation = true
+  # enable_ipv6                     = true
+  # assign_ipv6_address_on_creation = true
 
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
 
-  enable_vpn_gateway = true
-  amazon_side_asn    = 64620
+  # enable_vpn_gateway = true
+  # amazon_side_asn    = 64620
 
   tags = local.tags
 
@@ -48,8 +48,8 @@ module "vpc" {
     local.eks_tags,
   )
 
-  intra_subnet_tags = merge(
-    local.tags,
-    local.eks_tags,
-  )
+  # intra_subnet_tags = merge(
+  #   local.tags,
+  #   local.eks_tags,
+  # )
 }
