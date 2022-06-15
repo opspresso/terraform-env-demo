@@ -25,7 +25,7 @@ module "monitoring-v1" {
 
   instance_type = "m6i.large"
   volume_type   = "gp3"
-  volume_size   = "30"
+  volume_size   = "50"
 
   min = 1
   max = 2

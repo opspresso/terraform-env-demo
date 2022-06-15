@@ -25,7 +25,7 @@ module "workers-v1" {
 
   instance_type = "c6i.large"
   volume_type   = "gp3"
-  volume_size   = "30"
+  volume_size   = "50"
 
   min = 2
   max = 6

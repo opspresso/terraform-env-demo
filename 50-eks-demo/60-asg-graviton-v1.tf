@@ -25,7 +25,7 @@
 
 #   instance_type = "c6g.large"
 #   volume_type   = "gp3"
-#   volume_size   = "30"
+#   volume_size   = "50"
 
 #   min = 1
 #   max = 2
