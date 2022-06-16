@@ -62,6 +62,12 @@ locals {
       service_account = "karpenter"
       iam_policy      = file("policies/karpenter.json")
     },
+    {
+      service_name    = "kubecost"
+      namespace       = "addon-kubecost"
+      service_account = "kubecost"
+      iam_policy      = file("policies/kubecost.json")
+    },
   ]
 }
 
