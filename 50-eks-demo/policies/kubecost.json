@@ -32,7 +32,8 @@
         "s3:*"
       ],
       "Resource": [
-        "arn:aws:s3:::aws-athena-query-results-*"
+        "arn:aws:s3:::aws-athena-query-results-*",
+        "arn:aws:s3:::aws-spot-data-*"
       ]
     }
   ]
