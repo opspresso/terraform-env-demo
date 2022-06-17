@@ -14,6 +14,7 @@
         "athena:ListQueryExecutions",
         "athena:ListWorkGroups",
         "athena:RunQuery",
+        "athena:StartQueryExecution",
         "glue:GetDatabase",
         "glue:GetDatabases",
         "glue:GetPartition",
