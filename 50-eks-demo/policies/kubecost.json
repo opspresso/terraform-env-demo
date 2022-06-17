@@ -29,7 +29,13 @@
         "athena:ListQueryExecutions",
         "athena:ListWorkGroups",
         "athena:RunQuery",
-        "athena:StartQueryExecution"
+        "athena:StartQueryExecution",
+        "glue:GetDatabase",
+        "glue:GetDatabases",
+        "glue:GetPartition",
+        "glue:GetPartitions",
+        "glue:GetTable",
+        "glue:GetTables"
       ],
       "Resource": [
         "*"
