@@ -4,8 +4,7 @@
     {
       "Effect": "Allow",
       "Action": [
-        "s3:Get*",
-        "s3:List*",
+        "s3:*",
         "athena:GetNamespace",
         "athena:GetNamespaces",
         "athena:GetQueryExecutions",
