@@ -5,9 +5,24 @@
       "Effect": "Allow",
       "Action": [
         "s3:Get*",
-        "s3:List*"
+        "s3:List*",
+        "athena:GetNamespace",
+        "athena:GetNamespaces",
+        "athena:GetQueryExecutions",
+        "athena:GetTable",
+        "athena:GetTables",
+        "athena:ListNamedQueries",
+        "athena:ListQueryExecutions",
+        "athena:ListWorkGroups",
+        "athena:RunQuery",
+        "glue:GetDatabase",
+        "glue:GetDatabases",
+        "glue:GetPartition",
+        "glue:GetPartitions",
+        "glue:GetTable",
+        "glue:GetTables"
       ],
-      "Resource": "arn:aws:s3:::aws-*"
+      "Resource": "*"
     }
   ]
 }
