@@ -18,8 +18,17 @@
     {
       "Effect": "Allow",
       "Action": [
+        "athena:GetNamespace",
+        "athena:GetNamespaces",
         "athena:GetQueryExecution",
+        "athena:GetQueryExecutions",
         "athena:GetQueryResults",
+        "athena:GetTable",
+        "athena:GetTables",
+        "athena:ListNamedQueries",
+        "athena:ListQueryExecutions",
+        "athena:ListWorkGroups",
+        "athena:RunQuery",
         "athena:StartQueryExecution"
       ],
       "Resource": [
