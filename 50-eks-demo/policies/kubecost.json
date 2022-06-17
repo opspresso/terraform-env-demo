@@ -4,32 +4,34 @@
     {
       "Effect": "Allow",
       "Action": [
-        "s3:*",
-        "athena:GetNamespace",
-        "athena:GetNamespaces",
-        "athena:GetQueryExecution",
-        "athena:GetQueryExecutions",
-        "athena:GetQueryResults",
-        "athena:GetTable",
-        "athena:GetTables",
-        "athena:ListNamedQueries",
-        "athena:ListQueryExecutions",
-        "athena:ListWorkGroups",
-        "athena:RunQuery",
-        "athena:StartQueryExecution",
+        "ec2:DescribeAddresses",
         "ec2:DescribeAvailabilityZones",
         "ec2:DescribeInstances",
         "ec2:DescribeSnapshots",
         "ec2:DescribeTags",
-        "ec2:DescribeVolumes",
-        "glue:GetDatabase",
-        "glue:GetDatabases",
-        "glue:GetPartition",
-        "glue:GetPartitions",
-        "glue:GetTable",
-        "glue:GetTables"
+        "ec2:DescribeVolumes"
       ],
       "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "athena:GetQueryExecution",
+        "athena:GetQueryResults",
+        "athena:StartQueryExecution"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": [
+        "arn:aws:s3:::aws-athena-query-results-*"
+      ]
     }
   ]
 }
