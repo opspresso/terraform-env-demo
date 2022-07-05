@@ -21,7 +21,7 @@
 #   instance_types = ["m6i.large"]
 
 #   volume_type = "gp3"
-#   volume_size = "30"
+#   volume_size = "50"
 
 #   min = 1
 #   max = 2
