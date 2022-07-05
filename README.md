@@ -5,6 +5,8 @@
 > Create bucket and dynamodb for Terraform backend.
 
 ```bash
+# aws sts get-caller-identity
+
 ./replace.sh
 
 # ACCOUNT_ID = 123456789012
