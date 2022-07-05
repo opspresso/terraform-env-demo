@@ -18,10 +18,6 @@ locals {
 
   instance_profile_name = module.eks.worker_instance_profile_name
 
-  worker_policies = [
-    # aws_iam_policy.worker-ce.arn,
-  ]
-
   worker_source_sgs = [
     data.terraform_remote_state.alb.outputs.security_group_id,
   ]

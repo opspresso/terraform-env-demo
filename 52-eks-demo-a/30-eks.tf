@@ -20,7 +20,6 @@ module "eks" {
   iam_group = local.iam_group
   iam_roles = local.iam_roles
 
-  worker_policies   = local.worker_policies
   worker_source_sgs = local.worker_source_sgs
 
   addons_version = var.addons_version
