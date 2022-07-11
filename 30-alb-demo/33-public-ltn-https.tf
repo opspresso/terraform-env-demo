@@ -44,13 +44,13 @@ resource "aws_lb_listener_rule" "public_https--argocd" {
   }
 }
 
-resource "aws_lb_listener_rule" "public_https--applicationset" {
+resource "aws_lb_listener_rule" "public_https--workflows" {
   listener_arn = aws_lb_listener.public_https.arn
   priority     = 3
 
   condition {
     host_header {
-      values = ["appset.demo.nalbam.com"]
+      values = ["workflows.demo.nalbam.com"]
     }
   }
 
