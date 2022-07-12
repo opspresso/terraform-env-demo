@@ -5,6 +5,6 @@ locals {
   subnet_ids = data.terraform_remote_state.vpc.outputs.private_subnets
 
   security_groups = [
-    # "eks-demo-worker",
+    "eks-demo-worker",
   ]
 }
