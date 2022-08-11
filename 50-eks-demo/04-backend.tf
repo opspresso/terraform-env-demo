@@ -1,7 +1,7 @@
 # backend
 
 terraform {
-  required_version = "1.1.9"
+  required_version = "1.1.9" # terraform version
 
   backend "s3" {
     region         = "ap-northeast-2"
