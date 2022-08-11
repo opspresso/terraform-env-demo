@@ -64,6 +64,8 @@ jobs:
           [ -z "${PLAN}" ] || cat <<EOF > slack_message.json
           {
             "channel": "sandbox",
+            "icon_emoji": ":terraform:",
+            "username": "terraform",
             "attachments": [{
               "color": "warning",
               "title": "${{ matrix.path }}",
