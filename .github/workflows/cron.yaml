@@ -123,7 +123,7 @@ jobs:
       #       ```
 
       - name: Make Message Plan Failure
-        if: steps.plan.outcome == 'failure'
+        # if: steps.plan.outcome == 'failure'
         run: |
           PLAN=$(cat plan.txt)
           cat <<EOF > ./slack_message.json
@@ -136,7 +136,7 @@ jobs:
           EOF
 
       - name: Post Slack Plan Failure
-        if: steps.plan.outcome == 'failure'
+        # if: steps.plan.outcome == 'failure'
         uses: opspresso/action-slack@master
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
