@@ -55,8 +55,10 @@ jobs:
       - name: Reformat Plan
         if: steps.plan.outcome == 'success'
         run: |
-          echo '${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}' \
-          | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
+          cat <<EOF > plan.txt
+          ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
+          EOF
+          sed -E 's/^([[:space:]]+)([-+])/\2\1/g' plan.txt
 
       - name: Put Plan in Env Var
         if: steps.plan.outcome == 'success'
