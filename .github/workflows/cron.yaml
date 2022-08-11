@@ -63,9 +63,9 @@ jobs:
       - name: Make Message
         # if: steps.plan.outcome == 'success'
         run: |
-          PLAN=$(cat plan.txt | grep 'Plan:')
+          PLAN="$(cat plan.txt | grep 'Plan:')"
           echo "PLAN $PLAN"
-          NOCH=$(cat plan.txt | grep 'No changes.')
+          NOCH="$(cat plan.txt | grep 'No changes.')"
           echo "NOCH $NOCH"
           [ -z "${PLAN}" ] || cat <<EOF > slack_message.json
           {
