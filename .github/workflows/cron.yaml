@@ -65,7 +65,7 @@ jobs:
           {
             "channel": "sandbox",
             "attachments": [{
-              "color": "danger",
+              "color": "warning",
               "title": "${{ matrix.path }}",
               "text": "${PLAN}"
             }]
