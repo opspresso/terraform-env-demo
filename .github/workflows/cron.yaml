@@ -71,7 +71,7 @@ jobs:
         id: apply
         continue-on-error: true
         run: |
-          cd terraform/${{ matrix.path }}
+          cd ./${{ matrix.path }}
           terraform apply \
             -input=false \
             -no-color \
