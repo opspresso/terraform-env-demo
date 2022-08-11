@@ -49,11 +49,7 @@ jobs:
           terraform plan -input=false -no-color -out=tfplan && \
           terraform show -no-color tfplan
 
-      # Sed is taking all lines that begin with one or more spaces followed by a `+` or `-`.
-      # It stores the amount of spaces in `\1` and the +/- in `\2`.
-      # Then replace that portion of the line with `\2\1` (+/- followed by the number of matched spaces).
       - name: Reformat Plan
-        # if: steps.plan.outcome == 'success'
         run: |
           cat <<EOF > plan.txt
           ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
@@ -61,9 +57,10 @@ jobs:
           sed -E 's/^([[:space:]]+)([-+])/\2\1/g' plan.txt
 
       - name: Make Message
-        # if: steps.plan.outcome == 'success'
+        id: message
+        continue-on-error: true
         run: |
-          PLAN="$(cat plan.txt | grep 'Plan:')" || NOCH="$(cat plan.txt | grep 'No changes.')"
+          PLAN="$(cat plan.txt | grep 'Plan:')"
           [ -z "${PLAN}" ] || cat <<EOF > slack_message.json
           {
             "channel": "sandbox",
@@ -76,7 +73,7 @@ jobs:
           EOF
 
       - name: Post Slack
-        # if: steps.plan.outcome == 'success'
+        if: steps.message.outcome == 'success'
         uses: opspresso/action-slack@master
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
