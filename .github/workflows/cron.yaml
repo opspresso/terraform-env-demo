@@ -60,83 +60,25 @@ jobs:
           EOF
           sed -E 's/^([[:space:]]+)([-+])/\2\1/g' plan.txt
 
-      # - name: Put Plan in Env Var
-      #   if: steps.plan.outcome == 'success'
-      #   run: |
-      #     PLAN=$(cat plan.txt)
-      #     echo "PLAN<<EOF" >> $GITHUB_ENV
-      #     echo "$PLAN" >> $GITHUB_ENV
-      #     echo "EOF" >> $GITHUB_ENV
-
-      # - name: Apply Terraform
-      #   if: steps.plan.outcome == 'success'
-      #   id: apply
-      #   continue-on-error: true
-      #   run: |
-      #     cd ./${{ matrix.path }}
-      #     terraform apply \
-      #       -input=false \
-      #       -no-color \
-      #       tfplan
-
-      # - name: Post Plan and Apply to GitHub PR
-      #   if: steps.plan.outcome == 'success' && steps.apply.outcome == 'success'
-      #   uses: mshick/add-pr-comment@v1
-      #   with:
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
-      #     repo-token-user-login: "github-actions[bot]"
-      #     message: |
-      #       Applying **${{ matrix.path }}**:
-
-      #       ```diff
-      #       ${{ env.PLAN }}
-      #       ```
-
-      #       ```
-      #       ${{ steps.apply.outputs.stdout }}
-      #       ```
-
-      # - name: Post Plan Failure
-      #   if: steps.plan.outcome == 'failure'
-      #   uses: mshick/add-pr-comment@v1
-      #   with:
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
-      #     repo-token-user-login: "github-actions[bot]"
-      #     message: |
-      #       Plan failed for **${{ matrix.path }}**:
-
-      #       ```
-      #       ${{ steps.plan.outputs.stderr }}
-      #       ```
-
-      # - name: Post Apply Failure
-      #   if: steps.apply.outcome == 'failure'
-      #   uses: mshick/add-pr-comment@v1
-      #   with:
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
-      #     repo-token-user-login: "github-actions[bot]"
-      #     message: |
-      #       Apply failed for **${{ matrix.path }}**:
-
-      #       ```
-      #       ${{ steps.apply.outputs.stderr }}
-      #       ```
-
-      - name: Make Message Plan Failure
-        # if: steps.plan.outcome == 'failure'
+      - name: Make Message
+        # if: steps.plan.outcome == 'success'
         run: |
-          PLAN=$(cat plan.txt)
-          cat <<EOF > ./slack_message.json
-          {
-            "attachments": [{
-              "color": "danger",
-              "text": "${PLAN}"
-            }]
-          }
-          EOF
+          PLAN=$(cat plan.txt | grep 'Plan:')
+          NOCH=$(cat plan.txt | grep 'No changes.')
 
-      - name: Post Slack Plan Failure
-        # if: steps.plan.outcome == 'failure'
+          if [[ ! -z "${PLAN}" ]]; then
+            cat <<EOF > ./slack_message.json
+            {
+              "attachments": [{
+                "color": "danger",
+                "text": "${PLAN}"
+              }]
+            }
+            EOF
+          fi
+
+      - name: Post Slack
+        # if: steps.plan.outcome == 'success'
         uses: opspresso/action-slack@master
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
