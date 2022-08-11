@@ -3,10 +3,10 @@ name: Build-Cron
 on:
   schedule:
     - cron: "0 0 * * *"
-  push:
-    branches:
-      - main
-      - master
+  # push:
+  #   branches:
+  #     - main
+  #     - master
 
 jobs:
   build:
@@ -38,14 +38,14 @@ jobs:
 
       - name: Initialize Terraform
         run: |
-          cd ./${{ matrix.path }}
+          cd ${{ matrix.path }}
           terraform init -input=false
 
       - name: Plan Terraform
         id: plan
         continue-on-error: true
         run: |
-          cd ./${{ matrix.path }}
+          cd ${{ matrix.path }}
           terraform plan -input=false -no-color -out=tfplan && \
           terraform show -no-color tfplan
 
