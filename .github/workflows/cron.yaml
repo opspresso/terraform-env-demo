@@ -53,71 +53,91 @@ jobs:
       # It stores the amount of spaces in `\1` and the +/- in `\2`.
       # Then replace that portion of the line with `\2\1` (+/- followed by the number of matched spaces).
       - name: Reformat Plan
-        if: steps.plan.outcome == 'success'
+        # if: steps.plan.outcome == 'success'
         run: |
           cat <<EOF > plan.txt
           ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
           EOF
           sed -E 's/^([[:space:]]+)([-+])/\2\1/g' plan.txt
 
-      - name: Put Plan in Env Var
-        if: steps.plan.outcome == 'success'
+      # - name: Put Plan in Env Var
+      #   if: steps.plan.outcome == 'success'
+      #   run: |
+      #     PLAN=$(cat plan.txt)
+      #     echo "PLAN<<EOF" >> $GITHUB_ENV
+      #     echo "$PLAN" >> $GITHUB_ENV
+      #     echo "EOF" >> $GITHUB_ENV
+
+      # - name: Apply Terraform
+      #   if: steps.plan.outcome == 'success'
+      #   id: apply
+      #   continue-on-error: true
+      #   run: |
+      #     cd ./${{ matrix.path }}
+      #     terraform apply \
+      #       -input=false \
+      #       -no-color \
+      #       tfplan
+
+      # - name: Post Plan and Apply to GitHub PR
+      #   if: steps.plan.outcome == 'success' && steps.apply.outcome == 'success'
+      #   uses: mshick/add-pr-comment@v1
+      #   with:
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     repo-token-user-login: "github-actions[bot]"
+      #     message: |
+      #       Applying **${{ matrix.path }}**:
+
+      #       ```diff
+      #       ${{ env.PLAN }}
+      #       ```
+
+      #       ```
+      #       ${{ steps.apply.outputs.stdout }}
+      #       ```
+
+      # - name: Post Plan Failure
+      #   if: steps.plan.outcome == 'failure'
+      #   uses: mshick/add-pr-comment@v1
+      #   with:
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     repo-token-user-login: "github-actions[bot]"
+      #     message: |
+      #       Plan failed for **${{ matrix.path }}**:
+
+      #       ```
+      #       ${{ steps.plan.outputs.stderr }}
+      #       ```
+
+      # - name: Post Apply Failure
+      #   if: steps.apply.outcome == 'failure'
+      #   uses: mshick/add-pr-comment@v1
+      #   with:
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     repo-token-user-login: "github-actions[bot]"
+      #     message: |
+      #       Apply failed for **${{ matrix.path }}**:
+
+      #       ```
+      #       ${{ steps.apply.outputs.stderr }}
+      #       ```
+
+      - name: Make Message Plan Failure
+        if: steps.plan.outcome == 'failure'
         run: |
           PLAN=$(cat plan.txt)
-          echo "PLAN<<EOF" >> $GITHUB_ENV
-          echo "$PLAN" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          cat <<EOF > ./slack_message.json
+          {
+            "attachments": [{
+              "color": "danger",
+              "text": "${PLAN}"
+            }]
+          }
+          EOF
 
-      - name: Apply Terraform
-        if: steps.plan.outcome == 'success'
-        id: apply
-        continue-on-error: true
-        run: |
-          cd ./${{ matrix.path }}
-          terraform apply \
-            -input=false \
-            -no-color \
-            tfplan
-
-      - name: Post Plan and Apply to GitHub PR
-        if: steps.plan.outcome == 'success' && steps.apply.outcome == 'success'
-        uses: mshick/add-pr-comment@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: "github-actions[bot]"
-          message: |
-            Applying **${{ matrix.path }}**:
-
-            ```diff
-            ${{ env.PLAN }}
-            ```
-
-            ```
-            ${{ steps.apply.outputs.stdout }}
-            ```
-
-      - name: Post Plan Failure
+      - name: Post Slack Plan Failure
         if: steps.plan.outcome == 'failure'
-        uses: mshick/add-pr-comment@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: "github-actions[bot]"
-          message: |
-            Plan failed for **${{ matrix.path }}**:
-
-            ```
-            ${{ steps.plan.outputs.stderr }}
-            ```
-
-      - name: Post Apply Failure
-        if: steps.apply.outcome == 'failure'
-        uses: mshick/add-pr-comment@v1
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          repo-token-user-login: "github-actions[bot]"
-          message: |
-            Apply failed for **${{ matrix.path }}**:
-
-            ```
-            ${{ steps.apply.outputs.stderr }}
-            ```
+        uses: opspresso/action-slack@master
+        env:
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          JSON_PATH: ./slack_message.json
