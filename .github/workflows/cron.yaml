@@ -64,10 +64,10 @@ jobs:
         # if: steps.plan.outcome == 'success'
         run: |
           PLAN=$(cat plan.txt | grep 'Plan:')
-          echo $PLAN
+          echo "PLAN $PLAN"
           NOCH=$(cat plan.txt | grep 'No changes.')
-          echo $NOCH
-          [[ -z "${PLAN}" ]] || cat <<EOF > ./slack_message.json
+          echo "NOCH $NOCH"
+          [ -z "${PLAN}" ] || cat <<EOF > slack_message.json
           {
             "channel": "sandbox",
             "attachments": [{
@@ -82,4 +82,4 @@ jobs:
         uses: opspresso/action-slack@master
         env:
           SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-          JSON_PATH: ./slack_message.json
+          JSON_PATH: slack_message.json
