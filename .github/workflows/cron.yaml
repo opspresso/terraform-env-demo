@@ -66,16 +66,15 @@ jobs:
           PLAN=$(cat plan.txt | grep 'Plan:')
           NOCH=$(cat plan.txt | grep 'No changes.')
 
-          if [[ ! -z "${PLAN}" ]]; then
-          cat <<EOF > ./slack_message.json
+          [[ -z "${PLAN}" ]] || cat <<EOF > ./slack_message.json
           {
+            "channel": "sandbox",
             "attachments": [{
               "color": "danger",
               "text": "${PLAN}"
             }]
           }
           EOF
-          fi
 
       - name: Post Slack
         # if: steps.plan.outcome == 'success'
