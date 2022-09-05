@@ -1,0 +1,11 @@
+version: 0.1
+
+projects:
+  - path: 20-vpc-demo
+  - path: 22-atlantis
+  - path: 25-vpn-demo
+  - path: 30-alb-demo
+  - paht: 40-efs-demo
+  - path: 50-eks-demo
+  - path: 52-eks-demo-a
+  - path: 53-eks-demo-b
