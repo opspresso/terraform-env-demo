@@ -23,3 +23,9 @@ data "aws_ssm_parameter" "google_client_secret" {
 
   with_decryption = true
 }
+
+data "aws_ssm_parameter" "infracost_api_key" {
+  name = "/common/infracost/api-key"
+
+  with_decryption = true
+}
