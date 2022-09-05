@@ -46,5 +46,12 @@ module "atlantis" {
   allow_github_webhooks        = true
   allow_repo_config            = true
 
+  custom_environment_variables = [
+    {
+      name : "ATLANTIS_REPO_CONFIG_JSON",
+      value : jsonencode(yamldecode(file("${path.module}/server-atlantis.yaml"))),
+    },
+  ]
+
   tags = local.tags
 }
