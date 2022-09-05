@@ -5,10 +5,10 @@ output "atlantis_url" {
   value       = module.atlantis.atlantis_url
 }
 
-# output "atlantis_url_events" {
-#   description = "Webhook events URL of Atlantis"
-#   value       = module.atlantis.atlantis_url_events
-# }
+output "atlantis_url_events" {
+  description = "Webhook events URL of Atlantis"
+  value       = module.atlantis.atlantis_url_events
+}
 
 # output "webhook_secret" {
 #   description = "Webhook secret"
