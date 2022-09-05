@@ -85,6 +85,10 @@ module "atlantis" {
       name : "ATLANTIS_REPO_CONFIG_JSON",
       value : jsonencode(yamldecode(file("${path.module}/server-atlantis.yaml"))),
     },
+    {
+      name : "INFRACOST_API_KEY",
+      value : data.aws_ssm_parameter.infracost_api_key.value,
+    },
   ]
 
   tags = local.tags
