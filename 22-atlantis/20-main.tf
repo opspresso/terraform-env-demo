@@ -35,5 +35,7 @@ module "atlantis" {
     client_secret                       = data.aws_ssm_parameter.google_client_secret.value
   }
 
+  allow_github_webhooks = true
+
   tags = local.tags
 }

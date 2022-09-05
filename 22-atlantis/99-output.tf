@@ -13,6 +13,7 @@ output "atlantis_url" {
 # output "webhook_secret" {
 #   description = "Webhook secret"
 #   value       = module.atlantis.webhook_secret
+#   # aws ssm get-parameter --name "/atlantis/webhook/secret" --with-decryption | jq .Parameter.Value -r
 # }
 
 # # ECS
