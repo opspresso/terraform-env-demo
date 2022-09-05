@@ -24,6 +24,9 @@ module "atlantis" {
     hardLimit = 16384
   }]
 
+  # Trusted roles
+  trusted_principals = ["ssm.amazonaws.com"]
+
   # Atlantis github
   atlantis_github_user       = var.atlantis_github_user
   atlantis_github_user_token = data.aws_ssm_parameter.github_token.value
@@ -41,6 +44,7 @@ module "atlantis" {
 
   allow_unauthenticated_access = true
   allow_github_webhooks        = true
+  allow_repo_config            = true
 
   tags = local.tags
 }
