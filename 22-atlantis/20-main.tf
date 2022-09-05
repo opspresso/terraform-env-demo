@@ -25,5 +25,15 @@ module "atlantis" {
   atlantis_github_user_token = data.aws_ssm_parameter.github_token.value
   atlantis_repo_allowlist    = var.atlantis_repo_allowlist
 
+  alb_authenticate_oidc = {
+    issuer                              = "https://accounts.google.com"
+    token_endpoint                      = "https://oauth2.googleapis.com/token"
+    user_info_endpoint                  = "https://openidconnect.googleapis.com/v1/userinfo"
+    authorization_endpoint              = "https://accounts.google.com/o/oauth2/v2/auth"
+    authentication_request_extra_params = {}
+    client_id                           = data.aws_ssm_parameter.google_client_id.value
+    client_secret                       = data.aws_ssm_parameter.google_client_secret.value
+  }
+
   tags = local.tags
 }

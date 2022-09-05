@@ -11,3 +11,15 @@ data "aws_ssm_parameter" "github_token" {
 
   with_decryption = true
 }
+
+data "aws_ssm_parameter" "google_client_id" {
+  name = "/common/google/client_id"
+
+  with_decryption = true
+}
+
+data "aws_ssm_parameter" "google_client_secret" {
+  name = "/common/google/client_secret"
+
+  with_decryption = true
+}
