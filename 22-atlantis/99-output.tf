@@ -27,6 +27,11 @@ output "atlantis_url" {
 #   value       = module.atlantis.ecs_cluster_arn
 # }
 
+# output "task_role_arn" {
+#   description = "The Atlantis ECS task role arn"
+#   value       = module.atlantis.task_role_arn
+# }
+
 # # ALB
 # output "alb_dns_name" {
 #   description = "Dns name of alb"
