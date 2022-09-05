@@ -14,13 +14,17 @@ module "atlantis" {
 
   cidr = local.vpc_cidr_block
 
-  # DNS (without trailing dot)
   route53_zone_name = var.domain
+  certificate_arn   = data.aws_acm_certificate.domain.arn
 
-  # ACM (SSL certificate) - Specify ARN of an existing certificate or new one will be created and validated using Route53 DNS
-  certificate_arn = data.aws_acm_certificate.domain.arn
+  readonly_root_filesystem = false # atlantis currently mutable access to root filesystem
+  ulimits = [{
+    name      = "nofile"
+    softLimit = 4096
+    hardLimit = 16384
+  }]
 
-  # Atlantis
+  # Atlantis github
   atlantis_github_user       = var.atlantis_github_user
   atlantis_github_user_token = data.aws_ssm_parameter.github_token.value
   atlantis_repo_allowlist    = var.atlantis_repo_allowlist
