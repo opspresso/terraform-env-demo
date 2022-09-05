@@ -14,8 +14,26 @@ module "atlantis" {
 
   cidr = local.vpc_cidr_block
 
+  # Route53
   route53_zone_name = var.domain
   certificate_arn   = data.aws_acm_certificate.domain.arn
+
+  # ECS
+  runtime_platform = {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "ARM64"
+  }
+
+  entrypoint        = ["docker-entrypoint.sh"]
+  command           = ["server"]
+  working_directory = "/tmp"
+  docker_labels = {
+    "org.opencontainers.image.title"       = "Atlantis"
+    "org.opencontainers.image.description" = "A self-hosted golang application that listens for Terraform pull request events via webhooks."
+    "org.opencontainers.image.url"         = "https://github.com/runatlantis/atlantis/pkgs/container/atlantis"
+  }
+  start_timeout = 30
+  stop_timeout  = 30
 
   readonly_root_filesystem = false # atlantis currently mutable access to root filesystem
   ulimits = [{
