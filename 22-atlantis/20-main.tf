@@ -56,9 +56,9 @@ module "atlantis" {
   # Trusted roles
   trusted_principals = ["ssm.amazonaws.com"]
 
-  # Atlantis
-  atlantis_image   = "infracost/infracost-atlantis"
-  atlantis_version = "latest"
+  # # Infracost
+  # atlantis_image   = "infracost/infracost-atlantis"
+  # atlantis_version = "latest"
 
   # Github token
   atlantis_github_user       = var.atlantis_github_user
