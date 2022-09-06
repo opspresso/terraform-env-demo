@@ -83,7 +83,7 @@ module "atlantis" {
   custom_environment_variables = [
     {
       name : "ATLANTIS_REPO_CONFIG_JSON",
-      value : jsonencode(yamldecode(file("${path.module}/server-atlantis.yaml"))),
+      value : jsonencode(yamldecode(file("${path.module}/atlantis-config.yaml"))),
     },
     {
       name : "INFRACOST_API_KEY",
