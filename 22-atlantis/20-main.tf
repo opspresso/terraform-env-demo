@@ -30,10 +30,10 @@ module "atlantis" {
   container_cpu                = 512
   container_memory             = 1024
 
-  runtime_platform = {
-    operating_system_family = "LINUX"
-    cpu_architecture        = "ARM64"
-  }
+  # runtime_platform = {
+  #   operating_system_family = "LINUX"
+  #   cpu_architecture        = "ARM64"
+  # }
 
   entrypoint        = ["docker-entrypoint.sh"]
   command           = ["server"]
@@ -56,9 +56,9 @@ module "atlantis" {
   # Trusted roles
   trusted_principals = ["ssm.amazonaws.com"]
 
-  # # Infracost
-  # atlantis_image   = "infracost/infracost-atlantis"
-  # atlantis_version = "latest"
+  # Infracost
+  atlantis_image   = "infracost/infracost-atlantis"
+  atlantis_version = "latest"
 
   # Github token
   atlantis_github_user       = var.atlantis_github_user
