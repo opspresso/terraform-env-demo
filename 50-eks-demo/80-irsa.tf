@@ -3,6 +3,12 @@
 locals {
   irsa = [
     {
+      service_name    = "atlantis"
+      namespace       = "addon-atlantis"
+      service_account = "atlantis"
+      iam_policy      = file("policies/atlantis.json")
+    },
+    {
       service_name    = "aws-ebs-csi-driver"
       namespace       = "addon-aws-ebs-csi-driver"
       service_account = "ebs-csi-controller-sa"
