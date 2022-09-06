@@ -35,8 +35,8 @@ module "atlantis" {
   #   cpu_architecture        = "ARM64"
   # }
 
-  entrypoint        = ["docker-entrypoint.sh"]
-  command           = ["server"]
+  # entrypoint        = ["docker-entrypoint.sh"]
+  # command           = ["server"]
   working_directory = "/tmp"
   docker_labels = {
     "org.opencontainers.image.title"       = "Atlantis"
