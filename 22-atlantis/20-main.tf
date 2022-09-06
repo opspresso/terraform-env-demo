@@ -97,6 +97,10 @@ module "atlantis" {
       name : "INFRACOST_PRICING_API_ENDPOINT",
       value : data.aws_ssm_parameter.infracost_pricing_api_endpoint.value,
     },
+    {
+      name : "GITHUB_TOKEN",
+      value : data.aws_ssm_parameter.github_token.value,
+    },
   ]
 
   tags = local.tags
