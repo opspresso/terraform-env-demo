@@ -1,9 +1,22 @@
 repos:
   - id: /.*/
-    allow_custom_workflows: true
-    allowed_overrides:
-      - apply_requirements
-      - workflow
-    apply_requirements:
-      - approved
-    workflow: default
+    # allow_custom_workflows: true
+    # allowed_overrides:
+    #   - apply_requirements
+    #   - workflow
+    # apply_requirements:
+    #   - approved
+    workflow: terraform-infracost
+workflows:
+  terraform-infracost:
+    plan:
+      steps:
+        - init
+        - plan
+        - env:
+            name: INFRACOST_API_KEY
+            command: echo "$INFRACOST_API_KEY"
+        - env:
+            name: INFRACOST_TERRAFORM_BINARY
+            command: echo "terraform${ATLANTIS_TERRAFORM_VERSION}"
+        - run: "/home/atlantis/infracost_atlantis_diff.sh"

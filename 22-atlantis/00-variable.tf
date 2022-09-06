@@ -30,6 +30,6 @@ variable "atlantis_github_user" {
 variable "atlantis_repo_allowlist" {
   description = "List of allowed repositories Atlantis can be used with"
   default = [
-    "github.com/opspresso/*"
+    "github.com/opspresso/terraform-*"
   ]
 }
