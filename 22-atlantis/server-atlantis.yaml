@@ -7,22 +7,11 @@ repos:
     # apply_requirements:
     #   - approved
     workflow: terraform-infracost
-    # post_workflow_hooks:
-    #   - run: |
-    #       if [ ! -d "/tmp/$BASE_REPO_OWNER-$BASE_REPO_NAME-$PULL_NUM" ]; then; exit 0; fi
-    #       infracost comment github --repo $BASE_REPO_OWNER/$BASE_REPO_NAME --pull-request $PULL_NUM \
-    #         --path /tmp/$BASE_REPO_OWNER-$BASE_REPO_NAME-$PULL_NUM/infracost-output.json \
-    #         --github-token $GITHUB_TOKEN --behavior new
-    #       rm -rf /tmp/$BASE_REPO_OWNER-$BASE_REPO_NAME-$PULL_NUM
 
 workflows:
   terraform-infracost:
     plan:
       steps:
-        # - env:
-        #     name: INFRACOST_TERRAFORM_BINARY
-        #     command: echo "terraform${ATLANTIS_TERRAFORM_VERSION}"
-        # - run: "/home/atlantis/infracost_atlantis_diff.sh"
         - env:
             name: INFRACOST_OUTPUT
             command: echo "/tmp/$BASE_REPO_OWNER-$BASE_REPO_NAME-$PULL_NUM/infracost-output.json"
