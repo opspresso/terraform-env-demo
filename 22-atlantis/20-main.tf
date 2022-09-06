@@ -87,7 +87,7 @@ module "atlantis" {
     },
     {
       name : "INFRACOST_API_KEY",
-      value : data.aws_ssm_parameter.infracost_api_key.value,
+      value : data.aws_ssm_parameter.infracost_self_hosted_api_key.value,
     },
     {
       name : "SELF_HOSTED_INFRACOST_API_KEY",
