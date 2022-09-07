@@ -13,7 +13,7 @@ module "eks" {
 
   endpoint_public_access = true
 
-  # ip_family = "ipv6"
+  ip_family = var.ip_family
 
   cluster_log_types = []
 

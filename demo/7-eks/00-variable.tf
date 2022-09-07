@@ -36,6 +36,10 @@ variable "addons_irsa_name" {
   }
 }
 
+variable "ip_family" {
+  default = "ipv6" # ipv4, ipv6
+}
+
 variable "key_name" {
   default = "bruce-seoul"
 }
