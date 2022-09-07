@@ -7,7 +7,7 @@ variable "region" {
 
 variable "cluster_name" {
   description = "EKS 클러스터 이름을 입력합니다."
-  default     = "eks-demo" # for eks-demo
+  default     = "eks-demo-a" # for eks-demo-a
 }
 
 variable "kubernetes_version" {
@@ -26,6 +26,13 @@ variable "addons_version" {
     # "coredns" : "v1.8.7-eksbuild.2"
     # "kube-proxy" : "v1.23.7-eksbuild.1"
     # "vpc-cni" : "v1.11.3-eksbuild.1"
+  }
+}
+
+variable "addons_irsa_name" {
+  default = {
+    "aws-ebs-csi-driver" : "aws-ebs-csi-driver-sa"
+    # "vpc-cni" : "aws-node"
   }
 }
 

@@ -2,7 +2,7 @@
 
 module "eks" {
   source = "nalbam/eks/aws"
-  # version = "1.0.1"
+  # version = "1.1.x"
 
   cluster_name = var.cluster_name
 
@@ -22,10 +22,8 @@ module "eks" {
 
   worker_source_sgs = local.worker_source_sgs
 
-  addons_version = var.addons_version
-  # addons_irsa_role = {
-  #   "vpc-cni" : format("arn:aws:iam::%s:role/irsa--%s--aws-node", local.account_id, var.cluster_name)
-  # }
+  addons_version   = var.addons_version
+  addons_irsa_name = var.addons_irsa_name
 
   tags = local.tags
 }
