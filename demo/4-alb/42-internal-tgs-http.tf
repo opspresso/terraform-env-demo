@@ -64,3 +64,23 @@ output "internal_http_a" {
 output "internal_http_b" {
   value = aws_lb_target_group.internal_http_b.arn
 }
+
+# save ssm
+
+resource "aws_ssm_parameter" "internal_http_0" {
+  name  = format("/k8s/common/%s/internal_http_0", var.name)
+  type  = "String"
+  value = aws_lb_target_group.internal_http_0.arn
+}
+
+resource "aws_ssm_parameter" "internal_http_a" {
+  name  = format("/k8s/common/%s/internal_http_a", var.name)
+  type  = "String"
+  value = aws_lb_target_group.internal_http_a.arn
+}
+
+resource "aws_ssm_parameter" "internal_http_b" {
+  name  = format("/k8s/common/%s/internal_http_b", var.name)
+  type  = "String"
+  value = aws_lb_target_group.internal_http_b.arn
+}
