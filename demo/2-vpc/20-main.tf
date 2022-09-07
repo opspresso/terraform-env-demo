@@ -2,8 +2,8 @@
 # https://github.com/terraform-aws-modules/terraform-aws-vpc
 
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
-  # version = "3.12.0"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 3.0"
 
   name = var.name
   cidr = var.cidr
@@ -22,8 +22,8 @@ module "vpc" {
   private_subnet_ipv6_prefixes = [21, 22, 23]
   # intra_subnet_ipv6_prefixes   = [31, 32, 33]
 
-  # enable_ipv6                     = true
-  # assign_ipv6_address_on_creation = true
+  enable_ipv6                     = true
+  assign_ipv6_address_on_creation = true
 
   enable_nat_gateway   = true
   single_nat_gateway   = true
