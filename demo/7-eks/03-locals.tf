@@ -43,8 +43,13 @@ locals {
       groups = ["system:bootstrappers", "system:nodes"]
     },
     {
-      name   = "atlantis"
+      name   = "atlantis-ecs"
       role   = format("arn:aws:iam::%s:role/atlantis-ecs_task_execution", local.account_id)
+      groups = ["system:masters"]
+    },
+    {
+      name   = "atlantis-eks"
+      role   = format("arn:aws:iam::%s:role/irsa--%s--atlantis", local.account_id, var.cluster_name)
       groups = ["system:masters"]
     },
     {
