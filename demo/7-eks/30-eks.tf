@@ -1,8 +1,9 @@
 # eks
 
 module "eks" {
+  # source = "../../../../nalbam/terraform-aws-eks"
   source = "nalbam/eks/aws"
-  # version = "1.1.x"
+  # version = "1.2.x"
 
   cluster_name = var.cluster_name
 
@@ -17,9 +18,6 @@ module "eks" {
 
   cluster_log_types = []
 
-  iam_group = local.iam_group
-  iam_roles = local.iam_roles
-
   worker_source_sgs = local.worker_source_sgs
 
   addons_version   = var.addons_version
@@ -29,4 +27,3 @@ module "eks" {
 }
 
 # tf state rm module.eks.kubernetes_config_map.aws_auth
-# tf import module.eks.kubernetes_config_map.aws_auth kube-system/aws-auth
