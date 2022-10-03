@@ -63,12 +63,6 @@ locals {
       iam_policy      = file("policies/external-secrets.json")
     },
     {
-      service_name    = "irsa-operator"
-      namespace       = "addon-irsa-operator"
-      service_account = "irsa-operator"
-      iam_policy      = file("policies/irsa-operator.json")
-    },
-    {
       service_name    = "karpenter"
       namespace       = "addon-karpenter"
       service_account = "karpenter"
