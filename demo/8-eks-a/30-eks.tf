@@ -3,7 +3,7 @@
 module "eks" {
   # source = "../../../../nalbam/terraform-aws-eks"
   source = "nalbam/eks/aws"
-  # version = "2.0.x"
+  # version = "2.0.2"
 
   cluster_name = var.cluster_name
 
@@ -17,6 +17,9 @@ module "eks" {
   ip_family = var.ip_family
 
   cluster_log_types = []
+
+  iam_group = local.iam_group
+  iam_roles = local.iam_roles
 
   worker_source_sgs = local.worker_source_sgs
 

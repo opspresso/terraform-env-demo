@@ -9,6 +9,12 @@ locals {
       iam_policy      = file("policies/aws-ebs-csi-driver.json")
     },
     {
+      service_name    = "aws-ebs-csi-driver-sa"
+      namespace       = "kube-system"
+      service_account = "ebs-csi-controller-sa"
+      iam_policy      = file("policies/aws-ebs-csi-driver.json")
+    },
+    {
       service_name    = "aws-efs-csi-driver"
       namespace       = "addon-aws-efs-csi-driver"
       service_account = "efs-csi-controller-sa"
@@ -55,6 +61,12 @@ locals {
       namespace       = "addon-karpenter"
       service_account = "karpenter"
       iam_policy      = file("policies/karpenter.json")
+    },
+    {
+      service_name    = "kubecost"
+      namespace       = "addon-kubecost"
+      service_account = "kubecost"
+      iam_policy      = file("policies/kubecost.json")
     },
   ]
 }

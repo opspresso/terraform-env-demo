@@ -28,7 +28,7 @@ module "workers-v1" {
   volume_size   = "50"
 
   min = 2
-  max = 6
+  max = 10
 
   tags = local.tags
 }

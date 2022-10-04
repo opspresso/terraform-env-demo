@@ -22,7 +22,7 @@ variable "addons_version" {
     "kube-proxy" : "v1.22.11-eksbuild.2"
     "vpc-cni" : "v1.11.3-eksbuild.1"
     # # for 1.23
-    # "aws-ebs-csi-driver" : "v1.10.0-eksbuild.1"
+    # # "aws-ebs-csi-driver" : "v1.10.0-eksbuild.1"
     # "coredns" : "v1.8.7-eksbuild.2"
     # "kube-proxy" : "v1.23.7-eksbuild.1"
     # "vpc-cni" : "v1.11.3-eksbuild.1"
@@ -31,7 +31,7 @@ variable "addons_version" {
 
 variable "addons_irsa_name" {
   default = {
-    "aws-ebs-csi-driver" : "aws-ebs-csi-driver-sa"
+    # "aws-ebs-csi-driver" : "aws-ebs-csi-driver-sa"
     # "vpc-cni" : "aws-node"
   }
 }
