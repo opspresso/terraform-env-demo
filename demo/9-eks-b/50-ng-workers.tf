@@ -14,8 +14,8 @@
 
 #   key_name = var.key_name
 
-#   enable_taints = false
 #   enable_spot   = true
+#   enable_taints = false
 
 #   ami_type       = "AL2_x86_64"
 #   instance_types = ["c6i.large"]

@@ -19,9 +19,9 @@ module "workers-v1" {
   key_name = var.key_name
 
   enable_autoscale = true
-  enable_taints    = false
-  enable_spot      = true
   enable_event     = true
+  enable_spot      = false
+  enable_taints    = false
 
   instance_type = "c6i.large"
   volume_type   = "gp3"

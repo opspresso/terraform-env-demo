@@ -14,8 +14,8 @@
 
 #   key_name = var.key_name
 
-#   enable_taints = true
 #   enable_spot   = true
+#   enable_taints = true
 
 #   ami_type       = "AL2_ARM_64"
 #   instance_types = ["c6g.large"]

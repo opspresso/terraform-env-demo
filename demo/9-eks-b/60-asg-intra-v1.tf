@@ -19,9 +19,9 @@
 #   key_name = var.key_name
 
 #   enable_autoscale = true
-#   enable_taints    = true
-#   enable_spot      = true
 #   enable_event     = true
+#   enable_spot      = true
+#   enable_taints    = true
 
 #   instance_type = "c6i.large"
 #   volume_type   = "gp3"
