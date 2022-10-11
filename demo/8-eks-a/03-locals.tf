@@ -49,7 +49,7 @@ locals {
     },
     {
       name   = "atlantis-eks"
-      role   = format("arn:aws:iam::%s:role/irsa--%s--atlantis", local.account_id, var.cluster_name)
+      role   = format("arn:aws:iam::%s:role/irsa--%s--atlantis", local.account_id, "eks-demo")
       groups = ["system:masters"]
     },
     {
