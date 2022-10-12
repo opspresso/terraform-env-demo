@@ -2,7 +2,7 @@
 
 module "monitoring-v1" {
   source = "nalbam/eks-worker/aws"
-  # version = "1.0.1"
+  # version = "1.0.x"
 
   name    = "monitoring"
   subname = "v1"
@@ -20,7 +20,7 @@ module "monitoring-v1" {
 
   enable_autoscale = true
   enable_event     = true
-  enable_spot      = false
+  enable_spot      = true
   enable_taints    = true
 
   instance_type = "m6i.large"

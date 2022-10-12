@@ -4,7 +4,7 @@ resource "aws_lb_target_group" "public_http_0" {
   name             = format("%s-http-0", var.name)
   port             = 80
   protocol         = "HTTP"
-  protocol_version = "HTTP1" # [GRPC, HTTP1, HTTP2]
+  protocol_version = "HTTP2" # [GRPC, HTTP1, HTTP2]
   slow_start       = 30
   target_type      = "ip"
   vpc_id           = local.vpc_id

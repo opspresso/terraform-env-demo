@@ -2,7 +2,7 @@
 
 module "workers-v1" {
   source = "nalbam/eks-worker/aws"
-  # version = "1.0.1"
+  # version = "1.0.x"
 
   name    = "workers"
   subname = "v1"
@@ -20,7 +20,7 @@ module "workers-v1" {
 
   enable_autoscale = true
   enable_event     = true
-  enable_spot      = false
+  enable_spot      = true
   enable_taints    = false
 
   instance_type = "c6i.large"
