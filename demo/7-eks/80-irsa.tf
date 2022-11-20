@@ -74,6 +74,12 @@ locals {
       service_account = "kubecost"
       iam_policy      = file("policies/kubecost.json")
     },
+    {
+      service_name    = "random-quiz"
+      namespace       = "random-quiz"
+      service_account = "random-quiz"
+      iam_policy      = file("policies/random-quiz.json")
+    },
   ]
 }
 
