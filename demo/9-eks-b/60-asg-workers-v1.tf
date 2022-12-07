@@ -1,18 +1,19 @@
 # worker workers
 
 module "workers-v1" {
-  source = "nalbam/eks-worker/aws"
-  # version = "1.0.x"
+  source  = "nalbam/eks-worker/aws"
+  version = "~> 2.1"
 
   name    = "workers"
   subname = "v1"
 
-  cluster_info = module.eks.cluster_info
+  cluster_name = local.cluster_name
 
   role_name       = local.worker_role_name
   security_groups = local.worker_security_groups
   subnet_ids      = local.private_subnets
 
+  kubernetes_version = var.kubernetes_version
   worker_ami_arch    = "x86_64"
   worker_ami_keyword = "*"
 
