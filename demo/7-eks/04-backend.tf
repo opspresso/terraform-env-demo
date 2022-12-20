@@ -18,7 +18,7 @@ terraform {
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.25.5" # terraform kubernetes provider version
+      version = "2.16.1" # terraform kubernetes provider version
     }
   }
 }
