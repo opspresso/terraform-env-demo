@@ -51,6 +51,12 @@ locals {
       iam_policy      = file("policies/cluster-autoscaler.json")
     },
     {
+      service_name    = "crossplane"
+      namespace       = "addon-crossplane"
+      service_account = "crossplane"
+      iam_policy      = file("policies/crossplane.json")
+    },
+    {
       service_name    = "external-dns"
       namespace       = "addon-external-dns"
       service_account = "external-dns"
