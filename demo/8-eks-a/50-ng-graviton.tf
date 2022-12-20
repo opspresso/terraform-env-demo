@@ -27,4 +27,8 @@
 #   max = 6
 
 #   tags = local.tags
+
+#   depends_on = [
+#     module.eks,
+#   ]
 # }

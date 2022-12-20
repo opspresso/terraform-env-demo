@@ -32,4 +32,8 @@ module "monitoring-v1" {
   max = 2
 
   tags = local.tags
+
+  depends_on = [
+    module.eks,
+  ]
 }

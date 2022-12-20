@@ -32,4 +32,8 @@ module "workers-v1" {
   max = 10
 
   tags = local.tags
+
+  depends_on = [
+    module.eks,
+  ]
 }
