@@ -2,7 +2,7 @@
 
 module "monitoring-v1" {
   source  = "nalbam/eks-worker/aws"
-  version = "~> 2.1"
+  version = "~> 2.2"
 
   name    = "monitoring"
   subname = "v1"
@@ -21,15 +21,18 @@ module "monitoring-v1" {
 
   enable_autoscale = true
   enable_event     = true
-  enable_spot      = true
+  enable_mixed     = true
   enable_taints    = true
 
-  instance_type = "m6i.large"
-  volume_type   = "gp3"
-  volume_size   = "50"
+  on_demand_base = 0
+  on_demand_rate = 0
+
+  mixed_instances = ["m6i.large", "m5.large"]
+  volume_type     = "gp3"
+  volume_size     = "50"
 
   min = 1
-  max = 2
+  max = 1
 
   tags = local.tags
 

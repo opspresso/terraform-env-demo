@@ -3,7 +3,7 @@
 module "eks" {
   # source = "../../../../nalbam/terraform-aws-eks"
   source  = "nalbam/eks/aws"
-  version = "~> 2.1"
+  version = "~> 2.2"
 
   cluster_name = var.cluster_name
 
@@ -23,10 +23,9 @@ module "eks" {
 
   worker_source_sgs = local.worker_source_sgs
 
-  addons_version   = var.addons_version
-  addons_irsa_name = var.addons_irsa_name
+  addons_version = var.addons_version
 
-  apply_aws_auth = true
+  save_aws_auth = true
 
   tags = local.tags
 }

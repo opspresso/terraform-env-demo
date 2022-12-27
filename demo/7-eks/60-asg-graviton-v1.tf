@@ -2,7 +2,7 @@
 
 # module "graviton-v1" {
 #   source = "nalbam/eks-worker/aws"
-#   version = "~> 2.1"
+#   version = "~> 2.2"
 
 #   name    = "graviton"
 #   subname = "v1"
@@ -21,15 +21,18 @@
 
 #   enable_autoscale = true
 #   enable_event     = true
-#   enable_spot      = true
+#   enable_mixed     = true
 #   enable_taints    = true
 
-#   instance_type = "c6g.large"
-#   volume_type   = "gp3"
-#   volume_size   = "50"
+#   on_demand_base = 0
+#   on_demand_rate = 0
 
-#   min = 1
-#   max = 2
+#   mixed_instances = ["c6g.large"]
+#   volume_type     = "gp3"
+#   volume_size     = "50"
+
+#   min = 2
+#   max = 10
 
 #   tags = local.tags
 

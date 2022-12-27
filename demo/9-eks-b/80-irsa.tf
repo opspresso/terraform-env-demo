@@ -3,6 +3,12 @@
 locals {
   irsa = [
     {
+      service_name    = "atlantis"
+      namespace       = "addon-atlantis"
+      service_account = "atlantis"
+      iam_policy      = file("policies/atlantis.json")
+    },
+    {
       service_name    = "aws-ebs-csi-driver"
       namespace       = "addon-aws-ebs-csi-driver"
       service_account = "ebs-csi-controller-sa"
@@ -45,6 +51,12 @@ locals {
       iam_policy      = file("policies/cluster-autoscaler.json")
     },
     {
+      service_name    = "crossplane"
+      namespace       = "addon-crossplane"
+      service_account = "crossplane"
+      iam_policy      = file("policies/crossplane.json")
+    },
+    {
       service_name    = "external-dns"
       namespace       = "addon-external-dns"
       service_account = "external-dns"
@@ -67,6 +79,12 @@ locals {
       namespace       = "addon-kubecost"
       service_account = "kubecost"
       iam_policy      = file("policies/kubecost.json")
+    },
+    {
+      service_name    = "random-quiz"
+      namespace       = "random-quiz"
+      service_account = "random-quiz"
+      iam_policy      = file("policies/random-quiz.json")
     },
   ]
 }

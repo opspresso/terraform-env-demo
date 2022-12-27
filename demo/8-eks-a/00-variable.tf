@@ -16,14 +16,11 @@ variable "kubernetes_version" {
 }
 
 variable "addons_version" {
+  description = "EKS Addons 버전을 입력 합니다."
   default = {
-  }
-}
-
-variable "addons_irsa_name" {
-  default = {
-    # "aws-ebs-csi-driver" : "aws-ebs-csi-driver-sa"
-    # "vpc-cni" : "aws-node"
+    # "coredns" : "v1.8.4-eksbuild.1"
+    # "kube-proxy" : "v1.21.14-eksbuild.2"
+    # "vpc-cni" : "v1.11.2-eksbuild.1"
   }
 }
 
