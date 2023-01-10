@@ -2,7 +2,7 @@
 
 module "workers-v1" {
   source  = "nalbam/eks-worker/aws"
-  version = "~> 2.2"
+  version = "~> 2.3"
 
   name    = "workers"
   subname = "v1"
@@ -20,7 +20,6 @@ module "workers-v1" {
   key_name = var.key_name
 
   enable_autoscale = true
-  enable_event     = true
   enable_mixed     = true
   enable_taints    = false
 
@@ -32,7 +31,7 @@ module "workers-v1" {
   volume_size     = "50"
 
   min = 2
-  max = 10
+  max = 12
 
   tags = local.tags
 

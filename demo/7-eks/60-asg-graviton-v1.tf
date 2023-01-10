@@ -2,7 +2,7 @@
 
 # module "graviton-v1" {
 #   source = "nalbam/eks-worker/aws"
-#   version = "~> 2.2"
+#   version = "~> 2.3"
 
 #   name    = "graviton"
 #   subname = "v1"
@@ -20,7 +20,6 @@
 #   key_name = var.key_name
 
 #   enable_autoscale = true
-#   enable_event     = true
 #   enable_mixed     = true
 #   enable_taints    = true
 
@@ -32,7 +31,7 @@
 #   volume_size     = "50"
 
 #   min = 2
-#   max = 10
+#   max = 12
 
 #   tags = local.tags
 

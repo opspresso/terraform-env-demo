@@ -2,9 +2,11 @@
 
 # eks post-install
 
+AWS_REGION=$(aws configure get default.region)
 CLUSTER_NAME="$(kubectl config current-context)"
 
-echo "# $CLUSTER_NAME"
+echo "# ${AWS_REGION}"
+echo "# ${CLUSTER_NAME}"
 
 # coredns
 echo
@@ -29,3 +31,8 @@ echo "# aws-node version: $(kubectl get daemonset aws-node -n kube-system -o jso
 eksctl utils update-aws-node --cluster=$CLUSTER_NAME --approve
 
 echo "# aws-node version: $(kubectl get daemonset aws-node -n kube-system -o json | jq '.spec.template.spec.containers[].image' -r | cut -d':' -f2)"
+
+# rm runAsNonRoot
+
+kubectl patch daemonset aws-node -n kube-system --type=json \
+  -p='[{"op": "remove", "path": "/spec/template/spec/containers/0/securityContext/runAsNonRoot"}]'

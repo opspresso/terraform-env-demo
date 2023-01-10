@@ -3,7 +3,7 @@
 module "eks" {
   # source = "../../../../nalbam/terraform-aws-eks"
   source  = "nalbam/eks/aws"
-  version = "~> 2.2"
+  version = "~> 2.3"
 
   cluster_name = var.cluster_name
 
