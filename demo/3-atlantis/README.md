@@ -5,15 +5,12 @@
 ## aws ssm put
 
 ```bash
-
 aws ssm put-parameter --name /common/google/client_id --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /common/google/client_secret --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
 
 aws ssm put-parameter --name /k8s/common/infracost/api-key --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/infracost/self-hosted-api-key --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
 aws ssm put-parameter --name /k8s/common/infracost/pricing-api-endpoint --value "${ADMIN_PASSWORD}" --type SecureString --overwrite | jq .
-
-
 ```
 
 ## aws ssm get
