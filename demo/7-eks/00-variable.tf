@@ -18,9 +18,9 @@ variable "kubernetes_version" {
 variable "addons_version" {
   description = "EKS Addons 버전을 입력 합니다."
   default = {
-    "coredns" : "v1.10.1-eksbuild.7"
-    "kube-proxy" : "v1.28.4-eksbuild.4"
-    "vpc-cni" : "v1.16.0-eksbuild.1"
+    # "coredns" : "v1.10.1-eksbuild.7"
+    # "kube-proxy" : "v1.28.4-eksbuild.4"
+    # "vpc-cni" : "v1.16.0-eksbuild.1"
   }
 }
 
