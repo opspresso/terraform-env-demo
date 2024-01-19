@@ -34,7 +34,7 @@ resource "aws_lb_listener_rule" "public_https--argocd" {
 
   condition {
     host_header {
-      values = ["argocd.demo.nalbam.com"]
+      values = [format("argocd.demo.%s", var.root_domain)]
     }
   }
 
@@ -50,7 +50,7 @@ resource "aws_lb_listener_rule" "public_https--workflows" {
 
   condition {
     host_header {
-      values = ["workflows.demo.nalbam.com"]
+      values = [format("workflows.demo.%s", var.root_domain)]
     }
   }
 
@@ -66,7 +66,7 @@ resource "aws_lb_listener_rule" "public_https--grafana" {
 
   condition {
     host_header {
-      values = ["grafana.demo.nalbam.com"]
+      values = [format("grafana.demo.%s", var.root_domain)]
     }
   }
 
@@ -82,7 +82,7 @@ resource "aws_lb_listener_rule" "public_https--a" {
 
   condition {
     host_header {
-      values = ["*.demo-a.nalbam.com"]
+      values = [format("*.demo-a.%s", var.root_domain)]
     }
   }
 
@@ -98,7 +98,7 @@ resource "aws_lb_listener_rule" "public_https--b" {
 
   condition {
     host_header {
-      values = ["*.demo-b.nalbam.com"]
+      values = [format("*.demo-b.%s", var.root_domain)]
     }
   }
 

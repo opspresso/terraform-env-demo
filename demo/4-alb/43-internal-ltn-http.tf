@@ -32,7 +32,7 @@ resource "aws_lb_listener_rule" "internal_http--loki" {
 
   condition {
     host_header {
-      values = ["loki.in.demo.nalbam.com"]
+      values = [format("loki.in.demo.%s", var.root_domain)]
     }
   }
 
@@ -48,7 +48,7 @@ resource "aws_lb_listener_rule" "internal_http--prom" {
 
   condition {
     host_header {
-      values = ["prom.in.demo.nalbam.com"]
+      values = [format("prom.in.demo.%s", var.root_domain)]
     }
   }
 
@@ -64,7 +64,7 @@ resource "aws_lb_listener_rule" "internal_http--a" {
 
   condition {
     host_header {
-      values = ["*.in.demo-a.nalbam.com"]
+      values = [format("*.in.demo-a.%s", var.root_domain)]
     }
   }
 
@@ -80,7 +80,7 @@ resource "aws_lb_listener_rule" "internal_http--b" {
 
   condition {
     host_header {
-      values = ["*.in.demo-b.nalbam.com"]
+      values = [format("*.in.demo-b.%s", var.root_domain)]
     }
   }
 

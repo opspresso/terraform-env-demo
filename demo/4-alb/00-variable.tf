@@ -10,8 +10,13 @@ variable "name" {
   default     = "demo"
 }
 
+variable "root_domain" {
+  description = "ROOT 도메인을 입력합니다."
+  default     = "opspresso.com"
+}
+
 variable "domains" {
-  description = "생성될 ALB 도메인을 입력합니다."
+  description = "SUB 도메인을 입력합니다."
   default = [
     "demo.opspresso.com",
     "demo-a.opspresso.com",
