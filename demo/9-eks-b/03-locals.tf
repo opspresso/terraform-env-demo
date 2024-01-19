@@ -1,6 +1,8 @@
 # locals
 
 locals {
+  region = var.region
+
   account_id = data.aws_caller_identity.current.account_id
 }
 
@@ -26,6 +28,8 @@ locals {
     module.eks.worker_security_group,
     data.terraform_remote_state.vpc.outputs.default_security_group_id,
   ]
+
+  worker_ami_id = module.eks.worker_ami_id
 
   tags = {
     Name        = local.cluster_name

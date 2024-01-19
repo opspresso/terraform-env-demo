@@ -1,41 +1,46 @@
-# # worker graviton
+# worker graviton
 
-# module "graviton-v1" {
-#   source = "nalbam/eks-worker/aws"
-#   version = "~> 2.3"
+module "graviton-v1" {
+  source = "nalbam/eks-worker/aws"
+  # version = "~> 3.0"
 
-#   name    = "graviton"
-#   subname = "v1"
+  name    = "graviton"
+  subname = "v1"
 
-#   cluster_name = local.cluster_name
+  region     = local.region
+  account_id = local.account_id
 
-#   role_name       = local.worker_role_name
-#   security_groups = local.worker_security_groups
-#   subnet_ids      = local.private_subnets
+  cluster_name = local.cluster_name
 
-#   kubernetes_version = var.kubernetes_version
-#   worker_ami_arch    = "arm64"
-#   worker_ami_keyword = "*"
+  cluster_endpoint              = module.eks.cluster_endpoint
+  cluster_certificate_authority = module.eks.cluster_certificate_authority
 
-#   key_name = var.key_name
+  ami_arch        = "arm64"
+  role_name       = local.worker_role_name
+  security_groups = local.worker_security_groups
+  subnet_ids      = local.private_subnets
 
-#   enable_autoscale = true
-#   enable_mixed     = true
-#   enable_taints    = true
+  kubernetes_version = var.kubernetes_version
 
-#   on_demand_base = 0
-#   on_demand_rate = 0
+  key_name = var.key_name
 
-#   mixed_instances = ["c6g.large"]
-#   volume_type     = "gp3"
-#   volume_size     = "50"
+  enable_autoscale = true
+  enable_mixed     = true
+  enable_taints    = true
 
-#   min = 2
-#   max = 12
+  on_demand_base = 0
+  on_demand_rate = 0
 
-#   tags = local.tags
+  mixed_instances = ["c6g.large"]
+  volume_type     = "gp3"
+  volume_size     = "50"
 
-#   depends_on = [
-#     module.eks,
-#   ]
-# }
+  min = 1
+  max = 12
+
+  tags = local.tags
+
+  depends_on = [
+    module.eks,
+  ]
+}
