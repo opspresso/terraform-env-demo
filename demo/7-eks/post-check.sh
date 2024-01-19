@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# daangn eks post-check
+# eks post-check
 
 AWS_REGION=$(aws configure get default.region)
 CLUSTER_NAME="$(kubectl config current-context)"
