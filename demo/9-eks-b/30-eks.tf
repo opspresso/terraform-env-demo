@@ -15,6 +15,8 @@ module "eks" {
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnets
 
+  endpoint_public_access = true
+
   ip_family = var.ip_family
 
   cluster_log_types = []
