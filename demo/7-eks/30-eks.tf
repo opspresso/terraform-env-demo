@@ -2,8 +2,11 @@
 
 module "eks" {
   # source = "../../../../nalbam/terraform-aws-eks"
-  source  = "nalbam/eks/aws"
-  version = "~> 2.3"
+  source = "nalbam/eks/aws"
+  # version = "~> 3.0"
+
+  region     = local.region
+  account_id = local.account_id
 
   cluster_name = var.cluster_name
 
@@ -11,8 +14,6 @@ module "eks" {
 
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnets
-
-  endpoint_public_access = true
 
   ip_family = var.ip_family
 
@@ -25,9 +26,5 @@ module "eks" {
 
   addons_version = var.addons_version
 
-  save_aws_auth = true
-
   tags = local.tags
 }
-
-# tf state rm module.eks.kubernetes_config_map.aws_auth

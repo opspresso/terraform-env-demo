@@ -7,12 +7,12 @@ variable "region" {
 
 variable "cluster_name" {
   description = "EKS 클러스터 이름을 입력합니다."
-  default     = "eks-demo-b" # for eks-demo-b
+  default     = "eks-demo-b" # cluster_name for eks-demo-b
 }
 
 variable "kubernetes_version" {
   description = "쿠버네티스 버전을 입력합니다."
-  default     = "1.24"
+  default     = "1.28" # kubernetes_version for eks-demo-b
 }
 
 variable "addons_version" {
