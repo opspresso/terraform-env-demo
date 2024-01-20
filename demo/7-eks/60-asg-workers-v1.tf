@@ -31,7 +31,7 @@ module "workers-v1" {
   on_demand_base = 0
   on_demand_rate = 0
 
-  mixed_instances = ["c6i.xlarge", "c5.xlarge"]
+  mixed_instances = ["c6i.large", "c5.large"]
   volume_type     = "gp3"
   volume_size     = "50"
 

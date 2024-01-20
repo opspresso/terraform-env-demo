@@ -31,7 +31,7 @@
 #   on_demand_base = 0
 #   on_demand_rate = 0
 
-#   mixed_instances = ["c6g.xlarge"]
+#   mixed_instances = ["c6g.large"]
 #   volume_type     = "gp3"
 #   volume_size     = "50"
 
