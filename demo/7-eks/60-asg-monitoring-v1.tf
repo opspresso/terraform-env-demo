@@ -1,46 +1,46 @@
-# worker monitoring
+# # worker monitoring
 
-module "monitoring-v1" {
-  source = "nalbam/eks-worker/aws"
-  # version = "~> 3.0"
+# module "monitoring-v1" {
+#   source = "nalbam/eks-worker/aws"
+#   # version = "~> 3.0"
 
-  name    = "monitoring"
-  subname = "v1"
+#   name    = "monitoring"
+#   subname = "v1"
 
-  region     = local.region
-  account_id = local.account_id
+#   region     = local.region
+#   account_id = local.account_id
 
-  cluster_name = local.cluster_name
+#   cluster_name = local.cluster_name
 
-  cluster_endpoint              = module.eks.cluster_endpoint
-  cluster_certificate_authority = module.eks.cluster_certificate_authority
+#   cluster_endpoint              = module.eks.cluster_endpoint
+#   cluster_certificate_authority = module.eks.cluster_certificate_authority
 
-  ami_id          = local.worker_ami_id
-  role_name       = local.worker_role_name
-  security_groups = local.worker_security_groups
-  subnet_ids      = data.aws_subnets.c.ids
+#   ami_id          = local.worker_ami_id
+#   role_name       = local.worker_role_name
+#   security_groups = local.worker_security_groups
+#   subnet_ids      = data.aws_subnets.c.ids
 
-  kubernetes_version = var.kubernetes_version
+#   kubernetes_version = var.kubernetes_version
 
-  key_name = var.key_name
+#   key_name = var.key_name
 
-  enable_autoscale = false
-  enable_mixed     = true
-  enable_taints    = true
+#   enable_autoscale = false
+#   enable_mixed     = true
+#   enable_taints    = true
 
-  on_demand_base = 0
-  on_demand_rate = 0
+#   on_demand_base = 0
+#   on_demand_rate = 0
 
-  mixed_instances = ["m6i.large", "m5.large"]
-  volume_type     = "gp3"
-  volume_size     = "50"
+#   mixed_instances = ["m6i.large", "m5.large"]
+#   volume_type     = "gp3"
+#   volume_size     = "50"
 
-  min = 1
-  max = 1
+#   min = 1
+#   max = 1
 
-  tags = local.tags
+#   tags = local.tags
 
-  depends_on = [
-    module.eks,
-  ]
-}
+#   depends_on = [
+#     module.eks,
+#   ]
+# }
