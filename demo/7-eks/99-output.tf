@@ -35,3 +35,7 @@ output "worker_role_name" {
 output "worker_security_group" {
   value = local.worker_security_groups
 }
+
+output "workers" {
+  value = module.eks.workers
+}

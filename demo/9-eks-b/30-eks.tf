@@ -2,8 +2,8 @@
 
 module "eks" {
   # source = "../../../../nalbam/terraform-aws-eks"
-  source = "nalbam/eks/aws"
-  # version = "~> 3.0"
+  source  = "nalbam/eks/aws"
+  version = "~> 3.0"
 
   region     = local.region
   account_id = local.account_id
@@ -29,4 +29,18 @@ module "eks" {
   addons_version = var.addons_version
 
   tags = local.tags
+
+  workers = [
+    {
+      name    = "workers"
+      vername = "v2"
+
+      mixed_instances = ["c6i.xlarge", "c5.xlarge"]
+
+      min = 3
+      max = 12
+
+      key_name = var.key_name
+    },
+  ]
 }

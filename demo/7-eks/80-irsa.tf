@@ -101,7 +101,7 @@ module "irsa" {
   cluster_name      = module.eks.cluster_name
   cluster_oidc_urls = [module.eks.cluster_oidc_url]
 
-  service_name    = each.key
+  service_name    = each.value.service_name
   namespace       = try(each.value.namespace, null)
   service_account = try(each.value.service_account, null)
   iam_policy      = each.value.iam_policy
