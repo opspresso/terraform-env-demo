@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     # runs-on: [ self-hosted, linux, x64 ]
 
-    permissions:
-      id-token: write
-      contents: read
+    # permissions:
+    #   id-token: write
+    #   contents: read
 
     strategy:
       fail-fast: false
@@ -51,9 +51,9 @@ jobs:
           aws-region: ap-northeast-2
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_BRUCE }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_BRUCE }}
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_BRUCE }}:role/k8s-readonly
-          role-session-name: github-action-k8s-readonly
-          role-skip-session-tagging: true
+          # role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_BRUCE }}:role/k8s-readonly
+          # role-session-name: github-action-k8s-readonly
+          # role-skip-session-tagging: true
 
       - name: Initialize Terraform
         env:
