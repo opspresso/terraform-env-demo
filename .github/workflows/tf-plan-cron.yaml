@@ -1,43 +1,68 @@
-name: Build-Cron
+name: tf-plan-cron
 
 on:
   schedule:
     - cron: "0 0 * * *"
-  # push:
-  #   branches:
-  #     - main
-  #     - master
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - .github/workflows/tf-plan-cron.yaml
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # runs-on: [ self-hosted, linux, x64 ]
+
+    permissions:
+      id-token: write
+      contents: read
 
     strategy:
       fail-fast: false
       matrix:
         path:
-          - 20-vpc-demo
-          - 30-alb-demo
-          - 50-eks-demo
+          - demo/2-vpc
+          - demo/4-alb
+          - demo/7-eks
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Setup Linux
+        run: |
+          command -v unzip >/dev/null || apt install -y unzip
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x" # node version
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.5.7" # terraform version
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ap-northeast-2
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_BRUCE }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_BRUCE }}
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_BRUCE }}:role/k8s-readonly
+          role-session-name: github-action-k8s-readonly
+          role-skip-session-tagging: true
 
       - name: Initialize Terraform
+        env:
+          GIT_SSH_COMMAND: "echo '${{ secrets.GH_SSH_KEY }}' > id_rsa
+            && ssh-keyscan github.com > known_hosts
+            && chmod 600 id_rsa known_hosts
+            && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
         run: |
+          aws sts get-caller-identity --output=json | grep "Arn" | cut -d'"' -f4
           cd ${{ matrix.path }}
           terraform init -input=false
 
@@ -45,9 +70,9 @@ jobs:
         id: plan
         continue-on-error: true
         run: |
+          aws sts get-caller-identity --output=json | grep "Arn" | cut -d'"' -f4
           cd ${{ matrix.path }}
-          terraform plan -input=false -no-color -out=tfplan && \
-          terraform show -no-color tfplan
+          terraform plan -input=false -no-color -lock=false
 
       - name: Reformat Plan
         run: |
@@ -66,6 +91,7 @@ jobs:
             "channel": "sandbox",
             "icon_emoji": ":terraform:",
             "username": "terraform",
+            "text": ":warning: Terraform Plan 에 변경 사항이 있습니다. alpha :flag-kr:",
             "attachments": [{
               "color": "warning",
               "title": "${{ matrix.path }}",
