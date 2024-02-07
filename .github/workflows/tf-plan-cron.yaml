@@ -85,13 +85,25 @@ jobs:
         id: message
         continue-on-error: true
         run: |
+          AWS_REGION=$(echo ${{ matrix.path }} | cut -d'/' -f1)
+          case $AWS_REGION in
+            us-east-1|us-west-2)
+              COUNTRY_CODE="us"
+              ;;
+            ap-northeast-2)
+              COUNTRY_CODE="kr"
+              ;;
+            *)
+              COUNTRY_CODE="un"
+              ;;
+          esac
           PLAN="$(cat plan.txt | grep 'Plan:')"
           [ -z "${PLAN}" ] || cat <<EOF > slack_message.json
           {
             "channel": "sandbox",
             "icon_emoji": ":terraform:",
             "username": "terraform",
-            "text": ":warning: Terraform Plan 에 변경 사항이 있습니다. alpha :flag-kr:",
+            "text": ":warning: Terraform Plan 에 변경 사항이 있습니다. alpha :flag-${COUNTRY_CODE}:",
             "attachments": [{
               "color": "warning",
               "title": "${{ matrix.path }}",
