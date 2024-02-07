@@ -85,7 +85,7 @@ jobs:
         id: message
         continue-on-error: true
         run: |
-          AWS_REGION=$(echo ${{ matrix.path }} | cut -d'/' -f1)
+          AWS_REGION=$(aws configure get default.region)
           case $AWS_REGION in
             us-east-1|us-west-2)
               COUNTRY_CODE="us"
