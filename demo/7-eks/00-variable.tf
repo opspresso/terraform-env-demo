@@ -10,19 +10,9 @@ variable "cluster_name" {
   default     = "eks-demo" # cluster_name for eks-demo
 }
 
-variable "kubernetes_version" {
+variable "cluster_version" {
   description = "쿠버네티스 버전을 입력합니다."
-  default     = "1.29" # kubernetes_version for eks-demo
-}
-
-variable "addons_version" {
-  description = "EKS Addons 버전을 입력 합니다."
-  default = {
-    "coredns" : "v1.11.1-eksbuild.6"
-    "kube-proxy" : "v1.29.1-eksbuild.2"
-    "vpc-cni" : "v1.16.4-eksbuild.2"
-    # "aws-ebs-csi-driver": "v0.10.0"
-  }
+  default     = "1.29" # cluster_version for eks-demo
 }
 
 variable "ip_family" {

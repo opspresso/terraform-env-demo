@@ -1,34 +1,32 @@
 # eks
+# https://github.com/terraform-aws-modules/terraform-aws-eks
 
 module "eks" {
-  # source = "../../../../nalbam/terraform-aws-eks"
-  source  = "nalbam/eks/aws"
-  version = "~> 3.1"
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.0"
 
-  region     = local.region
-  account_id = local.account_id
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
 
-  cluster_name = var.cluster_name
-
-  kubernetes_version = var.kubernetes_version
+  cluster_endpoint_public_access = true
 
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnets
 
-  endpoint_public_access = true
+  # IPV6
+  cluster_ip_family          = var.ip_family
+  create_cni_ipv6_iam_policy = var.ip_family == "ipv6" ? true : false
 
-  ip_family = var.ip_family
+  enable_cluster_creator_admin_permissions = true
 
-  cluster_log_types = []
+  # Enable EFA support by adding necessary security group rules
+  # to the shared node security group
+  enable_efa_support = true
 
-  iam_group = local.iam_group
-  iam_roles = local.iam_roles
+  cluster_addons = local.cluster_addons
 
-  worker_source_sgs = local.worker_source_sgs
-
-  addons_version = var.addons_version
-
-  workers = local.workers
+  self_managed_node_group_defaults = local.self_managed_node_group_defaults
+  self_managed_node_groups         = local.self_managed_node_groups
 
   tags = local.tags
 }
