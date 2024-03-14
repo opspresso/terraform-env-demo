@@ -12,7 +12,7 @@ variable "cluster_name" {
 
 variable "kubernetes_version" {
   description = "쿠버네티스 버전을 입력합니다."
-  default     = "1.28" # kubernetes_version for eks-demo
+  default     = "1.29" # kubernetes_version for eks-demo
 }
 
 variable "addons_version" {
@@ -25,7 +25,7 @@ variable "addons_version" {
 }
 
 variable "ip_family" {
-  default = "ipv4" # ipv4, ipv6
+  default = "ipv6" # ipv4, ipv6
 }
 
 variable "key_name" {
