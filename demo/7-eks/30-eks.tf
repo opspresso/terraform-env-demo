@@ -3,7 +3,7 @@
 module "eks" {
   # source = "../../../../nalbam/terraform-aws-eks"
   source  = "nalbam/eks/aws"
-  version = "~> 3.0"
+  version = "~> 3.1"
 
   region     = local.region
   account_id = local.account_id
