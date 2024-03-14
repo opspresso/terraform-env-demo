@@ -18,13 +18,13 @@ module "vpc" {
   private_subnets = ["10.10.21.0/24", "10.10.22.0/24", "10.10.23.0/24"]
   # intra_subnets   = ["10.10.31.0/24", "10.10.32.0/24", "10.10.33.0/24"]
 
-  public_subnet_ipv6_prefixes                   = [0, 1, 2]
+  public_subnet_ipv6_prefixes                   = [11, 12, 13]
   public_subnet_assign_ipv6_address_on_creation = true
 
-  private_subnet_ipv6_prefixes                   = [3, 4, 5]
+  private_subnet_ipv6_prefixes                   = [21, 22, 23]
   private_subnet_assign_ipv6_address_on_creation = true
 
-  # intra_subnet_ipv6_prefixes                   = [6, 7, 8]
+  # intra_subnet_ipv6_prefixes                   = [31, 32, 33]
   # intra_subnet_assign_ipv6_address_on_creation = true
 
   enable_ipv6 = true
