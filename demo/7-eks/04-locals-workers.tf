@@ -25,10 +25,22 @@ locals {
       }
     }
 
-    autoscaling_group_tags = {
-      "k8s.io/cluster-autoscaler/enabled" : true,
-      "k8s.io/cluster-autoscaler/${var.cluster_name}" : "owned",
-    }
+    key_name = var.key_name
+
+    pre_bootstrap_user_data = <<-EOT
+      mkdir -p ~/.docker /var/lib/kubelet
+      aws ssm get-parameter --name "/k8s/common/docker-config" --with-decryption --output text --query Parameter.Value > ~/.docker/config.json
+      aws ssm get-parameter --name "/k8s/common/docker-config" --with-decryption --output text --query Parameter.Value > /var/lib/kubelet/config.json
+      aws ssm get-parameter --name "/k8s/common/containerd-config" --with-decryption --output text --query Parameter.Value >> /etc/eks/containerd/containerd-config.toml
+    EOT
+
+    post_bootstrap_user_data = <<-EOT
+      aws_region=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
+      aws_instance_id=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+      aws_instance_lifecycle=$(curl -s http://169.254.169.254/latest/meta-data/instance-life-cycle)
+      aws ec2 create-tags --resources $aws_instance_id --region $aws_region --tags Key=Lifecycle,Value=$aws_instance_lifecycle
+      echo "All done."
+    EOT
   }
 
   self_managed_node_groups = {
@@ -62,14 +74,12 @@ locals {
         additional = aws_iam_policy.additional.arn
       }
 
-      key_name = var.key_name
-
       bootstrap_extra_args = "--kubelet-extra-args '--node-labels=group=workers'"
 
-      # bootstrap_extra_args = <<-EOT
-      #   [settings.kubernetes.node-labels]
-      #   group = "workers"
-      # EOT
+      autoscaling_group_tags = {
+        "k8s.io/cluster-autoscaler/enabled" : true,
+        "k8s.io/cluster-autoscaler/${var.cluster_name}" : "owned",
+      }
 
       tags = merge(
         local.tags,
