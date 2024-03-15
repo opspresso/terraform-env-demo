@@ -5,7 +5,7 @@ locals {
     subnet_ids             = local.private_subnets
     vpc_security_group_ids = local.vpc_security_group_ids
 
-    instance_type = "c6i.large"
+    instance_type = "c6i.xlarge"
 
     ebs_optimized     = true
     enable_monitoring = true
@@ -46,11 +46,11 @@ locals {
 
         override = [
           {
-            instance_type     = "c6i.large"
+            instance_type     = "c6i.xlarge"
             weighted_capacity = "2"
           },
           {
-            instance_type     = "c7i.large"
+            instance_type     = "c7i.xlarge"
             weighted_capacity = "2"
           },
         ]
