@@ -7,16 +7,16 @@ variable "region" {
 
 variable "cluster_name" {
   description = "EKS 클러스터 이름을 입력합니다."
-  default     = "eks-demo" # cluster_name for eks-demo
+  default     = "eks-demo"
 }
 
 variable "cluster_version" {
   description = "쿠버네티스 버전을 입력합니다."
-  default     = "1.29" # cluster_version for eks-demo
+  default     = "1.29"
 }
 
 variable "ip_family" {
-  default = "ipv6" # ipv4, ipv6
+  default = "ipv4" # ipv4, ipv6
 }
 
 variable "key_name" {

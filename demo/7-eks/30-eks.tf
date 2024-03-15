@@ -8,14 +8,14 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
 
-  cluster_endpoint_public_access = true
-
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnets
 
   # IPV6
   cluster_ip_family          = var.ip_family
   create_cni_ipv6_iam_policy = var.ip_family == "ipv6" ? true : false
+
+  cluster_endpoint_public_access = true
 
   enable_cluster_creator_admin_permissions = true
 

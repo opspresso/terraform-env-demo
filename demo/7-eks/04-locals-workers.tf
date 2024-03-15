@@ -2,8 +2,6 @@
 
 locals {
   self_managed_node_group_defaults = {
-    ami_id = data.aws_ami.eks_default.id
-
     subnet_ids = local.private_subnets
 
     instance_type = "c6i.large"
@@ -26,17 +24,19 @@ locals {
 
     autoscaling_group_tags = {
       "k8s.io/cluster-autoscaler/enabled" : true,
-      "k8s.io/cluster-autoscaler/${local.cluster_name}" : "owned",
+      "k8s.io/cluster-autoscaler/${var.cluster_name}" : "owned",
     }
   }
 
   self_managed_node_groups = {
     workers = {
-      name = "workers"
+      name = format("%s-workers", var.cluster_name)
 
       min_size     = 1
-      max_size     = 5
-      desired_size = 2
+      max_size     = 6
+      desired_size = 1
+
+      vpc_security_group_ids = local.vpc_security_group_ids
 
       bootstrap_extra_args = "--kubelet-extra-args '--node-labels=node.kubernetes.io/lifecycle=spot'"
 
@@ -59,30 +59,43 @@ locals {
           },
         ]
       }
+
+      iam_role_additional_policies = {
+        additional = aws_iam_policy.additional.arn
+      }
+
+      bootstrap_extra_args = <<-EOT
+        [settings.kubernetes.node-labels]
+        label1 = "foo"
+        label2 = "bar"
+      EOT
+
+      key_name = var.key_name
+
+      tags = merge(
+        local.tags,
+        {
+          "Name"                        = format("%s-workers", var.cluster_name)
+          "group"                       = "workers",
+          "eks.amazonaws.com/nodegroup" = "workers",
+        },
+      )
     }
   }
 }
 
-data "aws_ami" "eks_default" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["amazon-eks-node-${var.cluster_version}-v*"]
-  }
-}
-
 resource "aws_iam_policy" "additional" {
-  name        = "${local.cluster_name}-additional"
-  description = "Example usage of node additional policy"
+  name        = format("%s-additional", var.cluster_name)
+  description = format("%s-additional policy", var.cluster_name)
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
         Action = [
+          "ec2:CreateTags",
           "ec2:Describe*",
+          "ssm:GetParameter",
         ]
         Effect   = "Allow"
         Resource = "*"
@@ -90,5 +103,10 @@ resource "aws_iam_policy" "additional" {
     ]
   })
 
-  tags = local.tags
+  tags = merge(
+    local.tags,
+    {
+      "Name" = format("%s-additional", var.cluster_name)
+    },
+  )
 }
