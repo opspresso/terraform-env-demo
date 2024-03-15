@@ -7,6 +7,8 @@ locals {
 
     instance_type = "c6i.xlarge"
 
+    launch_template_version = "$Latest"
+
     ebs_optimized     = true
     enable_monitoring = true
 
@@ -33,25 +35,25 @@ locals {
     workers = {
       name = format("%s-workers", var.cluster_name)
 
-      min_size = 1
+      min_size = 3
       max_size = 6
 
       use_mixed_instances_policy = true
       mixed_instances_policy = {
         instances_distribution = {
-          on_demand_base_capacity                  = 0
-          on_demand_percentage_above_base_capacity = 20
+          on_demand_base_capacity                  = 1
+          on_demand_percentage_above_base_capacity = 100
           spot_allocation_strategy                 = "price-capacity-optimized"
         }
 
         override = [
           {
             instance_type     = "c6i.xlarge"
-            weighted_capacity = "2"
+            weighted_capacity = "1"
           },
           {
             instance_type     = "c7i.xlarge"
-            weighted_capacity = "2"
+            weighted_capacity = "1"
           },
         ]
       }
@@ -62,20 +64,18 @@ locals {
 
       key_name = var.key_name
 
-      # bootstrap_extra_args = "--kubelet-extra-args '--node-labels=node.kubernetes.io/lifecycle=spot'"
+      bootstrap_extra_args = "--kubelet-extra-args '--node-labels=group=workers'"
 
-      bootstrap_extra_args = <<-EOT
-        [settings.kubernetes.node-labels]
-        label1 = "foo"
-        label2 = "bar"
-      EOT
+      # bootstrap_extra_args = <<-EOT
+      #   [settings.kubernetes.node-labels]
+      #   group = "workers"
+      # EOT
 
       tags = merge(
         local.tags,
         {
-          "Name"                        = format("%s-workers", var.cluster_name)
-          "group"                       = "workers",
-          "eks.amazonaws.com/nodegroup" = "workers",
+          "Name"  = format("%s-workers", var.cluster_name)
+          "group" = "workers",
         },
       )
     }
