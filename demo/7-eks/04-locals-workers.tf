@@ -2,7 +2,8 @@
 
 locals {
   self_managed_node_group_defaults = {
-    subnet_ids = local.private_subnets
+    subnet_ids             = local.private_subnets
+    vpc_security_group_ids = local.vpc_security_group_ids
 
     instance_type = "c6i.large"
 
@@ -32,13 +33,8 @@ locals {
     workers = {
       name = format("%s-workers", var.cluster_name)
 
-      min_size     = 1
-      max_size     = 6
-      desired_size = 1
-
-      vpc_security_group_ids = local.vpc_security_group_ids
-
-      bootstrap_extra_args = "--kubelet-extra-args '--node-labels=node.kubernetes.io/lifecycle=spot'"
+      min_size = 1
+      max_size = 6
 
       use_mixed_instances_policy = true
       mixed_instances_policy = {
@@ -64,13 +60,15 @@ locals {
         additional = aws_iam_policy.additional.arn
       }
 
+      key_name = var.key_name
+
+      # bootstrap_extra_args = "--kubelet-extra-args '--node-labels=node.kubernetes.io/lifecycle=spot'"
+
       bootstrap_extra_args = <<-EOT
         [settings.kubernetes.node-labels]
         label1 = "foo"
         label2 = "bar"
       EOT
-
-      key_name = var.key_name
 
       tags = merge(
         local.tags,

@@ -21,5 +21,7 @@ locals {
     Name        = var.cluster_name
     ClusterName = var.cluster_name
     Environment = "demo"
+    ManagedBy   = "Terraform"
+    Project     = "terraform-env-demo/demo/7-eks"
   }
 }

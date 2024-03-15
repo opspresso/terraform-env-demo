@@ -29,7 +29,8 @@ locals {
   ]
 
   tags = {
-    Name        = var.name
     Environment = "demo"
+    ManagedBy   = "Terraform"
+    Project     = "terraform-env-demo/demo/4-alb"
   }
 }

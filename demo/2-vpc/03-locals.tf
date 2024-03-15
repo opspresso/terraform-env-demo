@@ -3,6 +3,8 @@
 locals {
   tags = {
     Environment = "demo"
+    ManagedBy   = "Terraform"
+    Project     = "terraform-env-demo/demo/2-vpc"
   }
 
   eks_tags = {
