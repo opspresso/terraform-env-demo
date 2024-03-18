@@ -14,12 +14,12 @@ locals {
       service_account = "ebs-csi-controller-sa"
       iam_policy      = file("policies/aws-ebs-csi-driver.json")
     },
-    {
-      service_name    = "aws-ebs-csi-driver-sa"
-      namespace       = "kube-system"
-      service_account = "ebs-csi-controller-sa"
-      iam_policy      = file("policies/aws-ebs-csi-driver.json")
-    },
+    # {
+    #   service_name    = "aws-ebs-csi-driver-sa"
+    #   namespace       = "kube-system"
+    #   service_account = "ebs-csi-controller-sa"
+    #   iam_policy      = file("policies/aws-ebs-csi-driver.json")
+    # },
     {
       service_name    = "aws-efs-csi-driver"
       namespace       = "addon-aws-efs-csi-driver"

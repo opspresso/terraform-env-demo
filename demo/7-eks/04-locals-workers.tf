@@ -27,6 +27,10 @@ locals {
 
     key_name = var.key_name
 
+    iam_role_additional_policies = {
+      additional = aws_iam_policy.additional.arn
+    }
+
     pre_bootstrap_user_data = <<-EOT
       mkdir -p ~/.docker /var/lib/kubelet
       aws ssm get-parameter --name "/k8s/common/docker-config" --with-decryption --output text --query Parameter.Value > ~/.docker/config.json
@@ -68,10 +72,6 @@ locals {
             weighted_capacity = "1"
           },
         ]
-      }
-
-      iam_role_additional_policies = {
-        additional = aws_iam_policy.additional.arn
       }
 
       bootstrap_extra_args = "--kubelet-extra-args '--node-labels=group=workers'"
