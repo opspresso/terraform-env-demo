@@ -14,17 +14,17 @@ module "vpc" {
     format("%sc", var.region),
   ]
 
-  public_subnets  = ["10.10.11.0/24", "10.10.12.0/24", "10.10.13.0/24"]
-  private_subnets = ["10.10.21.0/24", "10.10.22.0/24", "10.10.23.0/24"]
-  # intra_subnets   = ["10.10.31.0/24", "10.10.32.0/24", "10.10.33.0/24"]
+  public_subnets  = ["10.10.16.0/20", "10.10.32.0/20", "10.10.48.0/20"]
+  private_subnets = ["10.10.112.0/20", "10.10.128.0/20", "10.10.144.0/20"]
+  # intra_subnets = ["10.10.208.0/20", "10.10.224.0/20", "10.10.240.0/20"]
 
-  public_subnet_ipv6_prefixes                   = [11, 12, 13]
+  public_subnet_ipv6_prefixes                   = [16, 32, 48]
   public_subnet_assign_ipv6_address_on_creation = true
 
-  private_subnet_ipv6_prefixes                   = [21, 22, 23]
+  private_subnet_ipv6_prefixes                   = [112, 128, 144]
   private_subnet_assign_ipv6_address_on_creation = true
 
-  # intra_subnet_ipv6_prefixes                   = [31, 32, 33]
+  # intra_subnet_ipv6_prefixes                   = [208, 224, 240]
   # intra_subnet_assign_ipv6_address_on_creation = true
 
   enable_ipv6 = true
