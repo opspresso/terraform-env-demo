@@ -18,6 +18,11 @@ module "vpc" {
   private_subnets = ["10.10.112.0/20", "10.10.128.0/20", "10.10.144.0/20"]
   # intra_subnets = ["10.10.208.0/20", "10.10.224.0/20", "10.10.240.0/20"]
 
+  enable_nat_gateway = true
+  single_nat_gateway = true
+
+  enable_ipv6 = true
+
   public_subnet_ipv6_prefixes                   = [16, 32, 48]
   public_subnet_assign_ipv6_address_on_creation = true
 
@@ -27,11 +32,7 @@ module "vpc" {
   # intra_subnet_ipv6_prefixes                   = [208, 224, 240]
   # intra_subnet_assign_ipv6_address_on_creation = true
 
-  enable_ipv6 = true
-
   enable_dns_hostnames = true
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
 
   # enable_vpn_gateway = true
   # amazon_side_asn    = 64620
