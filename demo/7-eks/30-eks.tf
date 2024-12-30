@@ -27,5 +27,7 @@ module "eks" {
 
   cluster_addons = local.cluster_addons
 
+  access_entries = local.access_entries
+
   tags = local.tags
 }

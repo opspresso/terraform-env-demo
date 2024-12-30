@@ -1,4 +1,4 @@
-# locals addons
+# locals cluster_addons
 
 locals {
   cluster_addons = {
