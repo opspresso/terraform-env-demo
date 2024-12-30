@@ -27,6 +27,11 @@ locals {
       namespace       = "addon-cluster-autoscaler"
       service_account = "cluster-autoscaler"
     }
+    "external-dns" = {
+      role_name       = "pod-role--external-dns"
+      namespace       = "addon-external-dns"
+      service_account = "external-dns"
+    }
     "external-secrets" = {
       role_name       = "pod-role--external-secrets"
       namespace       = "addon-external-secrets"
