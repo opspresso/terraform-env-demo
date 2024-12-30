@@ -12,13 +12,23 @@ variable "cluster_name" {
 
 variable "cluster_version" {
   description = "쿠버네티스 버전을 입력합니다."
-  default     = "1.29"
+  default     = "1.31"
 }
 
 variable "ip_family" {
-  default = "ipv4" # ipv4, ipv6
+  description = "IP 주소 체계를 입력합니다. ipv4, ipv6"
+  default     = "ipv4" # ipv4, ipv6
 }
 
 variable "key_name" {
-  default = "bruce-seoul"
+  description = "키 이름을 입력합니다."
+  default     = "bruce-seoul"
+}
+
+variable "self_managed_node_groups" {
+  description = "self managed node groups"
+  type        = any
+  default = {
+    workers = {}
+  }
 }

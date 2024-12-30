@@ -19,5 +19,8 @@ locals {
         }
       })
     }
+    eks-pod-identity-agent = {
+      most_recent = true
+    }
   }
 }
