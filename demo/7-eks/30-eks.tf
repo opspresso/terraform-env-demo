@@ -29,5 +29,7 @@ module "eks" {
 
   access_entries = local.access_entries
 
+  self_managed_node_groups = local.self_managed_node_groups
+
   tags = local.tags
 }
