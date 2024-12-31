@@ -19,11 +19,11 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
-  # EKS Auto Mode
-  cluster_compute_config = {
-    enabled    = true
-    node_pools = ["general-purpose"]
-  }
+  # # EKS Auto Mode
+  # cluster_compute_config = {
+  #   enabled    = true
+  #   node_pools = ["general-purpose"]
+  # }
 
   cluster_addons = local.cluster_addons
 
