@@ -1,15 +1,13 @@
 # route53
 
 data "aws_route53_zone" "this" {
-  count = length(var.domains)
-
-  name = var.domains[count.index]
+  name = var.root_domain
 }
 
 resource "aws_route53_record" "public" {
   count = length(var.domains)
 
-  zone_id = data.aws_route53_zone.this[count.index].zone_id
+  zone_id = data.aws_route53_zone.this.zone_id
   name    = format("*.%s", var.domains[count.index])
   type    = "A"
 
@@ -23,7 +21,7 @@ resource "aws_route53_record" "public" {
 resource "aws_route53_record" "internal" {
   count = length(var.domains)
 
-  zone_id = data.aws_route53_zone.this[count.index].zone_id
+  zone_id = data.aws_route53_zone.this.zone_id
   name    = format("*.in.%s", var.domains[count.index])
   type    = "A"
 
