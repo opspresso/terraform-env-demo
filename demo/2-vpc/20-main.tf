@@ -14,28 +14,31 @@ module "vpc" {
     format("%sc", var.region),
   ]
 
-  public_subnets  = ["10.10.16.0/20", "10.10.32.0/20", "10.10.48.0/20"]
-  private_subnets = ["10.10.112.0/20", "10.10.128.0/20", "10.10.144.0/20"]
-  # intra_subnets = ["10.10.208.0/20", "10.10.224.0/20", "10.10.240.0/20"]
+  public_subnets  = var.public_subnets
+  private_subnets = var.private_subnets
+  intra_subnets   = var.intra_subnets
 
-  enable_nat_gateway = true
-  single_nat_gateway = true
+  enable_nat_gateway = var.enable_nat_gateway
+  single_nat_gateway = var.single_nat_gateway
 
-  enable_ipv6 = true
+  enable_ipv6 = var.enable_ipv6
 
-  public_subnet_ipv6_prefixes                   = [16, 32, 48]
-  public_subnet_assign_ipv6_address_on_creation = true
+  public_subnet_ipv6_prefixes = [
+    for i in range(length(var.public_subnets)) : i * 16
+  ]
+  public_subnet_assign_ipv6_address_on_creation = var.enable_ipv6
 
-  private_subnet_ipv6_prefixes                   = [112, 128, 144]
-  private_subnet_assign_ipv6_address_on_creation = true
+  private_subnet_ipv6_prefixes = [
+    for i in range(length(var.private_subnets)) : i * 16
+  ]
+  private_subnet_assign_ipv6_address_on_creation = var.enable_ipv6
 
-  # intra_subnet_ipv6_prefixes                   = [208, 224, 240]
-  # intra_subnet_assign_ipv6_address_on_creation = true
+  intra_subnet_ipv6_prefixes = [
+    for i in range(length(var.intra_subnets)) : i * 16
+  ]
+  intra_subnet_assign_ipv6_address_on_creation = var.enable_ipv6
 
-  enable_dns_hostnames = true
-
-  # enable_vpn_gateway = true
-  # amazon_side_asn    = 64620
+  enable_dns_hostnames = var.enable_dns_hostnames
 
   tags = local.tags
 
