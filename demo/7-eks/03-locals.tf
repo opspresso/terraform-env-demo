@@ -8,28 +8,7 @@ locals {
   vpc_id          = data.terraform_remote_state.vpc.outputs.vpc_id
   private_subnets = data.terraform_remote_state.vpc.outputs.private_subnets
 
-  # vpc_security_group_ids = [
-  #   data.terraform_remote_state.vpc.outputs.default_security_group_id,
-  #   data.terraform_remote_state.alb.outputs.security_group_id,
-  # ]
-
   node_security_group_additional_rules = {
-    # ingress_all_self_node = {
-    #   description = "Node to node all"
-    #   protocol    = "-1"
-    #   from_port   = 0
-    #   to_port     = 0
-    #   type        = "ingress"
-    #   self        = true
-    # }
-    # ingress_all_self_cluster = {
-    #   description                   = "Cluster API to node all"
-    #   protocol                      = "-1"
-    #   from_port                     = 0
-    #   to_port                       = 0
-    #   type                          = "ingress"
-    #   source_cluster_security_group = true
-    # }
     ingress_cluster_15017_webhook = {
       description                   = "Cluster API to node 15017/tcp webhook"
       protocol                      = "tcp"
