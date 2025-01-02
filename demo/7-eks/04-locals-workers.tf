@@ -23,9 +23,6 @@ locals {
 
           echo "TMOUT=600" >> /etc/profile
 
-          aws ssm get-parameter --name "/k8s/common/containerd-config" --with-decryption \
-            --output text --query Parameter.Value >> /etc/containerd/config.toml
-
           ${try(value["cloudinit_pre"], "")}
 
         EOT
