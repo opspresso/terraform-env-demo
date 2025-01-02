@@ -31,7 +31,7 @@ module "eks" {
 
   self_managed_node_groups = local.self_managed_node_groups
 
-  node_security_group_additional_rules = var.node_security_group_additional_rules
+  node_security_group_additional_rules = local.node_security_group_additional_rules
 
   tags = local.tags
 }
