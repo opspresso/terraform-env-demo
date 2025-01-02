@@ -117,6 +117,10 @@ locals {
       cloudinit_pre_nodeadm  = local.self_managed_node_groups_cloudinit_pre[key]
       cloudinit_post_nodeadm = local.self_managed_node_groups_cloudinit_post[key]
 
+      metadata_options = {
+        http_tokens = try(value["http_tokens"], "optional")
+      }
+
       tags = local.self_managed_node_groups_tags[key]
     }
   }
