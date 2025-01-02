@@ -104,6 +104,8 @@ locals {
   }
 
   self_managed_node_group_defaults = {
+    ami_type = "AL2023_x86_64_STANDARD"
+
     launch_template_version = "$Latest"
 
     iam_role_additional_policies = {
@@ -117,7 +119,6 @@ locals {
 
   self_managed_node_groups = {
     for key, value in var.self_managed_node_groups : key => {
-      ami_type      = try(value["ami_type"], "AL2023_x86_64_STANDARD")
       instance_type = try(value["instance_type"], "c6i.large")
 
       min_size     = try(value["min"], 3)
