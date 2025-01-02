@@ -118,6 +118,8 @@ locals {
       max_size     = try(value["max"], 12)
       desired_size = try(value["desired_size"], 3)
 
+      launch_template_version = try(value["launch_template_version"], "$Latest")
+
       cloudinit_pre_nodeadm  = local.self_managed_node_groups_cloudinit_pre[key]
       cloudinit_post_nodeadm = local.self_managed_node_groups_cloudinit_post[key]
 

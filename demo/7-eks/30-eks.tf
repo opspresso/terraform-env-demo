@@ -19,6 +19,8 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
+  enable_efa_support = true
+
   # # EKS Auto Mode
   # cluster_compute_config = {
   #   enabled    = true
