@@ -22,5 +22,8 @@ locals {
     eks-pod-identity-agent = {
       most_recent = true
     }
+    amazon-cloudwatch-observability = {
+      most_recent = true
+    }
   }
 }
