@@ -29,6 +29,31 @@ variable "self_managed_node_groups" {
   description = "self managed node groups"
   type        = any
   default = {
-    workers = {}
+    workers = {
+      group = "workers"
+    }
+  }
+}
+
+variable "node_security_group_additional_rules" {
+  description = "node security group additional rules"
+  type        = any
+  default = {
+    ingress_all_self_cluster = {
+      description                   = "Cluster API to node all"
+      protocol                      = "-1"
+      from_port                     = 0
+      to_port                       = 0
+      type                          = "ingress"
+      source_cluster_security_group = true
+    }
+    ingress_all_self_node = {
+      description = "Node to node all"
+      protocol    = "-1"
+      from_port   = 0
+      to_port     = 0
+      type        = "ingress"
+      self        = true
+    }
   }
 }

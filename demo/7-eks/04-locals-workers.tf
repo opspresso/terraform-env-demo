@@ -1,14 +1,8 @@
 # locals self_managed_node_groups
 
 locals {
-  node_groups = {
-    workers = {
-      group = "workers"
-    }
-  }
-
   self_managed_node_groups_bolck = {
-    for key, value in local.node_groups : key => [
+    for key, value in var.self_managed_node_groups : key => [
       {
         device_name = try(value["device_name"], "/dev/xvda")
         ebs = {
@@ -21,7 +15,7 @@ locals {
   }
 
   self_managed_node_groups_cloudinit_pre = {
-    for key, value in local.node_groups : key => [
+    for key, value in var.self_managed_node_groups : key => [
       {
         content_type = "text/x-shellscript"
         content      = <<-EOT
@@ -40,20 +34,20 @@ locals {
   }
 
   self_managed_node_groups_labels = {
-    for key, value in local.node_groups : key => {
+    for key, value in var.self_managed_node_groups : key => {
       "eks.amazonaws.com/nodegroup" = key
       "group"                       = key
     }
   }
 
   self_managed_node_groups_taints = {
-    for key, value in local.node_groups : key => {
+    for key, value in var.self_managed_node_groups : key => {
       "args" = value["group"] == "workers" ? "" : format("- --register-with-taints=group=%s:NoSchedule", value["group"])
     }
   }
 
   self_managed_node_groups_extra_args = {
-    for key, value in local.node_groups : key => {
+    for key, value in var.self_managed_node_groups : key => {
       "args" = try(format("- %s", value["extra_args"]), "")
     }
   }
@@ -81,7 +75,7 @@ locals {
         content      = <<-EOT
           #!/bin/bash -xe
 
-          ${try(local.node_groups[key].cloudinit_post, "")}
+          ${try(var.self_managed_node_groups[key].cloudinit_post, "")}
 
           echo "Hello, ${var.cluster_name} ${key}!"
 
@@ -91,7 +85,7 @@ locals {
   }
 
   self_managed_node_groups_tags = {
-    for key, value in local.node_groups : key => merge(
+    for key, value in var.self_managed_node_groups : key => merge(
       local.tags,
       {
         "Name"                = format("%s-%s", var.cluster_name, key)
@@ -110,7 +104,7 @@ locals {
   }
 
   self_managed_node_groups = {
-    for key, value in local.node_groups : key => {
+    for key, value in var.self_managed_node_groups : key => {
       ami_type      = try(value["ami_type"], "AL2023_x86_64_STANDARD")
       instance_type = try(value["instance_type"], "c6i.large")
 
