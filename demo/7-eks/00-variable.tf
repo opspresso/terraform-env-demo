@@ -30,7 +30,8 @@ variable "self_managed_node_groups" {
   type        = any
   default = {
     workers = {
-      group = "workers"
+      group         = "workers"
+      instance_type = "c6i.xlarge"
     }
   }
 }
