@@ -30,7 +30,6 @@ locals {
     #   type                          = "ingress"
     #   source_cluster_security_group = true
     # }
-    # istio
     ingress_cluster_15017_webhook = {
       description                   = "Cluster API to node 15017/tcp webhook"
       protocol                      = "tcp"
@@ -39,7 +38,6 @@ locals {
       type                          = "ingress"
       source_cluster_security_group = true
     }
-    # alb http
     ingress_alb_80 = {
       description              = "ALB to node 80/tcp"
       protocol                 = "tcp"
@@ -48,7 +46,6 @@ locals {
       type                     = "ingress"
       source_security_group_id = data.terraform_remote_state.alb.outputs.security_group_id
     }
-    # alb health
     ingress_alb_15021 = {
       description              = "ALB to node 15021/tcp"
       protocol                 = "tcp"
