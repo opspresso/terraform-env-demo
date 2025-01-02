@@ -103,6 +103,18 @@ locals {
     )
   }
 
+  self_managed_node_group_defaults = {
+    launch_template_version = "$Latest"
+
+    iam_role_additional_policies = {
+      "CloudWatchAgentServerPolicy" = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+    }
+
+    metadata_options = {
+      http_tokens = "optional"
+    }
+  }
+
   self_managed_node_groups = {
     for key, value in var.self_managed_node_groups : key => {
       ami_type      = try(value["ami_type"], "AL2023_x86_64_STANDARD")
@@ -112,14 +124,8 @@ locals {
       max_size     = try(value["max"], 12)
       desired_size = try(value["desired_size"], 3)
 
-      launch_template_version = try(value["launch_template_version"], "$Latest")
-
       cloudinit_pre_nodeadm  = local.self_managed_node_groups_cloudinit_pre[key]
       cloudinit_post_nodeadm = local.self_managed_node_groups_cloudinit_post[key]
-
-      metadata_options = {
-        http_tokens = try(value["http_tokens"], "optional")
-      }
 
       tags = local.self_managed_node_groups_tags[key]
     }

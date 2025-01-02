@@ -29,7 +29,8 @@ module "eks" {
 
   access_entries = local.access_entries
 
-  self_managed_node_groups = local.self_managed_node_groups
+  self_managed_node_group_defaults = local.self_managed_node_group_defaults
+  self_managed_node_groups         = local.self_managed_node_groups
 
   node_security_group_additional_rules = local.node_security_group_additional_rules
 
