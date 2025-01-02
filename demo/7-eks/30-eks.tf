@@ -11,7 +11,6 @@ module "eks" {
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnets
 
-  # ipv6
   cluster_ip_family          = var.ip_family
   create_cni_ipv6_iam_policy = var.ip_family == "ipv6" ? true : false
 
