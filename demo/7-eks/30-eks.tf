@@ -16,7 +16,7 @@ module "eks" {
 
   cluster_endpoint_public_access = true
 
-  enable_cluster_creator_admin_permissions = true
+  # enable_cluster_creator_admin_permissions = true
 
   # # EKS Auto Mode
   # cluster_compute_config = {
