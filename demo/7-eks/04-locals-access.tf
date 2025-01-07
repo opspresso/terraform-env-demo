@@ -2,7 +2,7 @@
 
 locals {
   access_sso_ids = {
-    sso_opspresso = "sso-opspresso_c9c6de2d660a92e8"
+    # sso_opspresso = "sso-opspresso_c9c6de2d660a92e8"
   }
 
   access_entries = {
