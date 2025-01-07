@@ -2,6 +2,11 @@
 
 locals {
   pod_identity_associations = {
+    "atlantis" = {
+      role_name       = "pod-role--atlantis"
+      namespace       = "addon-atlantis"
+      service_account = "atlantis"
+    }
     "aws-ebs-csi-controller" = {
       role_name       = "pod-role--aws-ebs-csi-driver"
       namespace       = "addon-aws-ebs-csi-driver"
