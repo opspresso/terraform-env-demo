@@ -3,7 +3,8 @@
 locals {
   cluster_addons = {
     coredns = {
-      most_recent = true
+      most_recent                 = true
+      resolve_conflicts_on_update = "PRESERVE"
     }
     kube-proxy = {
       most_recent = true
