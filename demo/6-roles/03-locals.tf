@@ -7,6 +7,9 @@ locals {
     "aws-ebs-csi-driver" = {
       policy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
     }
+    # "cloudwatch-agent" = {
+    #   policy = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+    # }
   }
 
   tags = {
