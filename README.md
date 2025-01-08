@@ -13,9 +13,3 @@
 # REGION = ap-northeast-2
 # BUCKET = terraform-workshop-123456789012
 ```
-
-## for containerd-config
-
-```bash
-aws ssm put-parameter --name "/k8s/common/containerd-config" --value ""  --type SecureString --overwrite | jq .
-```
