@@ -7,16 +7,11 @@ locals {
       namespace       = "addon-atlantis"
       service_account = "atlantis"
     }
-    "aws-ebs-csi-controller" = {
-      role_name       = "pod-role--aws-ebs-csi-driver"
-      namespace       = "addon-aws-ebs-csi-driver"
-      service_account = "ebs-csi-controller-sa"
-    }
-    "aws-ebs-csi-node" = {
-      role_name       = "pod-role--aws-ebs-csi-driver"
-      namespace       = "addon-aws-ebs-csi-driver"
-      service_account = "ebs-csi-node-sa"
-    }
+    # "aws-ebs-csi-controller" = {
+    #   role_name       = "pod-role--aws-ebs-csi-driver"
+    #   namespace       = "addon-aws-ebs-csi-driver"
+    #   service_account = "ebs-csi-controller-sa"
+    # }
     "aws-load-balancer-controller" = {
       role_name       = "pod-role--aws-load-balancer-controller"
       namespace       = "addon-aws-load-balancer-controller"
