@@ -42,3 +42,14 @@ resource "aws_iam_role_policy_attachment" "this" {
     aws_iam_policy.this,
   ]
 }
+
+resource "aws_iam_role_policy_attachment" "additional_policies" {
+  for_each = local.additional_policies
+
+  role       = aws_iam_role.this[each.key].name
+  policy_arn = each.value.policy
+
+  depends_on = [
+    aws_iam_role.this,
+  ]
+}
