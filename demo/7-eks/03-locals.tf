@@ -12,7 +12,7 @@ locals {
     ingress_cluster_15017_webhook = {
       description                   = "Cluster API to node 15017/tcp webhook"
       protocol                      = "tcp"
-      from_port                     = 15017
+      from_port                     = 15017 # for istio
       to_port                       = 15017
       type                          = "ingress"
       source_cluster_security_group = true
