@@ -26,14 +26,14 @@ locals {
     amazon-cloudwatch-observability = {
       most_recent = true
     }
-    aws-ebs-csi-driver = {
-      most_recent = true
-      pod_identity_association = [
-        {
-          role_arn        = "arn:aws:iam::${local.account_id}:role/pod-role--aws-ebs-csi-driver"
-          service_account = "ebs-csi-controller-sa"
-        }
-      ]
-    }
+    # aws-ebs-csi-driver = {
+    #   most_recent = true
+    #   pod_identity_association = [
+    #     {
+    #       role_arn        = "arn:aws:iam::${local.account_id}:role/pod-role--aws-ebs-csi-driver"
+    #       service_account = "ebs-csi-controller-sa"
+    #     }
+    #   ]
+    # }
   }
 }
