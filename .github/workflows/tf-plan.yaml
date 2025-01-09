@@ -1,4 +1,4 @@
-name: tf-plan-cron
+name: tf-plan
 
 on:
   schedule:
@@ -8,16 +8,16 @@ on:
       - main
       - master
     paths:
-      - .github/workflows/tf-plan-cron.yaml
+      - .github/workflows/tf-plan.yaml
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # runs-on: [ self-hosted, linux, x64 ]
 
-    # permissions:
-    #   id-token: write
-    #   contents: read
+    permissions:
+      id-token: write
+      contents: read
 
     strategy:
       fail-fast: false
@@ -33,29 +33,29 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Linux
+      - name: Setup Linux 🐧
         run: |
           command -v unzip >/dev/null || apt install -y unzip
 
-      - name: Setup Node
+      - name: Setup Node 📝
         uses: actions/setup-node@v4
         with:
-          node-version: "20.x" # node version
+          node-version: 20 # node version
+          cache: "npm"
 
-      - name: Setup Terraform
+      - name: Setup Terraform 📝
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.5.7" # terraform version
+          terraform_version: "1.7.5" # terraform version
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials 🔑
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ap-northeast-2
-          # role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/k8s-readonly
-          # role-session-name: github-action-k8s-readonly
-          # role-skip-session-tagging: true
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/k8s-readonly
+          role-session-name: github-actions-ci-bot
 
-      - name: Initialize Terraform
+      - name: Initialize Terraform 📝
         env:
           GIT_SSH_COMMAND: "echo '${{ secrets.GH_SSH_KEY }}' > id_rsa
             && ssh-keyscan github.com > known_hosts
@@ -66,7 +66,7 @@ jobs:
           cd ${{ matrix.path }}
           terraform init -input=false
 
-      - name: Plan Terraform
+      - name: Plan Terraform 📝
         id: plan
         continue-on-error: true
         run: |
@@ -74,14 +74,14 @@ jobs:
           cd ${{ matrix.path }}
           terraform plan -input=false -no-color -lock=false
 
-      - name: Reformat Plan
+      - name: Reformat Plan 📝
         run: |
           cat <<EOF > plan.txt
           ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
           EOF
           sed -E 's/^([[:space:]]+)([-+])/\2\1/g' plan.txt
 
-      - name: Make Message
+      - name: Make Message 📝
         id: message
         continue-on-error: true
         run: |
@@ -101,7 +101,7 @@ jobs:
           }
           EOF
 
-      - name: Post Slack
+      - name: Post Slack 📩
         if: steps.message.outcome == 'success'
         uses: opspresso/action-slack@master
         env:
