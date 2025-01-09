@@ -41,7 +41,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20 # node version
-          cache: "npm"
 
       - name: Setup Terraform 📝
         uses: hashicorp/setup-terraform@v3
