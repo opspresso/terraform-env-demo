@@ -2,13 +2,18 @@ name: tf-plan
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 * * * *"
   push:
     branches:
       - main
       - master
     paths:
       - .github/workflows/tf-plan.yaml
+
+env:
+  AWS_ACCOUNT_ID: "396608815058"
+  AWS_REGION: "ap-northeast-2"
+  AWS_ROLE_NAME: "terraform-env-demo"
 
 jobs:
   build:
@@ -50,9 +55,9 @@ jobs:
       - name: Configure AWS Credentials 🔑
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ap-northeast-2
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/k8s-readonly
+          aws-region: ${{ env.AWS_REGION }}
           role-session-name: github-actions-ci-bot
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.AWS_ROLE_NAME }}
 
       - name: Initialize Terraform 📝
         env:
