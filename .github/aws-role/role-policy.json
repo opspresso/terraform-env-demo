@@ -4,9 +4,11 @@
     {
       "Effect": "Allow",
       "Action": [
-        "ecr:GetAuthorizationToken"
+        "s3:*"
       ],
-      "Resource": "*"
+      "Resource": [
+        "arn:aws:s3:::terraform-workshop-*"
+      ]
     }
   ]
 }
