@@ -14,22 +14,6 @@ locals {
     ]
   }
 
-  self_managed_node_groups_cloudinit_pre = {
-    for key, value in var.self_managed_node_groups : key => [
-      {
-        content_type = "text/x-shellscript"
-        content      = <<-EOT
-          #!/bin/bash -xe
-
-          echo "TMOUT=600" >> /etc/profile
-
-          ${try(value["cloudinit_pre"], "")}
-
-        EOT
-      },
-    ]
-  }
-
   self_managed_node_groups_labels = {
     for key, value in var.self_managed_node_groups : key => {
       "eks.amazonaws.com/nodegroup" = key
@@ -47,6 +31,24 @@ locals {
     for key, value in var.self_managed_node_groups : key => {
       "args" = try(format("- %s", value["extra_args"]), "")
     }
+  }
+
+  self_managed_node_groups_cloudinit_pre = {
+    for key, value in var.self_managed_node_groups : key => [
+      {
+        content_type = "text/x-shellscript"
+        content      = <<-EOT
+          #!/bin/bash -xe
+
+          echo "Hello, ${var.cluster_name} ${key}!"
+
+          echo "TMOUT=600" >> /etc/profile
+
+          ${try(value["cloudinit_pre"], "")}
+
+        EOT
+      },
+    ]
   }
 
   self_managed_node_groups_cloudinit_post = {
@@ -74,7 +76,7 @@ locals {
 
           ${try(var.self_managed_node_groups[key].cloudinit_post, "")}
 
-          echo "Hello, ${var.cluster_name} ${key}!"
+          echo "Done, ${var.cluster_name} ${key}!"
 
         EOT
       },

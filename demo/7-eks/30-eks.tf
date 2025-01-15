@@ -24,9 +24,12 @@ module "eks" {
   #   node_pools = ["general-purpose"]
   # }
 
+  access_entries = local.access_entries
+
   cluster_addons = local.cluster_addons
 
-  access_entries = local.access_entries
+  eks_managed_node_group_defaults = local.eks_managed_node_group_defaults
+  eks_managed_node_groups         = local.eks_managed_node_groups
 
   self_managed_node_group_defaults = local.self_managed_node_group_defaults
   self_managed_node_groups         = local.self_managed_node_groups
