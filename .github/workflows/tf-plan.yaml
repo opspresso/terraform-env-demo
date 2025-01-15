@@ -30,6 +30,7 @@ jobs:
         path:
           - demo/2-vpc
           - demo/4-alb
+          - demo/6-role
           - demo/7-eks
 
     steps:
