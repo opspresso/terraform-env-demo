@@ -112,7 +112,8 @@ locals {
     }
 
     metadata_options = {
-      http_tokens = "optional"
+      http_tokens                 = "required" # enforce IMDSv2
+      http_put_response_hop_limit = 1          # block pod access to node instance credentials
     }
   }
 

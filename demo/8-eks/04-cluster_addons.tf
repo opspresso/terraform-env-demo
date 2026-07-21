@@ -1,15 +1,19 @@
 # locals cluster_addons
 
 locals {
+  # Pin addon versions so unrelated applies do not trigger cluster-wide addon upgrades.
+  # Latest versions for each kubernetes_version:
+  #   aws eks describe-addon-versions --kubernetes-version <version> --addon-name <addon> \
+  #     --query 'addons[0].addonVersions[0].addonVersion'
   cluster_addons = {
     coredns = {
-      most_recent = true
+      addon_version = "v1.14.3-eksbuild.3"
     }
     kube-proxy = {
-      most_recent = true
+      addon_version = "v1.36.0-eksbuild.13"
     }
     vpc-cni = {
-      most_recent    = true
+      addon_version  = "v1.22.4-eksbuild.3"
       before_compute = true
       configuration_values = jsonencode({
         env = {
@@ -20,7 +24,7 @@ locals {
       })
     }
     eks-pod-identity-agent = {
-      most_recent = true
+      addon_version = "v1.3.10-eksbuild.3"
     }
     # amazon-cloudwatch-observability = {
     #   most_recent = true

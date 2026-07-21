@@ -4,7 +4,7 @@ module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
   version = "~> 21.0"
 
-  cluster_name = var.name
+  cluster_name = module.eks.cluster_name
 
   # Attach additional IAM policies to the Karpenter node IAM role
   node_iam_role_additional_policies = {
