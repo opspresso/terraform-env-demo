@@ -2,11 +2,11 @@
 
 locals {
   pod_identity_associations = {
-    # "atlantis" = {
-    #   role_name       = "pod-role--atlantis"
-    #   namespace       = "addon-atlantis"
-    #   service_account = "atlantis"
-    # }
+    "atlantis" = {
+      role_name       = "pod-role--atlantis"
+      namespace       = "addon-atlantis"
+      service_account = "atlantis"
+    }
     "aws-ebs-csi-controller" = {
       role_name       = "pod-role--aws-ebs-csi-driver"
       namespace       = "addon-aws-ebs-csi-driver"
@@ -37,16 +37,6 @@ locals {
       namespace       = "addon-external-secrets"
       service_account = "external-secrets"
     }
-    # "karpenter" = {
-    #   role_name       = "pod-role--karpenter"
-    #   namespace       = "addon-karpenter"
-    #   service_account = "karpenter"
-    # }
-    # "kubecost" = {
-    #   role_name       = "pod-role--kubecost"
-    #   namespace       = "addon-kubecost"
-    #   service_account = "kubecost"
-    # }
   }
 }
 
