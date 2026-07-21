@@ -16,7 +16,7 @@ resource "aws_eks_pod_identity_association" "this" {
   tags = merge(
     local.tags,
     {
-      "Name" = format("%s--%s--%s", var.cluster_name, try(each.value["namespace"], each.key), try(each.value["service_account"], each.key))
+      "Name" = format("%s--%s--%s", var.name, try(each.value["namespace"], each.key), try(each.value["service_account"], each.key))
     },
   )
 }

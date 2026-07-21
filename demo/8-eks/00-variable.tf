@@ -5,14 +5,14 @@ variable "region" {
   default     = "ap-northeast-2"
 }
 
-variable "cluster_name" {
+variable "name" {
   description = "EKS 클러스터 이름을 입력합니다."
   default     = "eks-demo"
 }
 
-variable "cluster_version" {
+variable "kubernetes_version" {
   description = "쿠버네티스 버전을 입력합니다."
-  default     = "1.31"
+  default     = "1.35"
 }
 
 variable "ip_family" {

@@ -38,8 +38,8 @@ locals {
 
 locals {
   tags = {
-    Name        = var.cluster_name
-    ClusterName = var.cluster_name
+    Name        = var.name
+    ClusterName = var.name
     Environment = "demo"
     ManagedBy   = "Terraform"
     Project     = "terraform-env-demo/demo/8-eks"

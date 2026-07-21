@@ -1,17 +1,17 @@
 # locals self_managed_node_groups
 
 locals {
-  self_managed_node_groups_bolck = {
-    for key, value in var.self_managed_node_groups : key => [
-      {
+  self_managed_node_groups_block = {
+    for key, value in var.self_managed_node_groups : key => {
+      root = {
         device_name = try(value["device_name"], "/dev/xvda")
         ebs = {
-          delete_on_termination = try(value["delete_on_termination"], "true")
+          delete_on_termination = try(value["delete_on_termination"], true)
           volume_size           = try(value["volume_size"], 100)
           volume_type           = try(value["volume_type"], "gp3")
         }
-      },
-    ]
+      }
+    }
   }
 
   self_managed_node_groups_labels = {
@@ -40,7 +40,7 @@ locals {
         content      = <<-EOT
           #!/bin/bash -xe
 
-          echo "Hello, ${var.cluster_name} ${key}!"
+          echo "Hello, ${var.name} ${key}!"
 
           echo "TMOUT=600" >> /etc/profile
 
@@ -76,7 +76,7 @@ locals {
 
           ${try(var.self_managed_node_groups[key].cloudinit_post, "")}
 
-          echo "Done, ${var.cluster_name} ${key}!"
+          echo "Done, ${var.name} ${key}!"
 
         EOT
       },
@@ -87,16 +87,16 @@ locals {
     for key, value in var.self_managed_node_groups : key => merge(
       local.tags,
       {
-        "Name"                = format("%s-%s", var.cluster_name, key)
-        "KubernetesNodeGroup" = format("%s-%s", var.cluster_name, value.group)
+        "Name"                = format("%s-%s", var.name, key)
+        "KubernetesNodeGroup" = format("%s-%s", var.name, value.group)
       },
       try(value["enable_autoscale"], true) ? {
-        "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
-        "k8s.io/cluster-autoscaler/enabled"             = "true"
+        "k8s.io/cluster-autoscaler/${var.name}" = "owned"
+        "k8s.io/cluster-autoscaler/enabled"     = "true"
       } : {},
       try(value["enable_event"], true) ? {
-        "aws-node-termination-handler/${var.cluster_name}" = "owned"
-        "aws-node-termination-handler/managed"             = "true"
+        "aws-node-termination-handler/${var.name}" = "owned"
+        "aws-node-termination-handler/managed"     = "true"
       } : {},
       try(value["tags"], {}),
     )
@@ -116,18 +116,24 @@ locals {
     }
   }
 
+  # v21 removed `self_managed_node_group_defaults` — defaults are merged here instead
   self_managed_node_groups = {
-    for key, value in var.self_managed_node_groups : key => {
-      instance_type = try(value["instance_type"], "c6i.large")
+    for key, value in var.self_managed_node_groups : key => merge(
+      local.self_managed_node_group_defaults,
+      {
+        instance_type = try(value["instance_type"], "c6i.large")
 
-      min_size     = try(value["min"], 3)
-      max_size     = try(value["max"], 12)
-      desired_size = try(value["desired_size"], 3)
+        min_size     = try(value["min"], 3)
+        max_size     = try(value["max"], 12)
+        desired_size = try(value["desired_size"], 3)
 
-      cloudinit_pre_nodeadm  = local.self_managed_node_groups_cloudinit_pre[key]
-      cloudinit_post_nodeadm = local.self_managed_node_groups_cloudinit_post[key]
+        block_device_mappings = local.self_managed_node_groups_block[key]
 
-      tags = local.self_managed_node_groups_tags[key]
-    }
+        cloudinit_pre_nodeadm  = local.self_managed_node_groups_cloudinit_pre[key]
+        cloudinit_post_nodeadm = local.self_managed_node_groups_cloudinit_post[key]
+
+        tags = local.self_managed_node_groups_tags[key]
+      }
+    )
   }
 }

@@ -3,36 +3,35 @@
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.31"
+  version = "~> 21.0"
 
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
+  name = var.name
+
+  kubernetes_version = var.kubernetes_version
 
   vpc_id     = local.vpc_id
   subnet_ids = local.private_subnets
 
-  cluster_ip_family          = var.ip_family
+  ip_family                  = var.ip_family
   create_cni_ipv6_iam_policy = var.ip_family == "ipv6" ? true : false
 
-  cluster_endpoint_public_access = true
+  endpoint_public_access = true
 
   enable_cluster_creator_admin_permissions = true
 
   # # EKS Auto Mode
-  # cluster_compute_config = {
+  # compute_config = {
   #   enabled    = true
   #   node_pools = ["general-purpose"]
   # }
 
   access_entries = local.access_entries
 
-  cluster_addons = local.cluster_addons
+  addons = local.cluster_addons
 
-  eks_managed_node_group_defaults = local.eks_managed_node_group_defaults
-  eks_managed_node_groups         = local.eks_managed_node_groups
+  eks_managed_node_groups = local.eks_managed_node_groups
 
-  self_managed_node_group_defaults = local.self_managed_node_group_defaults
-  self_managed_node_groups         = local.self_managed_node_groups
+  self_managed_node_groups = local.self_managed_node_groups
 
   node_security_group_additional_rules = local.node_security_group_additional_rules
 
