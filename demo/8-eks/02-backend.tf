@@ -6,7 +6,7 @@ terraform {
   backend "s3" {
     region  = "ap-northeast-2"
     bucket  = "terraform-workshop-396608815058"
-    key     = "backend/demo/alb-demo/terraform.tfstate"
+    key     = "backend/demo/eks-demo/terraform.tfstate" # for eks-demo
     encrypt = true
   }
 
@@ -14,6 +14,10 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "6.55.0" # terraform aws provider version
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "3.2.1" # terraform kubernetes provider version
     }
   }
 }

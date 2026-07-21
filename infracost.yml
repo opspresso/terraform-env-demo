@@ -1,9 +1,0 @@
-version: 0.1
-
-projects:
-  - path: 2-vpc
-  - path: 3-atlantis
-  - path: 4-alb
-  - path: 5-vpn
-  - path: 6-efs
-  - path: 7-eks
