@@ -24,14 +24,3 @@ variable "key_name" {
   description = "키 이름을 입력합니다."
   default     = "bruce-seoul"
 }
-
-variable "self_managed_node_groups" {
-  description = "self managed node groups"
-  type        = any
-  default = {
-    workers = {
-      group         = "workers"
-      instance_type = "c6i.xlarge"
-    }
-  }
-}

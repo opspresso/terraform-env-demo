@@ -16,6 +16,11 @@ resource "aws_lb_target_group" "public_http_0" {
   }
 
   deregistration_delay = 5
+
+  # required for EKS Auto Mode TargetGroupBinding (eks.amazonaws.com/v1)
+  tags = {
+    "eks:eks-cluster-name" = "eks-demo"
+  }
 }
 
 resource "aws_lb_target_group" "public_http_a" {
@@ -34,6 +39,11 @@ resource "aws_lb_target_group" "public_http_a" {
   }
 
   deregistration_delay = 5
+
+  # required for EKS Auto Mode TargetGroupBinding (eks.amazonaws.com/v1)
+  tags = {
+    "eks:eks-cluster-name" = "eks-demo-a"
+  }
 }
 
 resource "aws_lb_target_group" "public_http_b" {
@@ -52,6 +62,11 @@ resource "aws_lb_target_group" "public_http_b" {
   }
 
   deregistration_delay = 5
+
+  # required for EKS Auto Mode TargetGroupBinding (eks.amazonaws.com/v1)
+  tags = {
+    "eks:eks-cluster-name" = "eks-demo-b"
+  }
 }
 
 # output

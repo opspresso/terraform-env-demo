@@ -7,26 +7,6 @@ locals {
       namespace       = "addon-atlantis"
       service_account = "atlantis"
     }
-    "aws-ebs-csi-controller" = {
-      role_name       = "pod-role--aws-ebs-csi-driver"
-      namespace       = "addon-aws-ebs-csi-driver"
-      service_account = "ebs-csi-controller-sa"
-    }
-    "aws-load-balancer-controller" = {
-      role_name       = "pod-role--aws-load-balancer-controller"
-      namespace       = "addon-aws-load-balancer-controller"
-      service_account = "aws-load-balancer-controller"
-    }
-    "aws-node-termination-handler" = {
-      role_name       = "pod-role--aws-node-termination-handler"
-      namespace       = "addon-aws-node-termination-handler"
-      service_account = "aws-node-termination-handler"
-    }
-    "cluster-autoscaler" = {
-      role_name       = "pod-role--cluster-autoscaler"
-      namespace       = "addon-cluster-autoscaler"
-      service_account = "cluster-autoscaler"
-    }
     "external-dns" = {
       role_name       = "pod-role--external-dns"
       namespace       = "addon-external-dns"

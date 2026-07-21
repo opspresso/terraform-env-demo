@@ -22,18 +22,14 @@ module "eks" {
   # EKS Auto Mode
   compute_config = {
     enabled    = true
-    node_pools = ["general-purpose"]
+    node_pools = ["general-purpose", "system"]
   }
 
   access_entries = local.access_entries
 
   addons = local.cluster_addons
 
-  eks_managed_node_groups = local.eks_managed_node_groups
-
-  self_managed_node_groups = local.self_managed_node_groups
-
-  node_security_group_additional_rules = local.node_security_group_additional_rules
+  security_group_additional_rules = local.security_group_additional_rules
 
   tags = local.tags
 }

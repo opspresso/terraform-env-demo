@@ -8,15 +8,8 @@ locals {
   vpc_id          = data.terraform_remote_state.vpc.outputs.vpc_id
   private_subnets = data.terraform_remote_state.vpc.outputs.private_subnets
 
-  node_security_group_additional_rules = {
-    ingress_cluster_15017_webhook = {
-      description                   = "Cluster API to node 15017/tcp webhook"
-      protocol                      = "tcp"
-      from_port                     = 15017 # for istio
-      to_port                       = 15017
-      type                          = "ingress"
-      source_cluster_security_group = true
-    }
+  # EKS Auto Mode nodes use the cluster primary security group
+  security_group_additional_rules = {
     ingress_alb_80 = {
       description              = "ALB to node 80/tcp"
       protocol                 = "tcp"
