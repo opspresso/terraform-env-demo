@@ -19,11 +19,11 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
-  # # EKS Auto Mode
-  # compute_config = {
-  #   enabled    = true
-  #   node_pools = ["general-purpose"]
-  # }
+  # EKS Auto Mode
+  compute_config = {
+    enabled    = true
+    node_pools = ["general-purpose"]
+  }
 
   access_entries = local.access_entries
 
