@@ -29,7 +29,5 @@ module "eks" {
 
   addons = local.cluster_addons
 
-  security_group_additional_rules = local.security_group_additional_rules
-
   tags = local.tags
 }
