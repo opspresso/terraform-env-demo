@@ -4,6 +4,10 @@ locals {
   # 애드온별 네임스페이스/서비스어카운트. 키는 role 키(policies/ 파일명 또는
   # additional_policies 키)와 일치해야 하며, 어긋나면 plan 단계에서 실패합니다.
   pod_identity_targets = {
+    "agent-studio" = {
+      namespace       = "agent-studio"
+      service_account = "agent-studio"
+    }
     "atlantis" = {
       namespace       = "addon-atlantis"
       service_account = "atlantis"
