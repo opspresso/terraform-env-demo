@@ -6,7 +6,7 @@ resource "aws_lb" "internal" {
   internal           = true
   load_balancer_type = "application"
   subnets            = local.private_subnets
-  security_groups    = local.security_groups
+  security_groups    = local.internal_security_groups
 
   enable_cross_zone_load_balancing = true
   enable_deletion_protection       = false
@@ -18,12 +18,9 @@ resource "aws_lb" "internal" {
   #   enabled = true
   # }
 
-  tags = merge(
-    local.tags,
-    {
-      "Name" = format("%s-in", var.name)
-    },
-  )
+  tags = {
+    Name = format("%s-in", var.name)
+  }
 }
 
 # output

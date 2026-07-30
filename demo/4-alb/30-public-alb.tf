@@ -6,7 +6,7 @@ resource "aws_lb" "public" {
   internal           = false
   load_balancer_type = "application"
   subnets            = local.public_subnets
-  security_groups    = local.security_groups
+  security_groups    = local.public_security_groups
 
   enable_cross_zone_load_balancing = true
   enable_deletion_protection       = false
@@ -18,7 +18,9 @@ resource "aws_lb" "public" {
   #   enabled = true
   # }
 
-  tags = local.tags
+  tags = {
+    Name = var.name
+  }
 }
 
 # output

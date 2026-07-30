@@ -1,14 +1,17 @@
 # locals
 
 locals {
+  # HTTPS 리스너의 기본(default) 인증서로 쓸 도메인. 나머지는 SNI 로 추가됩니다.
+  primary_domain = var.domains[0]
+
   vpc_id          = data.terraform_remote_state.vpc.outputs.vpc_id
+  vpc_cidr        = data.terraform_remote_state.vpc.outputs.vpc_cidr_block
   public_subnets  = data.terraform_remote_state.vpc.outputs.public_subnets
   private_subnets = data.terraform_remote_state.vpc.outputs.private_subnets
 
-  security_groups = [
-    data.terraform_remote_state.vpc.outputs.default_security_group_id,
-    aws_security_group.public.id,
-  ]
+  # VPC 기본 SG 는 vpc 모듈이 규칙을 모두 제거한 상태로 관리하므로 붙여도 효과가 없습니다.
+  public_security_groups   = [aws_security_group.public.id]
+  internal_security_groups = [aws_security_group.internal.id]
 
   tgs = [
     {

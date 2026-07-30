@@ -15,10 +15,6 @@ terraform {
       source  = "hashicorp/aws"
       version = "6.55.0" # terraform aws provider version
     }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "3.2.1" # terraform kubernetes provider version
-    }
   }
 }
 
@@ -26,4 +22,8 @@ terraform {
 
 provider "aws" {
   region = var.region
+
+  default_tags {
+    tags = local.tags
+  }
 }

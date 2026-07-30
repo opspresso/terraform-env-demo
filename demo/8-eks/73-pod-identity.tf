@@ -13,10 +13,7 @@ resource "aws_eks_pod_identity_association" "this" {
   service_account = try(each.value["service_account"], each.key)
   role_arn        = try(each.value["role_arn"], format("arn:aws:iam::%s:role/%s", local.account_id, try(each.value["role_name"], format("pod-role--%s", each.key))))
 
-  tags = merge(
-    local.tags,
-    {
-      "Name" = format("%s--%s--%s", var.name, try(each.value["namespace"], each.key), try(each.value["service_account"], each.key))
-    },
-  )
+  tags = {
+    Name = format("%s--%s--%s", var.name, try(each.value["namespace"], each.key), try(each.value["service_account"], each.key))
+  }
 }
