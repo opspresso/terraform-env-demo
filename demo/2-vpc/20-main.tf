@@ -8,15 +8,11 @@ module "vpc" {
   name = var.name
   cidr = var.cidr
 
-  azs = [
-    format("%sa", var.region),
-    format("%sb", var.region),
-    format("%sc", var.region),
-  ]
+  azs = local.azs
 
-  public_subnets  = var.public_subnets
-  private_subnets = var.private_subnets
-  intra_subnets   = var.intra_subnets
+  public_subnets  = local.public_subnets
+  private_subnets = local.private_subnets
+  intra_subnets   = local.intra_subnets
 
   enable_nat_gateway = var.enable_nat_gateway
   single_nat_gateway = var.single_nat_gateway
@@ -24,17 +20,17 @@ module "vpc" {
   enable_ipv6 = var.enable_ipv6
 
   public_subnet_ipv6_prefixes = [
-    for i in range(length(var.public_subnets)) : i * 16
+    for i in range(length(local.public_subnets)) : i * 16
   ]
   public_subnet_assign_ipv6_address_on_creation = var.enable_ipv6
 
   private_subnet_ipv6_prefixes = [
-    for i in range(length(var.private_subnets)) : i * 16
+    for i in range(length(local.private_subnets)) : i * 16
   ]
   private_subnet_assign_ipv6_address_on_creation = var.enable_ipv6
 
   intra_subnet_ipv6_prefixes = [
-    for i in range(length(var.intra_subnets)) : i * 16
+    for i in range(length(local.intra_subnets)) : i * 16
   ]
   intra_subnet_assign_ipv6_address_on_creation = var.enable_ipv6
 
