@@ -48,6 +48,9 @@ _replace() {
 }
 
 _find_replace() {
+  _command "find . -name \"$2\" -exec sed -e \"$1\""
+  _result "$(find . -name "$2" | wc -l | xargs) files matched \"$2\""
+
   if [ "${OS_NAME}" == "darwin" ]; then
     find . -name "$2" -exec sed -i "" -e "$1" {} \;
   else
@@ -57,9 +60,12 @@ _find_replace() {
 
 _main() {
   # variable
+  _command "aws sts get-caller-identity"
   export ACCOUNT_ID=$(aws sts get-caller-identity | jq .Account -r)
 
+  _command "aws configure get region"
   export REGION="$(aws configure get region)"
+
   export BUCKET="terraform-workshop-${1:-${ACCOUNT_ID}}"
 
   export LOCK_TABLE="terraform-resource-lock"
@@ -68,15 +74,20 @@ _main() {
 
   _result "REGION = ${REGION}"
   _result "BUCKET = ${BUCKET}"
+  _result "LOCK_TABLE = ${LOCK_TABLE}"
 
   # create s3 bucket
+  _command "aws s3 ls | grep ${BUCKET}"
   COUNT=$(aws s3 ls | grep ${BUCKET} | wc -l | xargs)
   if [ "x${COUNT}" == "x0" ]; then
     _command "aws s3 mb s3://${BUCKET}"
     aws s3 mb s3://${BUCKET} --region ${REGION}
+  else
+    _warn "s3 bucket ${BUCKET} already exists, skipped"
   fi
 
   # create dynamodb table
+  _command "aws dynamodb list-tables | grep ${LOCK_TABLE}"
   COUNT=$(aws dynamodb list-tables | jq -r .TableNames | grep ${LOCK_TABLE} | wc -l | xargs)
   if [ "x${COUNT}" == "x0" ]; then
     _command "aws dynamodb create-table --table-name ${LOCK_TABLE}"
@@ -86,12 +97,16 @@ _main() {
       --key-schema AttributeName=LockID,KeyType=HASH \
       --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
       --region ${REGION} | jq .
+  else
+    _warn "dynamodb table ${LOCK_TABLE} already exists, skipped"
   fi
 
   # replace
   _find_replace "s/terraform-workshop-[[:alnum:]]*/${BUCKET}/g" "*.tf"
 
-  _success
+  _result "$(grep -rl "${BUCKET}" --include='*.tf' . 2>/dev/null | wc -l | xargs) *.tf files reference ${BUCKET}"
+
+  _success "done"
 }
 
 _main
