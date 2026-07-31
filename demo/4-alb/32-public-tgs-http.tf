@@ -1,9 +1,9 @@
 # aws_lb_target_group
 
 resource "aws_lb_target_group" "public_http_0" {
-  name             = format("%s-h1-0", var.name)
-  port             = 80
-  protocol         = "HTTP"
+  name     = format("%s-h1-0", var.name)
+  port     = 80
+  protocol = "HTTP"
   # HTTP1 accepts both HTTP/1.1 and HTTP/2 clients; HTTP2 rejects HTTP/1.1 with
   # a 464 before the request ever reaches the mesh. That broke every inbound
   # webhook — Slack events, trigger deliveries, A2A — while browsers kept
@@ -36,9 +36,9 @@ resource "aws_lb_target_group" "public_http_0" {
 }
 
 resource "aws_lb_target_group" "public_http_a" {
-  name             = format("%s-h1-a", var.name)
-  port             = 80
-  protocol         = "HTTP"
+  name     = format("%s-h1-a", var.name)
+  port     = 80
+  protocol = "HTTP"
   # HTTP1 accepts both HTTP/1.1 and HTTP/2 clients; HTTP2 rejects HTTP/1.1 with
   # a 464 before the request ever reaches the mesh. That broke every inbound
   # webhook — Slack events, trigger deliveries, A2A — while browsers kept
@@ -71,9 +71,9 @@ resource "aws_lb_target_group" "public_http_a" {
 }
 
 resource "aws_lb_target_group" "public_http_b" {
-  name             = format("%s-h1-b", var.name)
-  port             = 80
-  protocol         = "HTTP"
+  name     = format("%s-h1-b", var.name)
+  port     = 80
+  protocol = "HTTP"
   # HTTP1 accepts both HTTP/1.1 and HTTP/2 clients; HTTP2 rejects HTTP/1.1 with
   # a 464 before the request ever reaches the mesh. That broke every inbound
   # webhook — Slack events, trigger deliveries, A2A — while browsers kept

@@ -130,7 +130,7 @@ resource "aws_lb_listener_rule" "public_https--b" {
 # acm
 
 data "aws_acm_certificate" "public_https" {
-  for_each = toset(var.domains)
+  for_each = toset(var.public_domains)
 
   domain      = each.value
   types       = ["AMAZON_ISSUED"]
@@ -139,7 +139,7 @@ data "aws_acm_certificate" "public_https" {
 
 # 기본 인증서(local.primary_domain)를 제외한 나머지는 SNI 추가 인증서로 붙입니다.
 resource "aws_lb_listener_certificate" "public_https" {
-  for_each = toset([for domain in var.domains : domain if domain != local.primary_domain])
+  for_each = toset([for domain in var.public_domains : domain if domain != local.primary_domain])
 
   listener_arn    = aws_lb_listener.public_https.arn
   certificate_arn = data.aws_acm_certificate.public_https[each.value].arn

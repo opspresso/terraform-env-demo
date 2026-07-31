@@ -5,7 +5,7 @@ data "aws_route53_zone" "this" {
 }
 
 resource "aws_route53_record" "public" {
-  for_each = toset(var.domains)
+  for_each = toset(var.public_domains)
 
   zone_id = data.aws_route53_zone.this.zone_id
   name    = format("*.%s", each.value)
@@ -19,10 +19,10 @@ resource "aws_route53_record" "public" {
 }
 
 resource "aws_route53_record" "internal" {
-  for_each = toset(var.domains)
+  for_each = toset(var.internal_domains)
 
   zone_id = data.aws_route53_zone.this.zone_id
-  name    = format("*.in.%s", each.value)
+  name    = format("*.%s", each.value)
   type    = "A"
 
   alias {

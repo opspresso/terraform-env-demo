@@ -15,11 +15,20 @@ variable "root_domain" {
   default     = "opspresso.com"
 }
 
-variable "domains" {
+variable "public_domains" {
   description = "SUB 도메인을 입력합니다."
   default = [
     "demo.opspresso.com",
     "demo-a.opspresso.com",
     "demo-b.opspresso.com",
+  ]
+}
+
+variable "internal_domains" {
+  description = "SUB 도메인을 입력합니다."
+  default = [
+    "demo-in.opspresso.com",
+    "demo-in-a.opspresso.com",
+    "demo-in-b.opspresso.com",
   ]
 }
