@@ -20,6 +20,11 @@ locals {
       namespace       = "addon-external-secrets"
       service_account = "external-secrets"
     }
+    # 서비스어카운트 이름은 agent-mcps 차트의 fullnameOverride 에서 나옵니다.
+    "mcp-memory" = {
+      namespace       = "agent-mcps"
+      service_account = "mcp-memory"
+    }
   }
 
   # role_name/role_arn 을 문자열로 짜맞추지 않고 실제 리소스에서 가져옵니다.
