@@ -1,10 +1,15 @@
 # aws_lb_target_group
 
 resource "aws_lb_target_group" "public_http_0" {
-  name             = format("%s-http-0", var.name)
+  name             = format("%s-h1-0", var.name)
   port             = 80
   protocol         = "HTTP"
-  protocol_version = "HTTP2" # [GRPC, HTTP1, HTTP2]
+  # HTTP1 accepts both HTTP/1.1 and HTTP/2 clients; HTTP2 rejects HTTP/1.1 with
+  # a 464 before the request ever reaches the mesh. That broke every inbound
+  # webhook — Slack events, trigger deliveries, A2A — while browsers kept
+  # working over h2, so it looked healthy. gRPC needs h2 end to end and has its
+  # own target group below.
+  protocol_version = "HTTP1" # [GRPC, HTTP1, HTTP2]
   slow_start       = 30
   target_type      = "ip"
   vpc_id           = local.vpc_id
@@ -16,6 +21,13 @@ resource "aws_lb_target_group" "public_http_0" {
   }
 
   deregistration_delay = 5
+
+  # The listener points here, so the replacement has to overlap: create the new
+  # group, move the listener, then drop the old one. Destroying first fails with
+  # ResourceInUse and leaves the change half-applied.
+  lifecycle {
+    create_before_destroy = true
+  }
 
   # required for EKS Auto Mode TargetGroupBinding (eks.amazonaws.com/v1)
   tags = {
@@ -24,10 +36,15 @@ resource "aws_lb_target_group" "public_http_0" {
 }
 
 resource "aws_lb_target_group" "public_http_a" {
-  name             = format("%s-http-a", var.name)
+  name             = format("%s-h1-a", var.name)
   port             = 80
   protocol         = "HTTP"
-  protocol_version = "HTTP2" # [GRPC, HTTP1, HTTP2]
+  # HTTP1 accepts both HTTP/1.1 and HTTP/2 clients; HTTP2 rejects HTTP/1.1 with
+  # a 464 before the request ever reaches the mesh. That broke every inbound
+  # webhook — Slack events, trigger deliveries, A2A — while browsers kept
+  # working over h2, so it looked healthy. gRPC needs h2 end to end and has its
+  # own target group below.
+  protocol_version = "HTTP1" # [GRPC, HTTP1, HTTP2]
   slow_start       = 30
   target_type      = "ip"
   vpc_id           = local.vpc_id
@@ -39,6 +56,13 @@ resource "aws_lb_target_group" "public_http_a" {
   }
 
   deregistration_delay = 5
+
+  # The listener points here, so the replacement has to overlap: create the new
+  # group, move the listener, then drop the old one. Destroying first fails with
+  # ResourceInUse and leaves the change half-applied.
+  lifecycle {
+    create_before_destroy = true
+  }
 
   # required for EKS Auto Mode TargetGroupBinding (eks.amazonaws.com/v1)
   tags = {
@@ -47,10 +71,15 @@ resource "aws_lb_target_group" "public_http_a" {
 }
 
 resource "aws_lb_target_group" "public_http_b" {
-  name             = format("%s-http-b", var.name)
+  name             = format("%s-h1-b", var.name)
   port             = 80
   protocol         = "HTTP"
-  protocol_version = "HTTP2" # [GRPC, HTTP1, HTTP2]
+  # HTTP1 accepts both HTTP/1.1 and HTTP/2 clients; HTTP2 rejects HTTP/1.1 with
+  # a 464 before the request ever reaches the mesh. That broke every inbound
+  # webhook — Slack events, trigger deliveries, A2A — while browsers kept
+  # working over h2, so it looked healthy. gRPC needs h2 end to end and has its
+  # own target group below.
+  protocol_version = "HTTP1" # [GRPC, HTTP1, HTTP2]
   slow_start       = 30
   target_type      = "ip"
   vpc_id           = local.vpc_id
@@ -62,6 +91,13 @@ resource "aws_lb_target_group" "public_http_b" {
   }
 
   deregistration_delay = 5
+
+  # The listener points here, so the replacement has to overlap: create the new
+  # group, move the listener, then drop the old one. Destroying first fails with
+  # ResourceInUse and leaves the change half-applied.
+  lifecycle {
+    create_before_destroy = true
+  }
 
   # required for EKS Auto Mode TargetGroupBinding (eks.amazonaws.com/v1)
   tags = {
