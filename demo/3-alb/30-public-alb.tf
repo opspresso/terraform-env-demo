@@ -12,6 +12,11 @@ resource "aws_lb" "public" {
   enable_deletion_protection       = false
   enable_http2                     = true
 
+  # SSE runs stream keepalives every 15s, but non-streaming runs (image predict,
+  # A2A message/send) send nothing until the run finishes — up to the app's
+  # 600s run deadline. The idle timeout must outlive that, not the default 60s.
+  idle_timeout = 600
+
   # access_logs {
   #   bucket  = aws_s3_bucket.logs.bucket
   #   prefix  = var.name
