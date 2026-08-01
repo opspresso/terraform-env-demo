@@ -1,6 +1,10 @@
 # locals
 
 locals {
+  account_id = data.aws_caller_identity.current.account_id
+}
+
+locals {
   # policies/*.json 파일 하나당 인라인 정책 1개를 만듭니다.
   policies = [for file in fileset(path.module, "policies/*.json") : replace(basename(file), ".json", "")]
 
