@@ -1,8 +1,25 @@
 # locals
 
 locals {
-  # HTTPS 리스너의 기본(default) 인증서로 쓸 도메인. 나머지는 SNI 로 추가됩니다.
-  primary_domain = var.public_domains[0]
+  # var.domains 를 리소스가 쓰는 형태로 폅니다.
+  # certificate_domains 는 인증서 도메인 집합, *_records 는 {레코드 이름 => 그 레코드가 속한 zone} 입니다.
+  certificate_domains = toset(flatten([for domain in var.domains : domain.certificates]))
+
+  public_records = {
+    for pair in flatten([
+      for zone, domain in var.domains : [
+        for record in domain.public : { record = record, zone = zone }
+      ]
+    ]) : pair.record => pair.zone
+  }
+
+  internal_records = {
+    for pair in flatten([
+      for zone, domain in var.domains : [
+        for record in domain.internal : { record = record, zone = zone }
+      ]
+    ]) : pair.record => pair.zone
+  }
 
   vpc_id          = data.terraform_remote_state.vpc.outputs.vpc_id
   vpc_cidr        = data.terraform_remote_state.vpc.outputs.vpc_cidr_block

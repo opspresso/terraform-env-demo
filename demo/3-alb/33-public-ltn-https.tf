@@ -6,7 +6,7 @@ resource "aws_lb_listener" "public_https" {
   port            = "443"
   protocol        = "HTTPS"
   ssl_policy      = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  certificate_arn = data.aws_acm_certificate.public_https[local.primary_domain].arn
+  certificate_arn = data.aws_acm_certificate.public_https[var.primary_domain].arn
 
   default_action {
     type = "forward"
@@ -130,16 +130,16 @@ resource "aws_lb_listener_rule" "public_https--b" {
 # acm
 
 data "aws_acm_certificate" "public_https" {
-  for_each = toset(var.public_domains)
+  for_each = local.certificate_domains
 
   domain      = each.value
   types       = ["AMAZON_ISSUED"]
   most_recent = true
 }
 
-# 기본 인증서(local.primary_domain)를 제외한 나머지는 SNI 추가 인증서로 붙입니다.
+# 기본 인증서(var.primary_domain)를 제외한 나머지는 SNI 추가 인증서로 붙입니다.
 resource "aws_lb_listener_certificate" "public_https" {
-  for_each = toset([for domain in var.public_domains : domain if domain != local.primary_domain])
+  for_each = setsubtract(local.certificate_domains, [var.primary_domain])
 
   listener_arn    = aws_lb_listener.public_https.arn
   certificate_arn = data.aws_acm_certificate.public_https[each.value].arn
