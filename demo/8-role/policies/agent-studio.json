@@ -2,6 +2,7 @@
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "Table",
       "Effect": "Allow",
       "Action": [
         "dynamodb:BatchWriteItem",
@@ -18,12 +19,36 @@
       ]
     },
     {
+      "Sid": "ImageObjects",
       "Effect": "Allow",
       "Action": [
         "s3:PutObject"
       ],
       "Resource": [
         "arn:aws:s3:::agent-studio-static/images/*"
+      ]
+    },
+    {
+      "Sid": "CapabilityIndexReadWrite",
+      "Effect": "Allow",
+      "Action": [
+        "s3vectors:PutVectors",
+        "s3vectors:QueryVectors",
+        "s3vectors:ListVectors",
+        "s3vectors:DeleteVectors"
+      ],
+      "Resource": [
+        "arn:aws:s3vectors:*:*:bucket/agent-studio-vector/index/capabilities"
+      ]
+    },
+    {
+      "Sid": "EmbeddingModel",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel"
+      ],
+      "Resource": [
+        "arn:aws:bedrock:*::foundation-model/amazon.titan-embed-text-v2:0"
       ]
     }
   ]
