@@ -14,10 +14,6 @@ locals {
       namespace       = "agent-mcps"
       service_account = "mcp-memory"
     }
-    "mcp-document" = {
-      namespace       = "agent-mcps"
-      service_account = "mcp-document"
-    }
   }
 }
 
