@@ -49,13 +49,13 @@ variable "domains" {
       ]
     }
 
-    "agentpresso.dev" = {
+    "agentdure.com" = {
       certificates = [
-        "agentpresso.dev",
+        "agentdure.com",
       ]
       public = [
-        "agentpresso.dev",
-        "www.agentpresso.dev",
+        "agentdure.com",
+        "www.agentdure.com",
       ]
       internal = []
     }
