@@ -14,8 +14,8 @@
         "dynamodb:UpdateItem"
       ],
       "Resource": [
-        "arn:aws:dynamodb:*:*:table/agent-studio",
-        "arn:aws:dynamodb:*:*:table/agent-studio/index/*"
+        "arn:aws:dynamodb:*:*:table/agentdure",
+        "arn:aws:dynamodb:*:*:table/agentdure/index/*"
       ]
     },
     {
@@ -25,7 +25,7 @@
         "s3:PutObject"
       ],
       "Resource": [
-        "arn:aws:s3:::agent-studio-static/images/*"
+        "arn:aws:s3:::agentdure-static/images/*"
       ]
     },
     {

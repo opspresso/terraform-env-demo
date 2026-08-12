@@ -6,9 +6,9 @@ locals {
       namespace       = "addon-atlantis"
       service_account = "atlantis"
     }
-    "agent-studio" = {
-      namespace       = "agent-studio"
-      service_account = "agent-studio"
+    "agentdure" = {
+      namespace       = "agentdure"
+      service_account = "agentdure"
     }
     "mcp-memory" = {
       namespace       = "agent-mcps"
