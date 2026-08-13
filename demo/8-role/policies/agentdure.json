@@ -56,6 +56,14 @@
         "arn:aws:bedrock:*::foundation-model/cohere.embed-v4:0",
         "arn:aws:bedrock:*::foundation-model/amazon.titan-embed-text-v2:0"
       ]
+    },
+    {
+      "Sid": "ChatModelsOnMantle",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock-mantle:CreateInference"
+      ],
+      "Resource": "*"
     }
   ]
 }
