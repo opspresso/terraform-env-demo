@@ -10,6 +10,10 @@ locals {
       namespace       = "agentdure"
       service_account = "agentdure"
     }
+    "mcp-cloudwatch" = {
+      namespace       = "agent-mcps"
+      service_account = "mcp-cloudwatch"
+    }
     "mcp-memory" = {
       namespace       = "agent-mcps"
       service_account = "mcp-memory"
