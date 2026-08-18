@@ -68,6 +68,34 @@ import {
   id = "arn:aws:s3vectors:ap-northeast-2:396608815058:bucket/agent-studio-vector/index/capabilities"
 }
 
+# IDC — 손으로 만든 사용자와 정책, 그리고 호스트를 가리키는 레코드.
+import {
+  to = aws_iam_user.idc
+  id = "agentdure"
+}
+
+import {
+  to = aws_iam_policy.idc_ecr_pull
+  id = "arn:aws:iam::396608815058:policy/agentdure-idc-ecr-pull"
+}
+
+import {
+  to = aws_iam_user_policy_attachment.idc_ecr_pull
+  id = "agentdure/arn:aws:iam::396608815058:policy/agentdure-idc-ecr-pull"
+}
+
+import {
+  for_each = toset(local.idc_shared_policies)
+
+  to = aws_iam_user_policy_attachment.idc_shared[each.value]
+  id = "agentdure/arn:aws:iam::396608815058:policy/${each.value}"
+}
+
+import {
+  to = aws_route53_record.idc
+  id = "${data.aws_route53_zone.root.zone_id}_alpha.agentdure.com_A"
+}
+
 # 편입하지 않는 것 — 같은 벡터 버킷 안에 있지만 이 모듈의 것이 아닙니다:
 #   agent-studio-vector/memories          mcp-memory 저장소가 소유합니다
 #   agent-studio-vector/capabilities-local 로컬 개발이 쓰는 인덱스
