@@ -33,3 +33,7 @@ output "idc_user" {
   description = "IDC 호스트가 쓰는 IAM 사용자. 액세스 키는 terraform 이 만들지 않습니다."
   value       = aws_iam_user.idc.name
 }
+
+output "ecr_repositories" {
+  value = { for name, repo in aws_ecr_repository.this : name => repo.repository_url }
+}

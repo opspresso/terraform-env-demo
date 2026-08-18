@@ -96,6 +96,30 @@ import {
   id = "${data.aws_route53_zone.root.zone_id}_alpha.agentdure.com_A"
 }
 
+# ECR — 네 저장소와, 지금 유일하게 lifecycle 규칙을 가진 하나.
+import {
+  for_each = local.ecr_repositories
+
+  to = aws_ecr_repository.this[each.key]
+  id = each.key
+}
+
+import {
+  to = aws_ecr_lifecycle_policy.this["mcp-document"]
+  id = "mcp-document"
+}
+
+# 릴리스가 빌리는 GitHub OIDC 역할.
+import {
+  to = aws_iam_role.github_ecr
+  id = "github--agentdure-ecr"
+}
+
+import {
+  to = aws_iam_role_policy.github_ecr
+  id = "github--agentdure-ecr:ecr-push-agentdure"
+}
+
 # 편입하지 않는 것 — 같은 벡터 버킷 안에 있지만 이 모듈의 것이 아닙니다:
 #   agent-studio-vector/memories          mcp-memory 저장소가 소유합니다
 #   agent-studio-vector/capabilities-local 로컬 개발이 쓰는 인덱스
