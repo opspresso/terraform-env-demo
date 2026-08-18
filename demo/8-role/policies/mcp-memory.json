@@ -11,7 +11,8 @@
         "s3vectors:DeleteVectors"
       ],
       "Resource": [
-        "arn:aws:s3vectors:*:*:bucket/agent-studio-vector/index/memories"
+        "arn:aws:s3vectors:*:*:bucket/agent-studio-vector/index/memories",
+        "arn:aws:s3vectors:*:*:bucket/agentdure-vector/index/memories"
       ]
     },
     {
@@ -23,7 +24,8 @@
         "s3:DeleteObject"
       ],
       "Resource": [
-        "arn:aws:s3:::agent-studio-memory/*"
+        "arn:aws:s3:::agent-studio-memory/*",
+        "arn:aws:s3:::agentdure-memory/*"
       ]
     },
     {
@@ -33,7 +35,8 @@
         "s3:ListBucket"
       ],
       "Resource": [
-        "arn:aws:s3:::agent-studio-memory"
+        "arn:aws:s3:::agent-studio-memory",
+        "arn:aws:s3:::agentdure-memory"
       ]
     },
     {

@@ -67,3 +67,27 @@ resource "aws_s3vectors_index" "knowledge" {
     sse_type = "AES256"
   }
 }
+
+# mcp-memory 의 인덱스. 앱이 아니라 그 서버가 읽고 쓰지만, 벡터 버킷이 환경마다 하나이므로
+# 여기 있습니다 — prod 를 `agentdure-vector` 로 옮기려면 이 인덱스가 먼저 있어야 합니다.
+# non-filterable 키 넷은 mcp-memory 가 정한 것이고, 인덱스 생성 시점에 고정됩니다.
+resource "aws_s3vectors_index" "memories" {
+  for_each = local.names
+
+  vector_bucket_name = aws_s3vectors_vector_bucket.this[each.key].vector_bucket_name
+  index_name         = "memories"
+
+  data_type = "float32"
+  # Titan(`amazon.titan-embed-text-v2:0`)이 쓴 인덱스입니다. 카탈로그가 Cohere 인 것과
+  # 다르며, 인덱스를 쓴 모델과 질의하는 모델은 같아야 합니다.
+  dimension       = var.embedding_dimension
+  distance_metric = "cosine"
+
+  metadata_configuration {
+    non_filterable_metadata_keys = ["content", "createdAt", "tags", "trustBase"]
+  }
+
+  encryption_configuration {
+    sse_type = "AES256"
+  }
+}
