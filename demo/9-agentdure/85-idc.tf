@@ -77,6 +77,59 @@ resource "aws_iam_user_policy_attachment" "idc_ecr_pull" {
   policy_arn = aws_iam_policy.idc_ecr_pull.arn
 }
 
+# 호스트가 스스로 시크릿을 갱신할 수 있게 합니다 — `scripts/deploy.sh` 가 `fetch-env.sh` 를
+# 부르고, 그것이 이 권한으로 SSM 을 읽습니다.
+#
+# **이것은 트레이드오프다.** 이 키가 유출되면 배포 시크릿 전부가 함께 열린다 — 앱의 것과
+# MCP 서버들의 것. 그 대신 호스트가 노트북의 SSO 자격증명 없이 최신 시크릿으로 배포할 수
+# 있다. 경로를 `/k8s/common/agentdure/*` 와 `/k8s/common/mcp-*` 로 좁혀 두는 것이 그 폭을
+# 줄이는 유일한 수단이다.
+data "aws_iam_policy_document" "idc_ssm_read" {
+  statement {
+    sid    = "ReadDeploymentParameters"
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:GetParametersByPath",
+    ]
+    resources = [
+      format("arn:aws:ssm:%s:%s:parameter/k8s/common/agentdure/*", var.region, local.account_id),
+      format("arn:aws:ssm:%s:%s:parameter/k8s/common/mcp-*", var.region, local.account_id),
+    ]
+  }
+
+  # SecureString 은 SSM 을 통해서만 풀립니다. 조건 없이 주면 이 키가 계정의 다른 KMS 사용처까지
+  # 여는 것이 되므로, `kms:ViaService` 로 SSM 경유만 허용합니다.
+  statement {
+    sid       = "DecryptSecureStrings"
+    effect    = "Allow"
+    actions   = ["kms:Decrypt"]
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = [format("ssm.%s.amazonaws.com", var.region)]
+    }
+  }
+}
+
+resource "aws_iam_policy" "idc_ssm_read" {
+  name        = "agentdure-idc-ssm-read"
+  description = "Deployment parameters for the IDC alpha host (deploy/idc)"
+  policy      = data.aws_iam_policy_document.idc_ssm_read.json
+
+  tags = {
+    Name = "agentdure-idc-ssm-read"
+  }
+}
+
+resource "aws_iam_user_policy_attachment" "idc_ssm_read" {
+  user       = aws_iam_user.idc.name
+  policy_arn = aws_iam_policy.idc_ssm_read.arn
+}
+
 # 액세스 키는 여기서 만들지 않습니다. terraform 이 만들면 비밀키가 state 에 평문으로
 # 남습니다 — 그 state 는 `deploy/idc/.env.aws` 보다 넓게 읽힙니다. 키 발급과 회전은
 # 사람이 `aws iam create-access-key` 로 합니다.
