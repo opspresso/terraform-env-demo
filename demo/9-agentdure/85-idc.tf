@@ -84,7 +84,8 @@ resource "aws_iam_user_policy_attachment" "idc_ecr_pull" {
 # IDC 호스트를 가리키는 이름. 3-alb 의 레코드들은 ALB alias 라 그 모듈의 두 리소스에
 # 맞지 않습니다 — 이것은 물리 호스트의 IP 하나입니다.
 data "aws_route53_zone" "root" {
-  name = "agentdure.com"
+  name         = "agentdure.com"
+  private_zone = false
 }
 
 resource "aws_route53_record" "idc" {

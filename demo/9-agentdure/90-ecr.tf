@@ -24,8 +24,10 @@ resource "aws_ecr_repository" "this" {
   name                 = each.key
   image_tag_mutability = "MUTABLE"
 
+  # 기본 스캐닝은 무료이고 푸시를 막지도 않습니다. 켜 두지 않으면 취약점은 아무도 보지
+  # 않는 곳에 남습니다.
   image_scanning_configuration {
-    scan_on_push = false
+    scan_on_push = true
   }
 
   encryption_configuration {
