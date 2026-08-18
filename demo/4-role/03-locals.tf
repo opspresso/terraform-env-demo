@@ -26,6 +26,6 @@ locals {
   tags = {
     Environment = "demo"
     ManagedBy   = "Terraform"
-    Project     = "terraform-env-demo/demo/6-role"
+    Project     = "terraform-env-demo/demo/4-role"
   }
 }

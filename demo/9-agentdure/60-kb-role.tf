@@ -1,7 +1,7 @@
 # Knowledge Base 서비스 롤
 
 # Bedrock 이 이 롤을 빌려 문서를 읽고, 임베딩을 만들고, 인덱스에 씁니다. 파드 롤
-# (demo/8-role) 과는 별개입니다 — 파드는 KB 를 *질의*할 뿐 수집하지 않습니다.
+# (demo/4-role) 과는 별개입니다 — 파드는 KB 를 *질의*할 뿐 수집하지 않습니다.
 resource "aws_iam_role" "knowledge_base" {
   for_each = local.names
 
