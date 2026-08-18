@@ -17,7 +17,7 @@ resource "aws_iam_user" "idc" {
 }
 
 # 앱과 MCP 서버가 쓰는 권한은 `pod-role--*` 정책을 **그대로 재사용**합니다. 역할은 pod
-# identity 전용이라 사용자에게 붙일 수 없지만, 정책은 8-role 이 `policies/*.json` 하나당
+# identity 전용이라 사용자에게 붙일 수 없지만, 정책은 4-role 이 `policies/*.json` 하나당
 # 하나씩 만들어 두므로 역할과 무관하게 붙습니다. 덕분에 권한의 단일 소스가 유지됩니다 —
 # 여기만 넓히려고 그 JSON 을 고치면 EKS 쪽도 함께 넓어진다는 뜻이기도 합니다.
 locals {
@@ -32,7 +32,7 @@ resource "aws_iam_user_policy_attachment" "idc_shared" {
   for_each = toset(local.idc_shared_policies)
 
   user = aws_iam_user.idc.name
-  # 8-role 이 이름을 결정적으로 짓기 때문에 ARN 을 조립할 수 있습니다. 그 모듈의 출력은
+  # 4-role 이 이름을 결정적으로 짓기 때문에 ARN 을 조립할 수 있습니다. 그 모듈의 출력은
   # 역할 이름만 내보내므로 remote state 로는 정책 ARN 에 닿지 못합니다.
   policy_arn = format("arn:aws:iam::%s:policy/%s", local.account_id, each.value)
 }
