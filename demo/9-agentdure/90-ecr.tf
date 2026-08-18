@@ -10,11 +10,13 @@
 # attestation 을 붙이던 동안에는 태그가 가리키는 것이 바로 그 태그 없는 매니페스트였고,
 # 그 뻔한 규칙이 릴리스된 태그를 깨뜨립니다 (agentdure 저장소 docs/OPERATIONS.md).
 locals {
+  # `agentdure` 만 30 인 것은 릴리스 빈도 때문입니다 — 하루 네댓 번 나가므로 10 은 사흘치
+  # 롤백 창밖에 되지 않습니다. MCP 서버들은 드물게 나가서 10 이 몇 달을 덮습니다.
   ecr_repositories = {
-    "agentdure"    = { keep_releases = null }
-    "mcp-memory"   = { keep_releases = null }
+    "agentdure"    = { keep_releases = 30 }
+    "mcp-memory"   = { keep_releases = 10 }
     "mcp-document" = { keep_releases = 10 }
-    "mcp-youtube"  = { keep_releases = null }
+    "mcp-youtube"  = { keep_releases = 10 }
   }
 }
 
