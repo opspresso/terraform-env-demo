@@ -28,3 +28,8 @@ output "document_buckets" {
 output "knowledge_base_ids" {
   value = { for env, kb in aws_bedrockagent_knowledge_base.this : env => kb.id }
 }
+
+output "idc_user" {
+  description = "IDC 호스트가 쓰는 IAM 사용자. 액세스 키는 terraform 이 만들지 않습니다."
+  value       = aws_iam_user.idc.name
+}

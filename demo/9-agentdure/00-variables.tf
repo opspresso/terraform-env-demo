@@ -16,3 +16,9 @@ variable "embedding_dimension" {
   type        = number
   default     = 1024
 }
+
+variable "idc_host_ip" {
+  description = "IDC alpha 호스트의 공인 IP. `alpha.agentdure.com` 이 여기를 가리킵니다."
+  type        = string
+  default     = "115.68.216.99"
+}
