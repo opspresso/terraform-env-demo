@@ -80,3 +80,35 @@ resource "aws_iam_role_policy" "github_ecr" {
   role   = aws_iam_role.github_ecr.id
   policy = data.aws_iam_policy_document.github_ecr.json
 }
+
+# GitHub Actions — 주간 모델 점검이 mantle 에 무엇이 서빙되는지 물을 때 빌리는 신원
+
+# 신뢰 조건은 위와 같은 문서를 씁니다. 같은 저장소의 같은 ref 들이고, 조건을 한 번 더 적으면
+# 둘이 갈라질 수 있습니다. 역할을 나누는 이유는 반대쪽입니다: 모델 목록을 읽는 워크플로가
+# 이미지를 푸시할 수 있을 이유가 없습니다.
+resource "aws_iam_role" "github_models" {
+  name               = "github--agentdure-models"
+  description        = "agentdure model registry check from GitHub Actions OIDC"
+  assume_role_policy = data.aws_iam_policy_document.github_ecr_assume.json
+
+  tags = {
+    Name = "github--agentdure-models"
+  }
+}
+
+# 읽기 하나뿐입니다. `bedrock-mantle:ListModels` 는 mantle 의 OpenAI 호환 `/v1/models` 가
+# CloudTrail 에 남기는 그 호출이고(리소스는 `project/default`), 파드가 디스패치에 쓰는
+# `bedrock-mantle:CreateInference` 와 같은 계열입니다 — 이 역할에는 그쪽이 없습니다.
+data "aws_iam_policy_document" "github_models" {
+  statement {
+    effect    = "Allow"
+    actions   = ["bedrock-mantle:ListModels"]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "github_models" {
+  name   = "mantle-list-models"
+  role   = aws_iam_role.github_models.id
+  policy = data.aws_iam_policy_document.github_models.json
+}
