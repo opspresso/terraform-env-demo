@@ -1,7 +1,7 @@
 # GitHub Actions — 릴리스가 ECR 로 푸시할 때 빌리는 신원
 
 # 장기 키가 없습니다. 워크플로가 OIDC 토큰으로 이 역할을 assume 합니다
-# (agentdure 저장소의 .github/workflows/release.yml).
+# (agent-studio 저장소의 .github/workflows/release.yml).
 data "aws_iam_policy_document" "github_ecr_assume" {
   statement {
     effect  = "Allow"
@@ -20,32 +20,30 @@ data "aws_iam_policy_document" "github_ecr_assume" {
       values   = ["sts.amazonaws.com"]
     }
 
-    # 실물 그대로입니다. 숫자가 붙은 형태는 GitHub 이 owner·repo 를 id 로 고정해 발급하는
-    # subject 이고, 리브랜딩 전 `agent-studio` 이름의 항목도 아직 남아 있습니다. 정리는
-    # 릴리스가 실제로 어느 형태를 보내는지 확인한 뒤에 할 일입니다 — 여기서 지우면 다음
-    # 태그 푸시가 assume 에 실패합니다.
+    # 두 형태를 다 둡니다. 숫자가 붙은 형태는 GitHub 이 owner·repo 를 id 로 고정해 발급하는
+    # subject 이고(저장소 id 1307383317 은 이름이 바뀌어도 같습니다), 숫자 없는 형태는
+    # 기본 subject 입니다. 어느 쪽이 오는지는 릴리스 로그로 확인한 뒤 정리합니다 — 여기서
+    # 잘못 지우면 다음 태그 푸시가 assume 에 실패합니다.
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
-        "repo:opspresso@38965494/agentdure@1307383317:ref:refs/tags/v*",
-        "repo:opspresso@38965494/agentdure@1307383317:ref:refs/heads/main",
         "repo:opspresso@38965494/agent-studio@1307383317:ref:refs/tags/v*",
         "repo:opspresso@38965494/agent-studio@1307383317:ref:refs/heads/main",
-        "repo:opspresso/agentdure:ref:refs/tags/v*",
-        "repo:opspresso/agentdure:ref:refs/heads/main",
+        "repo:opspresso/agent-studio:ref:refs/tags/v*",
+        "repo:opspresso/agent-studio:ref:refs/heads/main",
       ]
     }
   }
 }
 
 resource "aws_iam_role" "github_ecr" {
-  name               = "github--agentdure-ecr"
-  description        = "agentdure ECR push from GitHub Actions OIDC"
+  name               = "github--agent-studio-ecr"
+  description        = "agent-studio ECR push from GitHub Actions OIDC"
   assume_role_policy = data.aws_iam_policy_document.github_ecr_assume.json
 
   tags = {
-    Name = "github--agentdure-ecr"
+    Name = "github--agent-studio-ecr"
   }
 }
 
@@ -68,15 +66,15 @@ data "aws_iam_policy_document" "github_ecr" {
       "ecr:UploadLayerPart",
       "ecr:CompleteLayerUpload",
     ]
-    # 저장소 리소스의 `.arn` 대신 조립합니다. 그 저장소는 이 계획에서 import 되는 중이라
-    # 값이 apply 전에는 알려지지 않고, 그러면 이 정책 전체가 "known after apply" 로 보여
-    # 편입이 무변경인지 계획만으로 확인할 수 없게 됩니다.
-    resources = [format("arn:aws:ecr:%s:%s:repository/agentdure", var.region, local.account_id)]
+    # 저장소 리소스의 `.arn` 대신 조립합니다. 저장소가 같은 계획에서 만들어지면 그 값은
+    # apply 전에는 알려지지 않고, 그러면 이 정책 전체가 "known after apply" 로 보여
+    # 계획만으로 무엇이 바뀌는지 읽을 수 없게 됩니다.
+    resources = [format("arn:aws:ecr:%s:%s:repository/agent-studio", var.region, local.account_id)]
   }
 }
 
 resource "aws_iam_role_policy" "github_ecr" {
-  name   = "ecr-push-agentdure"
+  name   = "ecr-push-agent-studio"
   role   = aws_iam_role.github_ecr.id
   policy = data.aws_iam_policy_document.github_ecr.json
 }
@@ -87,12 +85,12 @@ resource "aws_iam_role_policy" "github_ecr" {
 # 둘이 갈라질 수 있습니다. 역할을 나누는 이유는 반대쪽입니다: 모델 목록을 읽는 워크플로가
 # 이미지를 푸시할 수 있을 이유가 없습니다.
 resource "aws_iam_role" "github_models" {
-  name               = "github--agentdure-models"
-  description        = "agentdure model registry check from GitHub Actions OIDC"
+  name               = "github--agent-studio-models"
+  description        = "agent-studio model registry check from GitHub Actions OIDC"
   assume_role_policy = data.aws_iam_policy_document.github_ecr_assume.json
 
   tags = {
-    Name = "github--agentdure-models"
+    Name = "github--agent-studio-models"
   }
 }
 

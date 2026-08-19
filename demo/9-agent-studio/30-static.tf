@@ -43,7 +43,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "static" {
 }
 
 # 서명 URL 없이 <img src> 로 읽히는 것이 이 버킷의 용도입니다. 쓰기는 파드 롤만 할 수
-# 있습니다 (demo/4-role 의 agentdure 정책).
+# 있습니다 (demo/4-role 의 agent-studio 정책).
 resource "aws_s3_bucket_policy" "static" {
   for_each = local.names
 

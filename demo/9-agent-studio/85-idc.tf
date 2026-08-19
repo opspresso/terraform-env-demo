@@ -2,12 +2,12 @@
 
 # 같은 테이블·버킷·인덱스를 읽는 같은 시스템이고, 다른 것은 자격증명을 얻는 방법뿐입니다.
 # pod identity 가 없으므로 IAM 사용자 하나가 그 자리를 대신합니다.
-# 배포 자체는 agentdure 저장소의 deploy/idc/README.md 가 설명합니다.
+# 배포 자체는 agent-studio 저장소의 deploy/idc/README.md 가 설명합니다.
 resource "aws_iam_user" "idc" {
-  name = "agentdure"
+  name = "agent-studio"
 
   tags = {
-    Name = "agentdure"
+    Name = "agent-studio"
   }
 
   # 액세스 키가 붙어 있는 사용자입니다. 지우는 계획은 여기서 멈춰야 합니다.
@@ -22,7 +22,7 @@ resource "aws_iam_user" "idc" {
 # 여기만 넓히려고 그 JSON 을 고치면 EKS 쪽도 함께 넓어진다는 뜻이기도 합니다.
 locals {
   idc_shared_policies = [
-    "pod-role--agentdure",      # 앱
+    "pod-role--agent-studio",   # 앱
     "pod-role--mcp-memory",     # mcp-memory
     "pod-role--mcp-cloudwatch", # mcp-cloudwatch
   ]
@@ -56,19 +56,19 @@ data "aws_iam_policy_document" "idc_ecr_pull" {
       "ecr:DescribeImages",
     ]
     resources = [
-      format("arn:aws:ecr:%s:%s:repository/agentdure", var.region, local.account_id),
+      format("arn:aws:ecr:%s:%s:repository/agent-studio", var.region, local.account_id),
       format("arn:aws:ecr:%s:%s:repository/mcp-*", var.region, local.account_id),
     ]
   }
 }
 
 resource "aws_iam_policy" "idc_ecr_pull" {
-  name        = "agentdure-idc-ecr-pull"
+  name        = "agent-studio-idc-ecr-pull"
   description = "ECR pull for the IDC alpha host (deploy/idc)"
   policy      = data.aws_iam_policy_document.idc_ecr_pull.json
 
   tags = {
-    Name = "agentdure-idc-ecr-pull"
+    Name = "agent-studio-idc-ecr-pull"
   }
 }
 
@@ -82,7 +82,7 @@ resource "aws_iam_user_policy_attachment" "idc_ecr_pull" {
 #
 # **이것은 트레이드오프다.** 이 키가 유출되면 배포 시크릿 전부가 함께 열린다 — 앱의 것과
 # MCP 서버들의 것. 그 대신 호스트가 노트북의 SSO 자격증명 없이 최신 시크릿으로 배포할 수
-# 있다. 경로를 `/k8s/common/agentdure/*` 와 `/k8s/common/mcp-*` 로 좁혀 두는 것이 그 폭을
+# 있다. 경로를 `/k8s/common/agent-studio/*` 와 `/k8s/common/mcp-*` 로 좁혀 두는 것이 그 폭을
 # 줄이는 유일한 수단이다.
 data "aws_iam_policy_document" "idc_ssm_read" {
   statement {
@@ -94,7 +94,7 @@ data "aws_iam_policy_document" "idc_ssm_read" {
       "ssm:GetParametersByPath",
     ]
     resources = [
-      format("arn:aws:ssm:%s:%s:parameter/k8s/common/agentdure/*", var.region, local.account_id),
+      format("arn:aws:ssm:%s:%s:parameter/k8s/common/agent-studio/*", var.region, local.account_id),
       format("arn:aws:ssm:%s:%s:parameter/k8s/common/mcp-*", var.region, local.account_id),
     ]
   }
@@ -116,12 +116,12 @@ data "aws_iam_policy_document" "idc_ssm_read" {
 }
 
 resource "aws_iam_policy" "idc_ssm_read" {
-  name        = "agentdure-idc-ssm-read"
+  name        = "agent-studio-idc-ssm-read"
   description = "Deployment parameters for the IDC alpha host (deploy/idc)"
   policy      = data.aws_iam_policy_document.idc_ssm_read.json
 
   tags = {
-    Name = "agentdure-idc-ssm-read"
+    Name = "agent-studio-idc-ssm-read"
   }
 }
 
@@ -137,13 +137,13 @@ resource "aws_iam_user_policy_attachment" "idc_ssm_read" {
 # IDC 호스트를 가리키는 이름. 3-alb 의 레코드들은 ALB alias 라 그 모듈의 두 리소스에
 # 맞지 않습니다 — 이것은 물리 호스트의 IP 하나입니다.
 data "aws_route53_zone" "root" {
-  name         = "agentdure.com"
+  name         = "opspresso.com"
   private_zone = false
 }
 
 resource "aws_route53_record" "idc" {
   zone_id = data.aws_route53_zone.root.zone_id
-  name    = "alpha.agentdure.com"
+  name    = "studio.opspresso.com"
   type    = "A"
   ttl     = 300
   records = [var.idc_host_ip]

@@ -3,12 +3,13 @@
 locals {
   account_id = data.aws_caller_identity.current.account_id
 
-  # 이름이 곧 환경입니다. `agent-studio` 는 리브랜딩 전 이름으로 alpha 가 계속 쓰고,
-  # `agentdure` 는 새 이름으로 production 이 씁니다. 나머지 리소스 이름은 전부 여기서
-  # 파생되므로, 환경을 하나 더 만드는 것은 아래 맵에 줄 하나를 더하는 일입니다.
+  # 이름이 곧 환경입니다. 지금 있는 환경은 alpha 하나 — IDC 호스트가 읽는 `agent-studio`
+  # 세트입니다. 나머지 리소스 이름은 전부 여기서 파생되므로, 환경을 하나 더 만드는 것은
+  # 아래 맵에 줄 하나를 더하는 일입니다. production 은 `agent-studio-prod` 로 정해 두었지만
+  # 아직 만들지 않습니다 — 주석을 풀면 테이블·버킷·인덱스·KB 한 벌이 그 이름으로 생깁니다.
   envs = {
     alpha = { base = "agent-studio" }
-    prod  = { base = "agentdure" }
+    # prod = { base = "agent-studio-prod" }
   }
 
   names = {
@@ -36,6 +37,6 @@ locals {
   tags = {
     Environment = "demo"
     ManagedBy   = "Terraform"
-    Project     = "terraform-env-demo/demo/9-agentdure"
+    Project     = "terraform-env-demo/demo/9-agent-studio"
   }
 }

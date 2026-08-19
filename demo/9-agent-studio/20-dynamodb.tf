@@ -1,7 +1,7 @@
 # DynamoDB — 앱의 단일 테이블
 
 # 스키마는 앱이 정합니다: PK/SK 위에 GSI1·GSI2 두 개, TTL 은 `expiresAt`.
-# 자세한 키 맵은 agentdure 저장소의 docs/ARCHITECTURE.md 를 보세요.
+# 자세한 키 맵은 agent-studio 저장소의 docs/ARCHITECTURE.md 를 보세요.
 resource "aws_dynamodb_table" "this" {
   for_each = local.names
 

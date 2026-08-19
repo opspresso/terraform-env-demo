@@ -48,17 +48,6 @@ variable "domains" {
         "*.demo-in-b.opspresso.com",
       ]
     }
-
-    "agentdure.com" = {
-      certificates = [
-        "agentdure.com",
-      ]
-      public = [
-        "agentdure.com",
-        "www.agentdure.com",
-      ]
-      internal = []
-    }
   }
 }
 

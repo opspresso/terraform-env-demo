@@ -29,9 +29,9 @@ locals {
       namespace       = "addon-atlantis"
       service_account = "atlantis"
     }
-    "agentdure" = {
-      namespace       = "agentdure"
-      service_account = "agentdure"
+    "agent-studio" = {
+      namespace       = "agent-studio"
+      service_account = "agent-studio"
     }
     "mcp-cloudwatch" = {
       namespace       = "agent-mcps"

@@ -12,7 +12,7 @@
       ],
       "Resource": [
         "arn:aws:s3vectors:*:*:bucket/agent-studio-vector/index/memories",
-        "arn:aws:s3vectors:*:*:bucket/agentdure-vector/index/memories"
+        "arn:aws:s3vectors:*:*:bucket/agent-studio-prod-vector/index/memories"
       ]
     },
     {
@@ -25,7 +25,7 @@
       ],
       "Resource": [
         "arn:aws:s3:::agent-studio-memory/*",
-        "arn:aws:s3:::agentdure-memory/*"
+        "arn:aws:s3:::agent-studio-prod-memory/*"
       ]
     },
     {
@@ -36,7 +36,7 @@
       ],
       "Resource": [
         "arn:aws:s3:::agent-studio-memory",
-        "arn:aws:s3:::agentdure-memory"
+        "arn:aws:s3:::agent-studio-prod-memory"
       ]
     },
     {

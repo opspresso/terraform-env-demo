@@ -69,7 +69,7 @@ resource "aws_s3vectors_index" "knowledge" {
 }
 
 # mcp-memory 의 인덱스. 앱이 아니라 그 서버가 읽고 쓰지만, 벡터 버킷이 환경마다 하나이므로
-# 여기 있습니다 — prod 를 `agentdure-vector` 로 옮기려면 이 인덱스가 먼저 있어야 합니다.
+# 여기 있습니다 — 환경을 하나 더 만들면 그 벡터 버킷에도 이 인덱스가 먼저 있어야 합니다.
 # non-filterable 키 넷은 mcp-memory 가 정한 것이고, 인덱스 생성 시점에 고정됩니다.
 resource "aws_s3vectors_index" "memories" {
   for_each = local.names

@@ -14,10 +14,10 @@
         "dynamodb:UpdateItem"
       ],
       "Resource": [
-        "arn:aws:dynamodb:*:*:table/agentdure",
-        "arn:aws:dynamodb:*:*:table/agentdure/index/*",
         "arn:aws:dynamodb:*:*:table/agent-studio",
-        "arn:aws:dynamodb:*:*:table/agent-studio/index/*"
+        "arn:aws:dynamodb:*:*:table/agent-studio/index/*",
+        "arn:aws:dynamodb:*:*:table/agent-studio-prod",
+        "arn:aws:dynamodb:*:*:table/agent-studio-prod/index/*"
       ]
     },
     {
@@ -29,10 +29,10 @@
         "s3:DeleteObject"
       ],
       "Resource": [
-        "arn:aws:s3:::agentdure-static/artifacts/*",
-        "arn:aws:s3:::agentdure-static/images/*",
         "arn:aws:s3:::agent-studio-static/artifacts/*",
-        "arn:aws:s3:::agent-studio-static/images/*"
+        "arn:aws:s3:::agent-studio-static/images/*",
+        "arn:aws:s3:::agent-studio-prod-static/artifacts/*",
+        "arn:aws:s3:::agent-studio-prod-static/images/*"
       ]
     },
     {
@@ -46,8 +46,8 @@
         "s3vectors:DeleteVectors"
       ],
       "Resource": [
-        "arn:aws:s3vectors:*:*:bucket/agentdure-vector/index/capabilities",
-        "arn:aws:s3vectors:*:*:bucket/agent-studio-vector/index/capabilities"
+        "arn:aws:s3vectors:*:*:bucket/agent-studio-vector/index/capabilities",
+        "arn:aws:s3vectors:*:*:bucket/agent-studio-prod-vector/index/capabilities"
       ]
     },
     {
