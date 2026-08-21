@@ -36,8 +36,7 @@ locals {
 
   tags = {
     Environment = "demo"
-    ManagedBy   = "Terraform"
-    Project     = "terraform-env-demo/demo/9-agent-studio"
     ManagedBy   = "CloudManager"
+    Project     = "terraform-env-demo/demo/9-agent-studio"
   }
 }
