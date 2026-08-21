@@ -38,5 +38,6 @@ locals {
     Environment = "demo"
     ManagedBy   = "Terraform"
     Project     = "terraform-env-demo/demo/9-agent-studio"
+    ManagedBy   = "CloudManager"
   }
 }
