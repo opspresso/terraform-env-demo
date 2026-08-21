@@ -48,6 +48,16 @@
       "Resource": [
         "arn:aws:bedrock:*::foundation-model/amazon.titan-embed-text-v2:0"
       ]
+    },
+    {
+      "Sid": "KnowledgeBaseRetrieve",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:Retrieve"
+      ],
+      "Resource": [
+        "arn:aws:bedrock:*:*:knowledge-base/C3NQOMBFVD"
+      ]
     }
   ]
 }
