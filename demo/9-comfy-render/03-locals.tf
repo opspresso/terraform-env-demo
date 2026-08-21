@@ -5,6 +5,7 @@ locals {
   table_name        = "comfy-render-dev"
   bucket_name       = "comfy-render-static"
   render_queue_name = "comfy-render-dev-render-queue"
+  render_dlq_name   = "comfy-render-dev-render-dlq"
   amplify_app_id    = "d136e8x9dkhdxg"
 
   tags = {

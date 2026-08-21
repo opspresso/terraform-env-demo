@@ -15,6 +15,11 @@ output "render_queue" {
   value       = aws_sqs_queue.render.name
 }
 
+output "render_dead_letter_queue" {
+  description = "SQS_DLQ_NAME"
+  value       = aws_sqs_queue.render_dead_letter.name
+}
+
 output "app_access_policy_arn" {
   value = aws_iam_policy.app_access.arn
 }

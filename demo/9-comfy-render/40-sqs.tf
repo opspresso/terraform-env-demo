@@ -1,5 +1,20 @@
 # SQS — 렌더 작업 큐
 
+resource "aws_sqs_queue" "render_dead_letter" {
+  name                      = local.render_dlq_name
+  message_retention_seconds = 1209600
+  max_message_size          = 1048576
+  sqs_managed_sse_enabled   = true
+
+  tags = {
+    Name = local.render_dlq_name
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
 resource "aws_sqs_queue" "render" {
   name                       = local.render_queue_name
   visibility_timeout_seconds = 3600
@@ -8,7 +23,7 @@ resource "aws_sqs_queue" "render" {
   sqs_managed_sse_enabled    = true
 
   redrive_policy = jsonencode({
-    deadLetterTargetArn = data.aws_sqs_queue.render_dead_letter.arn
+    deadLetterTargetArn = aws_sqs_queue.render_dead_letter.arn
     maxReceiveCount     = 3
   })
 
