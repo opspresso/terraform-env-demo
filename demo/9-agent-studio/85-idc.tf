@@ -83,7 +83,8 @@ resource "aws_iam_user_policy_attachment" "idc_ecr_pull" {
 # **이것은 트레이드오프다.** 이 키가 유출되면 배포 시크릿 전부가 함께 열린다 — 앱의 것과
 # MCP 서버들의 것. 그 대신 호스트가 노트북의 SSO 자격증명 없이 최신 시크릿으로 배포할 수
 # 있다. 경로를 `/k8s/common/agent-studio/*` 와 `/k8s/common/mcp-*` 로 좁혀 두는 것이 그 폭을
-# 줄이는 유일한 수단이다.
+# 줄이는 유일한 수단이다. Agent Memory도 같은 호스트에서 별도 application으로 실행되므로
+# 자기 namespace만 추가한다.
 data "aws_iam_policy_document" "idc_ssm_read" {
   statement {
     sid    = "ReadDeploymentParameters"
@@ -95,6 +96,7 @@ data "aws_iam_policy_document" "idc_ssm_read" {
     ]
     resources = [
       format("arn:aws:ssm:%s:%s:parameter/k8s/common/agent-studio/*", var.region, local.account_id),
+      format("arn:aws:ssm:%s:%s:parameter/k8s/common/agent-memory/*", var.region, local.account_id),
       format("arn:aws:ssm:%s:%s:parameter/k8s/common/mcp-*", var.region, local.account_id),
     ]
   }
