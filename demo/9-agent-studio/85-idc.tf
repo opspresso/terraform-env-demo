@@ -150,3 +150,12 @@ resource "aws_route53_record" "idc" {
   ttl     = 300
   records = [var.idc_host_ip]
 }
+
+resource "aws_route53_record" "idc_memory" {
+  zone_id         = data.aws_route53_zone.root.zone_id
+  name            = "memory.opspresso.com"
+  type            = "A"
+  ttl             = 300
+  records         = [var.idc_host_ip]
+  allow_overwrite = true
+}

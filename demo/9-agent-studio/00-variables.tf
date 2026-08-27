@@ -18,7 +18,7 @@ variable "embedding_dimension" {
 }
 
 variable "idc_host_ip" {
-  description = "IDC alpha 호스트의 공인 IP. `studio.opspresso.com` 이 여기를 가리킵니다."
+  description = "IDC alpha 호스트의 공인 IP. `studio.opspresso.com` 과 `memory.opspresso.com` 이 여기를 가리킵니다."
   type        = string
-  default     = "115.68.216.99"
+  default     = "115.68.228.117"
 }
