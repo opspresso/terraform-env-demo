@@ -16,8 +16,8 @@ locals {
     for env, cfg in local.envs : env => {
       table     = cfg.base             # DYNAMODB_TABLE_NAME
       static    = "${cfg.base}-static" # S3_BUCKET_NAME — 아티팩트와 이미지
-      vector    = "${cfg.base}-vector" # VECTOR_BUCKET — 케이퍼빌리티 카탈로그와 KB
-      memory    = "${cfg.base}-memory" # STATE_BUCKET — mcp-memory 의 상태
+      vector    = "${cfg.base}-vector" # S3 Vectors — 기존 인덱스와 KB
+      memory    = "${cfg.base}-memory" # mcp-memory v0.8 이전 상태 보존 버킷
       documents = "${cfg.base}-kb"     # Knowledge Base 가 읽어들일 문서 저장소
       knowledge = cfg.base             # Knowledge Base 이름
     }

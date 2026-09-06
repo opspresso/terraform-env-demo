@@ -20,9 +20,10 @@ resource "aws_s3vectors_vector_bucket" "this" {
   }
 }
 
-# 인덱스에는 `prevent_destroy` 를 걸지 않습니다. 안에 든 것은 파생 데이터고 — 카탈로그는
-# CronJob 틱이, KB 는 재수집이 다시 채웁니다 — 차원이나 거리 함수를 바꾸는 정당한 변경이
-# replace 로 나타나므로, 막아 두면 그 변경까지 함께 막힙니다. 버킷은 반대입니다.
+# 카탈로그와 Knowledge Base 인덱스에는 `prevent_destroy` 를 걸지 않습니다. 안에 든 것은
+# 파생 데이터고 — 카탈로그는 CronJob 틱이, KB 는 재수집이 다시 채웁니다 — 차원이나 거리
+# 함수를 바꾸는 정당한 변경이 replace 로 나타나기 때문입니다. 아래의 이전 Memory 인덱스는
+# 원본 데이터 보존 대상이라 예외입니다.
 
 # 앱이 자기 케이퍼빌리티(스킬·MCP 도구·에이전트)를 검색하는 인덱스. CronJob 틱이
 # 다시 만들고, 런은 읽기만 합니다.
@@ -68,9 +69,9 @@ resource "aws_s3vectors_index" "knowledge" {
   }
 }
 
-# mcp-memory 의 인덱스. 앱이 아니라 그 서버가 읽고 쓰지만, 벡터 버킷이 환경마다 하나이므로
-# 여기 있습니다 — 환경을 하나 더 만들면 그 벡터 버킷에도 이 인덱스가 먼저 있어야 합니다.
-# non-filterable 키 넷은 mcp-memory 가 정한 것이고, 인덱스 생성 시점에 고정됩니다.
+# mcp-memory v0.8 이전 데이터 보존 인덱스. v0.9부터 서버는 PostgreSQL만 사용하며 이
+# 인덱스에 접근하지 않습니다. 기존 데이터를 보존하고 Terraform이 삭제를 계획하지 않도록
+# 계속 관리합니다. 보존 기한과 폐기를 별도로 결정하기 전에는 이 리소스를 제거하지 않습니다.
 resource "aws_s3vectors_index" "memories" {
   for_each = local.names
 
@@ -78,8 +79,7 @@ resource "aws_s3vectors_index" "memories" {
   index_name         = "memories"
 
   data_type = "float32"
-  # Titan(`amazon.titan-embed-text-v2:0`)이 쓴 인덱스입니다. 카탈로그가 Cohere 인 것과
-  # 다르며, 인덱스를 쓴 모델과 질의하는 모델은 같아야 합니다.
+  # 기존 Titan(`amazon.titan-embed-text-v2:0`) 데이터의 차원을 유지합니다.
   dimension       = var.embedding_dimension
   distance_metric = "cosine"
 
@@ -89,5 +89,9 @@ resource "aws_s3vectors_index" "memories" {
 
   encryption_configuration {
     sse_type = "AES256"
+  }
+
+  lifecycle {
+    prevent_destroy = true
   }
 }

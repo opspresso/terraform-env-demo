@@ -16,7 +16,7 @@ output "vector_buckets" {
 }
 
 output "memory_buckets" {
-  description = "STATE_BUCKET — mcp-memory 의 상태"
+  description = "mcp-memory v0.8 이전 상태 보존 버킷"
   value       = { for env, bucket in aws_s3_bucket.memory : env => bucket.bucket }
 }
 

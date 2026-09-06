@@ -1,8 +1,8 @@
-# S3 — mcp-memory 의 상태 버킷 (STATE_BUCKET)
+# S3 — mcp-memory v0.8 이전 상태 보존 버킷
 
-# 앱이 아니라 mcp-memory 서버가 씁니다. 여기 두는 이유는 이름이 같은 규칙을 따르고
-# 환경마다 한 벌씩 필요하기 때문입니다 — 벡터는 같은 벡터 버킷의 `memories` 인덱스에
-# 들어가고, 그 옆의 index/ 와 stats/ 가 이 버킷입니다.
+# mcp-memory v0.9부터 PostgreSQL만 사용하므로 런타임은 이 버킷에 접근하지 않습니다.
+# 이전 버전의 데이터를 보존하고 기존 Terraform state가 삭제를 계획하지 않도록 계속
+# 관리합니다. 보존 기한과 폐기를 별도로 결정하기 전에는 이 리소스를 제거하지 않습니다.
 resource "aws_s3_bucket" "memory" {
   for_each = local.names
 
