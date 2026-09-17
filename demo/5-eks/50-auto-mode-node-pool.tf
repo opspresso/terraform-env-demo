@@ -29,6 +29,16 @@ resource "kubernetes_manifest" "auto_mode_baseline_node_pool" {
               key      = "karpenter.sh/capacity-type"
               operator = "In"
               values   = ["on-demand"]
+            },
+            {
+              key      = "eks.amazonaws.com/instance-category"
+              operator = "In"
+              values   = ["c"]
+            },
+            {
+              key      = "eks.amazonaws.com/instance-cpu"
+              operator = "Gt"
+              values   = ["1"]
             }
           ]
         }
