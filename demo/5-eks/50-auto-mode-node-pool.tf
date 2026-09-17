@@ -46,7 +46,7 @@ resource "kubernetes_manifest" "auto_mode_baseline_node_pool" {
 
       # AMI drift나 노드 교체 중 임시 여유 용량을 허용합니다.
       limits = {
-        nodes = var.auto_mode_baseline_replicas + 1
+        nodes = var.auto_mode_baseline_replicas + 2
       }
     }
   }
