@@ -38,7 +38,7 @@ resource "kubernetes_manifest" "auto_mode_baseline_node_pool" {
             {
               key      = "eks.amazonaws.com/instance-cpu"
               operator = "Gt"
-              values   = ["1"]
+              values   = ["2"]
             }
           ]
         }
