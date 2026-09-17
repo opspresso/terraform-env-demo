@@ -95,9 +95,7 @@ data "aws_iam_policy_document" "idc_ssm_read" {
       "ssm:GetParametersByPath",
     ]
     resources = [
-      format("arn:aws:ssm:%s:%s:parameter/k8s/common/agent-studio/*", var.region, local.account_id),
-      format("arn:aws:ssm:%s:%s:parameter/k8s/common/agent-memory/*", var.region, local.account_id),
-      format("arn:aws:ssm:%s:%s:parameter/k8s/common/mcp-*", var.region, local.account_id),
+      format("arn:aws:ssm:%s:%s:parameter/k8s/common/*", var.region, local.account_id),
     ]
   }
 
@@ -135,27 +133,3 @@ resource "aws_iam_user_policy_attachment" "idc_ssm_read" {
 # 액세스 키는 여기서 만들지 않습니다. terraform 이 만들면 비밀키가 state 에 평문으로
 # 남습니다 — 그 state 는 `deploy/idc/.env.aws` 보다 넓게 읽힙니다. 키 발급과 회전은
 # 사람이 `aws iam create-access-key` 로 합니다.
-
-# IDC 호스트를 가리키는 이름. 3-alb 의 레코드들은 ALB alias 라 그 모듈의 두 리소스에
-# 맞지 않습니다 — 이것은 물리 호스트의 IP 하나입니다.
-data "aws_route53_zone" "root" {
-  name         = "opspresso.com"
-  private_zone = false
-}
-
-resource "aws_route53_record" "idc" {
-  zone_id = data.aws_route53_zone.root.zone_id
-  name    = "studio.opspresso.com"
-  type    = "A"
-  ttl     = 300
-  records = [var.idc_host_ip]
-}
-
-resource "aws_route53_record" "idc_memory" {
-  zone_id         = data.aws_route53_zone.root.zone_id
-  name            = "memory.opspresso.com"
-  type            = "A"
-  ttl             = 300
-  records         = [var.idc_host_ip]
-  allow_overwrite = true
-}

@@ -28,8 +28,6 @@ data "aws_iam_policy_document" "github_ecr_assume" {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
-        "repo:opspresso@38965494/agent-studio@1307383317:ref:refs/tags/v*",
-        "repo:opspresso@38965494/agent-studio@1307383317:ref:refs/heads/main",
         "repo:opspresso/agent-studio:ref:refs/tags/v*",
         "repo:opspresso/agent-studio:ref:refs/heads/main",
       ]
