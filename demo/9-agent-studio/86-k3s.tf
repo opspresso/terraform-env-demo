@@ -1,7 +1,33 @@
 # k3s 노드 — 기존에 생성된 EC2를 Terraform으로 가져와 관리한다.
 
-data "aws_iam_instance_profile" "k3s" {
-  name = "dockpad-agent-studio-profile"
+resource "aws_iam_role" "k3s" {
+  name        = "k3s-agent-studio-role"
+  description = "IAM role for the k3s agent-studio node"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
+
+  tags = {
+    Name = "k3s-agent-studio-role"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_iam_instance_profile" "k3s" {
+  name = "k3s-agent-studio-profile"
+  role = aws_iam_role.k3s.name
+
+  tags = {
+    Name = "k3s-agent-studio-profile"
+  }
 }
 
 data "aws_route53_zone" "k3s" {
@@ -14,7 +40,7 @@ resource "aws_instance" "k3s" {
   instance_type               = "c6i.xlarge"
   subnet_id                   = "subnet-06b0a3ca13327ae30"
   vpc_security_group_ids      = ["sg-014d7e010d702add6"]
-  iam_instance_profile        = data.aws_iam_instance_profile.k3s.name
+  iam_instance_profile        = aws_iam_instance_profile.k3s.name
   key_name                    = "nalbam-bruce"
   ebs_optimized               = true
   associate_public_ip_address = true
@@ -44,11 +70,6 @@ resource "aws_instance" "k3s" {
   }
 }
 
-import {
-  to = aws_instance.k3s
-  id = "i-08e4a94565495548d"
-}
-
 resource "aws_route53_record" "k3s_wildcard" {
   zone_id = data.aws_route53_zone.k3s.zone_id
   name    = "*.demo.opsp.dev"
@@ -57,13 +78,9 @@ resource "aws_route53_record" "k3s_wildcard" {
   records = [aws_instance.k3s.public_ip]
 }
 
-import {
-  to = aws_route53_record.k3s_wildcard
-  id = "Z04116161MQCAA7BJ31AV_*.demo.opsp.dev._A"
-}
-
-# IDC 사용자에 붙어 있던 애플리케이션 권한을 k3s 노드 역할로 옮긴다.
-resource "aws_iam_role_policy_attachment" "k3s_shared" {
+# 애플리케이션 공통 정책을 k3s 노드 역할에 연결한다. EKS에서는 별도 role에
+# 같은 정책을 연결해 k3s 노드 권한과 구분한다.
+resource "aws_iam_role_policy_attachment" "k3s_pod_policies" {
   for_each = toset([
     "pod-role--agent-studio",
     "pod-role--mcp-cloudwatch",
@@ -71,16 +88,21 @@ resource "aws_iam_role_policy_attachment" "k3s_shared" {
     "pod-role--external-secrets",
   ])
 
-  role       = data.aws_iam_instance_profile.k3s.role_name
+  role       = aws_iam_role.k3s.name
   policy_arn = format("arn:aws:iam::%s:policy/%s", local.account_id, each.value)
 }
 
 resource "aws_iam_role_policy_attachment" "k3s_ecr_pull" {
-  role       = data.aws_iam_instance_profile.k3s.role_name
-  policy_arn = aws_iam_policy.idc_ecr_pull.arn
+  role       = aws_iam_role.k3s.name
+  policy_arn = aws_iam_policy.k3s_ecr_pull.arn
 }
 
 resource "aws_iam_role_policy_attachment" "k3s_ssm_read" {
-  role       = data.aws_iam_instance_profile.k3s.role_name
-  policy_arn = aws_iam_policy.idc_ssm_read.arn
+  role       = aws_iam_role.k3s.name
+  policy_arn = aws_iam_policy.k3s_ssm_read.arn
+}
+
+resource "aws_iam_role_policy_attachment" "k3s_ssm_core" {
+  role       = aws_iam_role.k3s.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }

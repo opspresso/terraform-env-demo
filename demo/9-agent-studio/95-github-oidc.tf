@@ -28,6 +28,8 @@ data "aws_iam_policy_document" "github_ecr_assume" {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
       values = [
+        "repo:opspresso@38965494/agent-studio@1345706960:ref:refs/tags/v*",
+        "repo:opspresso@38965494/agent-studio@1345706960:ref:refs/heads/main",
         "repo:opspresso/agent-studio:ref:refs/tags/v*",
         "repo:opspresso/agent-studio:ref:refs/heads/main",
       ]
@@ -85,10 +87,39 @@ resource "aws_iam_role_policy" "github_ecr" {
 resource "aws_iam_role" "github_models" {
   name               = "github--agent-studio-models"
   description        = "agent-studio model registry check from GitHub Actions OIDC"
-  assume_role_policy = data.aws_iam_policy_document.github_ecr_assume.json
+  assume_role_policy = data.aws_iam_policy_document.github_models_assume.json
 
   tags = {
     Name = "github--agent-studio-models"
+  }
+}
+
+data "aws_iam_policy_document" "github_models_assume" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    principals {
+      type = "Federated"
+      identifiers = [
+        format("arn:aws:iam::%s:oidc-provider/token.actions.githubusercontent.com", local.account_id),
+      ]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "token.actions.githubusercontent.com:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringLike"
+      variable = "token.actions.githubusercontent.com:sub"
+      values = [
+        "repo:opspresso/agent-studio:ref:refs/tags/v*",
+        "repo:opspresso/agent-studio:ref:refs/heads/main",
+      ]
+    }
   }
 }
 

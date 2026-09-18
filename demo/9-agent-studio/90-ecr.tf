@@ -1,7 +1,7 @@
 # ECR — 앱과 MCP 서버의 이미지
 
 # `agent-studio` 는 릴리스 파이프라인이 밀어 넣고, `mcp-*` 는 각 서버 저장소가 밀어 넣습니다.
-# IDC 호스트가 끌어가는 것도 이 넷입니다 (85-idc.tf 의 pull 정책).
+# k3s 호스트가 끌어가는 것도 이 넷입니다 (85-k3s-iam.tf 의 pull 정책).
 #
 # `keep_releases` 가 있는 저장소에만 lifecycle 규칙이 붙습니다 — 지금 실제로 가진 것은
 # mcp-document 뿐이고, 나머지는 모든 이미지를 남깁니다.
