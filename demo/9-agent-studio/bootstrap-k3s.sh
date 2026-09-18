@@ -53,6 +53,24 @@ else
   echo "gh is already installed"
 fi
 
+echo "== install helm"
+if ! command -v helm >/dev/null 2>&1; then
+  curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+else
+  echo "helm is already installed"
+fi
+
+echo "== install Argo CD CLI"
+if ! command -v argocd >/dev/null 2>&1; then
+  argocd_binary="$(mktemp)"
+  curl -fsSL https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64 \
+    -o "$argocd_binary"
+  install -m 0755 "$argocd_binary" /usr/local/bin/argocd
+  rm -f "$argocd_binary"
+else
+  echo "argocd is already installed"
+fi
+
 echo "== install k9s"
 if ! command -v k9s >/dev/null 2>&1; then
   temp_dir="$(mktemp -d)"
@@ -85,6 +103,8 @@ install -m 0600 -o "$admin_user" -g "$admin_user" /etc/rancher/k3s/k3s.yaml "$ad
 echo "== verify installed tools"
 git --version
 gh --version | head -n 1
+helm version --short
+argocd version --client
 k9s version --short
 KUBECONFIG="$admin_home/.kube/config" k3s kubectl wait --for=condition=Ready node --all --timeout=120s
 KUBECONFIG="$admin_home/.kube/config" k3s kubectl get nodes -o wide
