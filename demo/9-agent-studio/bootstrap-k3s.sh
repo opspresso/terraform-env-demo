@@ -100,6 +100,64 @@ admin_home="$(getent passwd "$admin_user" | cut -d: -f6)"
 install -d -m 0700 -o "$admin_user" -g "$admin_user" "$admin_home/.kube"
 install -m 0600 -o "$admin_user" -g "$admin_user" /etc/rancher/k3s/k3s.yaml "$admin_home/.kube/config"
 
+echo "== configure ECR image pull credentials"
+install -m 0750 -d /usr/local/sbin
+cat > /usr/local/sbin/refresh-k3s-ecr-secret <<'EOF'
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+region="${AWS_REGION:-ap-northeast-2}"
+account_id="${AWS_ACCOUNT_ID:-396608815058}"
+registry="${account_id}.dkr.ecr.${region}.amazonaws.com"
+kubectl=(k3s kubectl)
+
+password="$(aws ecr get-login-password --region "$region")"
+for namespace in agent-memory agent-studio; do
+  "${kubectl[@]}" create namespace "$namespace" --dry-run=client -o yaml \
+    | "${kubectl[@]}" apply -f - >/dev/null
+  "${kubectl[@]}" create secret docker-registry ecr-registry \
+    --namespace "$namespace" \
+    --save-config \
+    --docker-server="$registry" \
+    --docker-username=AWS \
+    --docker-password="$password" \
+    --dry-run=client -o yaml \
+    | "${kubectl[@]}" apply -f - >/dev/null
+done
+EOF
+chmod 0750 /usr/local/sbin/refresh-k3s-ecr-secret
+
+cat > /etc/systemd/system/k3s-ecr-secret.service <<'EOF'
+[Unit]
+Description=Refresh ECR pull credentials for k3s applications
+After=k3s.service
+Requires=k3s.service
+
+[Service]
+Type=oneshot
+Environment=AWS_REGION=ap-northeast-2
+Environment=AWS_ACCOUNT_ID=396608815058
+ExecStart=/usr/local/sbin/refresh-k3s-ecr-secret
+EOF
+
+cat > /etc/systemd/system/k3s-ecr-secret.timer <<'EOF'
+[Unit]
+Description=Refresh ECR pull credentials for k3s applications
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=6h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+
+systemctl daemon-reload
+systemctl enable --now k3s-ecr-secret.timer
+systemctl start k3s-ecr-secret.service
+
 echo "== verify installed tools"
 git --version
 gh --version | head -n 1
