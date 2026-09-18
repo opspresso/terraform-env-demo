@@ -30,20 +30,99 @@ resource "aws_iam_instance_profile" "k3s" {
   }
 }
 
+data "aws_ami" "al2023" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023.*-kernel-*-x86_64"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+resource "aws_security_group" "k3s" {
+  name        = "agent-studio-sg"
+  description = "agent-studio web"
+  vpc_id      = "vpc-00cf0ebacd562f09e"
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPS"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "agent-studio-sg"
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
 data "aws_route53_zone" "k3s" {
   name         = "opsp.dev"
   private_zone = false
 }
 
 resource "aws_instance" "k3s" {
-  ami                         = "ami-07eb6efe2dab82ae4"
+  ami                         = data.aws_ami.al2023.id
   instance_type               = "c6i.xlarge"
   subnet_id                   = "subnet-06b0a3ca13327ae30"
-  vpc_security_group_ids      = ["sg-014d7e010d702add6"]
+  vpc_security_group_ids      = [aws_security_group.k3s.id]
   iam_instance_profile        = aws_iam_instance_profile.k3s.name
   key_name                    = "nalbam-bruce"
   ebs_optimized               = true
   associate_public_ip_address = true
+
+  # user_data는 새 인스턴스의 최초 부팅에서만 실행하며, 기존 인스턴스에는
+  # bootstrap을 재실행하지 않는다.
+  user_data = file("${path.module}/bootstrap-k3s.sh")
 
   root_block_device {
     volume_type           = "gp3"
@@ -67,6 +146,7 @@ resource "aws_instance" "k3s" {
 
   lifecycle {
     prevent_destroy = true
+    ignore_changes  = [ami, user_data]
   }
 }
 
