@@ -56,6 +56,7 @@ data "aws_iam_policy_document" "idc_ecr_pull" {
       "ecr:DescribeImages",
     ]
     resources = [
+      format("arn:aws:ecr:%s:%s:repository/agent-memory", var.region, local.account_id),
       format("arn:aws:ecr:%s:%s:repository/agent-studio", var.region, local.account_id),
       format("arn:aws:ecr:%s:%s:repository/mcp-*", var.region, local.account_id),
     ]
