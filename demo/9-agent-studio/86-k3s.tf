@@ -186,3 +186,30 @@ resource "aws_iam_role_policy_attachment" "k3s_ssm_core" {
   role       = aws_iam_role.k3s.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
+
+resource "aws_iam_role_policy" "k3s_cert_manager_route53" {
+  name = "cert-manager-route53-dns01"
+  role = aws_iam_role.k3s.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "ChangeOpespressoHostedZone"
+        Effect   = "Allow"
+        Action   = "route53:ChangeResourceRecordSets"
+        Resource = "arn:aws:route53:::hostedzone/Z09927883VHDFS344CJ61"
+      },
+      {
+        Sid    = "ReadRoute53ForDns01"
+        Effect = "Allow"
+        Action = [
+          "route53:GetChange",
+          "route53:ListHostedZonesByName",
+          "route53:ListResourceRecordSets",
+        ]
+        Resource = "*"
+      },
+    ]
+  })
+}
