@@ -29,6 +29,16 @@ case "${ID:-}" in
   *) echo "unsupported Linux distribution: ${ID:-unknown}" >&2; exit 1 ;;
 esac
 
+echo "== install Node.js"
+if ! command -v node >/dev/null 2>&1; then
+  case "${ID:-}" in
+    amzn) dnf install -y nodejs ;;
+    ubuntu|debian) DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs ;;
+  esac
+else
+  echo "node is already installed"
+fi
+
 echo "== install GitHub CLI"
 if ! command -v gh >/dev/null 2>&1; then
   case "${ID:-}" in
@@ -160,6 +170,7 @@ systemctl start k3s-ecr-secret.service
 
 echo "== verify installed tools"
 git --version
+node --version
 gh --version | head -n 1
 helm version --short
 argocd version --client
