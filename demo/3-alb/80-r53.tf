@@ -69,3 +69,10 @@ moved {
   from = aws_route53_record.internal["demo-in-b.opspresso.com"]
   to   = aws_route53_record.internal["*.demo-in-b.opspresso.com"]
 }
+
+# 기존 k3s A 레코드를 관리 대상으로 가져온 뒤 EKS ALB alias로 전환한다.
+import {
+  for_each = toset(["studio.opspresso.com", "memory.opspresso.com"])
+  to       = aws_route53_record.public[each.value]
+  id       = "${data.aws_route53_zone.this[var.root_domain].zone_id}_${each.value}_A"
+}

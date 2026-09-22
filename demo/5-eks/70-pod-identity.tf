@@ -41,10 +41,6 @@ locals {
       namespace       = "agent-mcps"
       service_account = "mcp-cloudwatch"
     }
-    "mcp-memory" = {
-      namespace       = "agent-mcps"
-      service_account = "mcp-memory"
-    }
   }
 
   # ARN 을 문자열로 조립하지 않고 4-role 이 내보낸 것을 씁니다. 키가 없으면 여기서

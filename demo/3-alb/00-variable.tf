@@ -33,11 +33,14 @@ variable "domains" {
   default = {
     "opspresso.com" = {
       certificates = [
+        "opspresso.com",
         "demo.opspresso.com",
         "demo-a.opspresso.com",
         "demo-b.opspresso.com",
       ]
       public = [
+        "studio.opspresso.com",
+        "memory.opspresso.com",
         "*.demo.opspresso.com",
         "*.demo-a.opspresso.com",
         "*.demo-b.opspresso.com",
