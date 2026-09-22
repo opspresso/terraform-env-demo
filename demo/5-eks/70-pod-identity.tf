@@ -33,6 +33,10 @@ locals {
       namespace       = "agent-studio"
       service_account = "agent-studio"
     }
+    "agent-memory" = {
+      namespace       = "agent-memory"
+      service_account = "agent-memory"
+    }
     "mcp-cloudwatch" = {
       namespace       = "agent-mcps"
       service_account = "mcp-cloudwatch"

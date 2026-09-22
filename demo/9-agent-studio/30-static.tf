@@ -1,6 +1,6 @@
-# S3 — 아티팩트와 이미지를 담는 정적 버킷
+# S3 — Studio 아티팩트와 Memory 문서 원본을 담는 비공개 버킷
 
-# 런이 남긴 그림·문서가 여기 들어가고, 브라우저가 직접 읽습니다.
+# 객체 접근은 각 앱의 인증·권한 검사와 Pod Identity를 거칩니다.
 resource "aws_s3_bucket" "static" {
   for_each = local.names
 
@@ -15,8 +15,7 @@ resource "aws_s3_bucket" "static" {
   }
 }
 
-# 정책으로 공개 읽기를 허용하므로 `block_public_policy` 는 꺼 둡니다. ACL 쪽은 막아 둔
-# 채로입니다 — 공개는 정책 한 줄로만 일어나야 추적됩니다.
+# 앱이 proxied 접근을 제공하므로 공개 정책과 ACL을 모두 차단합니다.
 resource "aws_s3_bucket_public_access_block" "static" {
   for_each = local.names
 
@@ -24,8 +23,8 @@ resource "aws_s3_bucket_public_access_block" "static" {
 
   block_public_acls       = true
   ignore_public_acls      = true
-  block_public_policy     = false
-  restrict_public_buckets = false
+  block_public_policy     = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "static" {
@@ -42,8 +41,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "static" {
   }
 }
 
-# 서명 URL 없이 <img src> 로 읽히는 것이 이 버킷의 용도입니다. 쓰기는 파드 롤만 할 수
-# 있습니다 (demo/4-role 의 agent-studio 정책).
+# Bucket policy는 TLS만 강제하고, 접근 권한은 각 앱의 IAM policy에 둡니다.
 resource "aws_s3_bucket_policy" "static" {
   for_each = local.names
 
@@ -53,17 +51,16 @@ resource "aws_s3_bucket_policy" "static" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid       = "PublicReadGetObject"
-        Effect    = "Allow"
+        Sid       = "DenyInsecureTransport"
+        Effect    = "Deny"
         Principal = "*"
-        Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.static[each.key].arn}/*"
+        Action    = "s3:*"
+        Resource  = [aws_s3_bucket.static[each.key].arn, "${aws_s3_bucket.static[each.key].arn}/*"]
+        Condition = { Bool = { "aws:SecureTransport" = "false" } }
       },
     ]
   })
 
-  # 새 버킷은 계정 기본값으로 공개 정책이 막힌 채 생기므로, 위 블록이 먼저 풀려야
-  # 이 정책이 받아들여집니다.
   depends_on = [aws_s3_bucket_public_access_block.static]
 }
 

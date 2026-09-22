@@ -2,73 +2,20 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "Table",
-      "Effect": "Allow",
-      "Action": [
-        "dynamodb:BatchWriteItem",
-        "dynamodb:ConditionCheckItem",
-        "dynamodb:DeleteItem",
-        "dynamodb:GetItem",
-        "dynamodb:PutItem",
-        "dynamodb:Query",
-        "dynamodb:UpdateItem"
-      ],
-      "Resource": [
-        "arn:aws:dynamodb:*:*:table/agent-studio",
-        "arn:aws:dynamodb:*:*:table/agent-studio/index/*",
-        "arn:aws:dynamodb:*:*:table/agent-studio-prod",
-        "arn:aws:dynamodb:*:*:table/agent-studio-prod/index/*"
-      ]
-    },
-    {
-      "Sid": "ArtifactObjects",
+      "Sid": "StudioObjects",
       "Effect": "Allow",
       "Action": [
         "s3:PutObject",
         "s3:GetObject",
-        "s3:DeleteObject"
+        "s3:DeleteObject",
+        "s3:AbortMultipartUpload",
+        "s3:ListMultipartUploadParts"
       ],
       "Resource": [
         "arn:aws:s3:::agent-studio-static/artifacts/*",
         "arn:aws:s3:::agent-studio-static/images/*",
-        "arn:aws:s3:::agent-studio-prod-static/artifacts/*",
-        "arn:aws:s3:::agent-studio-prod-static/images/*"
+        "arn:aws:s3:::agent-studio-static/source-files/*"
       ]
-    },
-    {
-      "Sid": "CapabilityIndexReadWrite",
-      "Effect": "Allow",
-      "Action": [
-        "s3vectors:PutVectors",
-        "s3vectors:QueryVectors",
-        "s3vectors:GetVectors",
-        "s3vectors:ListVectors",
-        "s3vectors:DeleteVectors"
-      ],
-      "Resource": [
-        "arn:aws:s3vectors:*:*:bucket/agent-studio-vector/index/capabilities",
-        "arn:aws:s3vectors:*:*:bucket/agent-studio-prod-vector/index/capabilities"
-      ]
-    },
-    {
-      "Sid": "EmbeddingModel",
-      "Effect": "Allow",
-      "Action": [
-        "bedrock:InvokeModel"
-      ],
-      "Resource": [
-        "arn:aws:bedrock:*:*:inference-profile/global.cohere.embed-v4:0",
-        "arn:aws:bedrock:*::foundation-model/cohere.embed-v4:0",
-        "arn:aws:bedrock:*::foundation-model/amazon.titan-embed-text-v2:0"
-      ]
-    },
-    {
-      "Sid": "ChatModelsOnMantle",
-      "Effect": "Allow",
-      "Action": [
-        "bedrock-mantle:CreateInference"
-      ],
-      "Resource": "*"
     }
   ]
 }

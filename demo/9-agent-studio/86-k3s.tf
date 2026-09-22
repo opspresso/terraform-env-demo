@@ -162,9 +162,7 @@ resource "aws_route53_record" "k3s_wildcard" {
 # 같은 정책을 연결해 k3s 노드 권한과 구분한다.
 resource "aws_iam_role_policy_attachment" "k3s_pod_policies" {
   for_each = toset([
-    "pod-role--agent-studio",
     "pod-role--mcp-cloudwatch",
-    "pod-role--mcp-memory",
     "pod-role--external-secrets",
   ])
 
