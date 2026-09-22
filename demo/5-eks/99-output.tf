@@ -12,6 +12,15 @@ output "cluster_endpoint" {
   value = module.eks.cluster_endpoint
 }
 
+output "cluster_certificate_authority_data" {
+  description = "6-eks-node의 Kubernetes provider가 사용하는 Base64 인코딩 CA 인증서입니다."
+  value       = module.eks.cluster_certificate_authority_data
+}
+
+output "cluster_region" {
+  value = var.region
+}
+
 output "cluster_iam_role_name" {
   value = module.eks.cluster_iam_role_name
 }

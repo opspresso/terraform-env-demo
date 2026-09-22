@@ -1,10 +1,8 @@
 # EKS Auto Mode baseline capacity
-# 이 pool은 항상 2개를 유지하고, workload 증가분은 기존 dynamic NodePool이 처리합니다.
-# compute_config의 general-purpose/system NodePool은 workload 수요에 따라 추가 확장됩니다.
+# 기준 노드 수를 유지하고 workload 증가분은 기본 dynamic NodePool이 처리합니다.
+# plan 시점에 EKS API가 필요하므로 5-eks를 먼저 적용합니다.
 
-resource "kubernetes_manifest" "auto_mode_baseline_node_pool" {
-  depends_on = [module.eks]
-
+resource "kubernetes_manifest" "baseline" {
   manifest = {
     apiVersion = "karpenter.sh/v1"
     kind       = "NodePool"
