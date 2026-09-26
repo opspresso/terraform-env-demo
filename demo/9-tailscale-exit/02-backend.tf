@@ -6,7 +6,7 @@ terraform {
   backend "s3" {
     region  = "ap-northeast-2"
     bucket  = "terraform-workshop-396608815058"
-    key     = "backend/demo/tailscale-exit-jp/terraform.tfstate"
+    key     = "backend/demo/tailscale-exit/terraform.tfstate"
     encrypt = true
   }
 
