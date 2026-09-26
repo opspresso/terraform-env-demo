@@ -77,7 +77,60 @@ EOF
 
 echo "== start services"
 systemctl daemon-reload
-systemctl enable --now amazon-ssm-agent tailscale-udp-offload tailscaled
+systemctl enable --now tailscale-udp-offload tailscaled
+
+# IAM credentials can reach IMDS after the preinstalled SSM agent starts.
+# Restart it after credentials are available to clear its registration backoff.
+echo "== wait for EC2 instance role credentials"
+python3 - <<'PY'
+import json
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+
+base_url = "http://169.254.169.254"
+opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+request = urllib.request.Request(
+    base_url + "/latest/api/token",
+    method="PUT",
+    headers={"X-aws-ec2-metadata-token-ttl-seconds": "300"},
+)
+with opener.open(request, timeout=3) as response:
+    token = response.read().decode()
+
+def read_metadata(path):
+    request = urllib.request.Request(
+        base_url + path,
+        headers={"X-aws-ec2-metadata-token": token},
+    )
+    with opener.open(request, timeout=3) as response:
+        return response.read().decode()
+
+deadline = time.monotonic() + 180
+while True:
+    try:
+        role = read_metadata("/latest/meta-data/iam/security-credentials/").strip()
+        credentials = json.loads(read_metadata(
+            "/latest/meta-data/iam/security-credentials/" + urllib.parse.quote(role, safe="")
+        ))
+    except urllib.error.HTTPError as error:
+        if error.code != 404:
+            raise
+    else:
+        if credentials.get("Code") != "Success" or not all(
+            credentials.get(field) for field in ("AccessKeyId", "SecretAccessKey", "Token")
+        ):
+            raise RuntimeError("EC2 instance role credentials are invalid")
+        print("EC2 instance role credentials are available")
+        break
+
+    if time.monotonic() >= deadline:
+        raise TimeoutError("Timed out waiting for EC2 instance role credentials")
+    time.sleep(2)
+PY
+systemctl enable amazon-ssm-agent
+systemctl restart amazon-ssm-agent
 
 # Set preferences without logging a one-time login URL in cloud-init output.
 # Keep the instance's AWS DNS resolver to avoid Amazon Linux DNS loops.

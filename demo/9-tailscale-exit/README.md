@@ -15,7 +15,7 @@
 - 인바운드: SSH 용 TCP `22`, Tailscale 직접 연결용 UDP `41641` (`0.0.0.0/0`)
 - 관리: SSH 또는 AWS Systems Manager Session Manager
 - SSH key pair: `nalbam-bruce` (오레곤 리전에 등록된 key pair)
-- Bootstrap: Tailscale 설치, IP forwarding, 재부팅 시 UDP offload 및 서비스 복원
+- Bootstrap: Tailscale 설치, IP forwarding, UDP offload, 역할 자격 증명 확인 후 SSM 시작
 - State: 기존 서울 S3 backend 의 별도 `tailscale-exit` key 사용
 
 기본 VPC/subnet 은 data source 로 조회합니다. 오레곤 기본 VPC 와 해당
@@ -123,6 +123,12 @@ sudo tail -n 100 /var/log/cloud-init-output.log
 sudo sysctl net.ipv4.ip_forward net.ipv6.conf.all.forwarding
 sudo swapon --show
 ```
+
+SSM Agent 는 AMI 에서 먼저 시작할 수 있어, 최초 부팅 시 IMDS 에 역할 자격 증명이
+아직 없으면 등록 실패 후 재시도 대기에 들어갈 수 있습니다. Bootstrap 은 IMDSv2 로
+자격 증명 전달을 최대 180초 기다린 뒤 SSM Agent 를 재시작합니다. 이미 실행 중인
+노드에서 같은 증상이 발생하면 IAM 역할/정책과 IMDS 자격 증명 전달을 확인한 후
+`sudo systemctl restart amazon-ssm-agent` 를 실행합니다.
 
 공인 IPv4 는 stop/start 또는 인스턴스 교체 시 바뀔 수 있지만, 클라이언트는
 Tailscale 이름으로 선택합니다. Bootstrap 변경은 인스턴스를 교체하므로 새 노드를
