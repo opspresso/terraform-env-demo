@@ -44,6 +44,14 @@ resource "aws_security_group" "k3s" {
   }
 
   ingress {
+    description = "Tailscale WireGuard"
+    from_port   = 41641
+    to_port     = 41641
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     description = "HTTP"
     from_port   = 80
     to_port     = 80

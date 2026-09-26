@@ -1,4 +1,4 @@
-# Session Manager 로 관리하며 공인 SSH 는 열지 않습니다.
+# Session Manager 관리 권한
 
 resource "aws_iam_role" "exit_node" {
   name        = "${local.name}-role"

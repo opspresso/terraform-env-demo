@@ -12,8 +12,8 @@
 - EC2: `t4g.nano` (ARM64, 2 vCPU, 512 MiB), Amazon Linux 2023
 - 디스크: 암호화된 `gp3` 8 GiB, swap 1 GiB
 - 네트워크: 오레곤 기본 VPC 및 `us-west-2a` 기본 public subnet, 공인 IPv4
-- 인바운드: Tailscale 직접 연결용 UDP `41641` 만 허용
-- 관리: AWS Systems Manager Session Manager 또는 Tailscale 네트워크의 SSH
+- 인바운드: SSH 용 TCP `22`, Tailscale 직접 연결용 UDP `41641` (`0.0.0.0/0`)
+- 관리: SSH 또는 AWS Systems Manager Session Manager
 - SSH key pair: `nalbam-bruce` (오레곤 리전에 등록된 key pair)
 - Bootstrap: Tailscale 설치, IP forwarding, 재부팅 시 UDP offload 및 서비스 복원
 - State: 기존 서울 S3 backend 의 별도 `tailscale-exit` key 사용
@@ -42,7 +42,13 @@ terraform apply
 terraform output
 ```
 
-EC2 부팅과 SSM 등록이 끝나면 AWS 콘솔의 Session Manager 로 연결하거나,
+EC2 부팅이 끝나면 `nalbam-bruce` 의 개인 키로 공인 IP 에 SSH 접속합니다.
+
+```bash
+ssh -i /path/to/private-key ec2-user@"$(terraform output -raw public_ip)"
+```
+
+SSM 등록이 끝나면 AWS 콘솔의 Session Manager 로 연결하거나,
 AWS CLI 및 Session Manager plugin 이 있는 환경에서 실행합니다.
 
 ```bash
@@ -53,7 +59,7 @@ SSM 접속 권한은 이 명령을 실행하는 AWS 사용자/role 에도 필요
 
 ## Tailscale 등록
 
-Session Manager 의 EC2 셸에서 bootstrap 완료를 기다린 뒤 로그인합니다.
+SSH 또는 Session Manager 의 EC2 셸에서 bootstrap 완료를 기다린 뒤 로그인합니다.
 표시된 URL 을 열어 클라이언트와 같은 tailnet 에 등록합니다.
 
 ```bash
