@@ -6,7 +6,7 @@ output "instance_id" {
 }
 
 output "public_ip" {
-  description = "Exit node 사용 시 인터넷에 표시될 일본 공인 IPv4"
+  description = "Exit node 사용 시 인터넷에 표시될 IPv4"
   value       = aws_instance.exit_node.public_ip
 }
 

@@ -1,24 +1,24 @@
-# Japan Tailscale exit node
+# Oregon Tailscale exit node
 
-`Client → Tailscale → tailscale-exit-jp (Tokyo) → Internet`
+`Client → Tailscale → tailscale-exit (Oregon) → Internet`
 
-클라이언트에서 `tailscale-exit-jp` 를 exit node 로 선택하면 웹사이트에는
-도쿄 EC2 의 공인 IP 가 표시됩니다.
+클라이언트에서 `tailscale-exit` 를 exit node 로 선택하면 웹사이트에는
+오레곤 EC2 의 공인 IP 가 표시됩니다.
 [Tailscale exit node 문서](https://tailscale.com/docs/features/exit-nodes)
 
 ## 구성
 
-- 리전: `ap-northeast-1`, AZ: `ap-northeast-1a`
+- 리전: `us-west-2`, AZ: `us-west-2a`
 - EC2: `t4g.nano` (ARM64, 2 vCPU, 512 MiB), Amazon Linux 2023
 - 디스크: 암호화된 `gp3` 8 GiB, swap 1 GiB
-- 네트워크: 도쿄 기본 VPC 및 `ap-northeast-1a` 기본 public subnet, 공인 IPv4
+- 네트워크: 오레곤 기본 VPC 및 `us-west-2a` 기본 public subnet, 공인 IPv4
 - 인바운드: Tailscale 직접 연결용 UDP `41641` 만 허용
 - 관리: AWS Systems Manager Session Manager 또는 Tailscale 네트워크의 SSH
-- SSH key pair: `nalbam-bruce` (도쿄 리전에 등록된 key pair)
+- SSH key pair: `nalbam-bruce` (오레곤 리전에 등록된 key pair)
 - Bootstrap: Tailscale 설치, IP forwarding, 재부팅 시 UDP offload 및 서비스 복원
-- State: 기존 서울 S3 backend 의 별도 `tailscale-exit-jp` key 사용
+- State: 기존 서울 S3 backend 의 별도 `tailscale-exit` key 사용
 
-기본 VPC/subnet 은 data source 로 조회합니다. 도쿄 기본 VPC 와 해당
+기본 VPC/subnet 은 data source 로 조회합니다. 오레곤 기본 VPC 와 해당
 AZ 의 기본 subnet 이 존재하며 인터넷으로 향하는 IGW 경로가 있어야 합니다.
 현재 기본 VPC 는 IPv4 전용이므로 이 exit node 는 IPv6 인터넷 통신을 지원하지
 않습니다. IPv6 전용 사이트에는 접속할 수 없습니다.
@@ -46,7 +46,7 @@ EC2 부팅과 SSM 등록이 끝나면 AWS 콘솔의 Session Manager 로 연결�
 AWS CLI 및 Session Manager plugin 이 있는 환경에서 실행합니다.
 
 ```bash
-aws ssm start-session --region ap-northeast-1 --target "$(terraform output -raw instance_id)"
+aws ssm start-session --region us-west-2 --target "$(terraform output -raw instance_id)"
 ```
 
 SSM 접속 권한은 이 명령을 실행하는 AWS 사용자/role 에도 필요합니다.
@@ -59,7 +59,7 @@ Session Manager 의 EC2 셸에서 bootstrap 완료를 기다린 뒤 로그인합
 ```bash
 sudo cloud-init status --wait
 sudo systemctl is-active amazon-ssm-agent tailscale-udp-offload tailscaled
-sudo tailscale up --hostname=tailscale-exit-jp --advertise-exit-node --accept-dns=false
+sudo tailscale up --hostname=tailscale-exit --advertise-exit-node --accept-dns=false
 sudo tailscale ip -4
 ```
 
@@ -69,7 +69,7 @@ DNS forwarding loop 를 피합니다. 클라이언트의 DNS 설정을 끄는 �
 [Amazon Linux DNS 설명](https://tailscale.com/docs/reference/linux-dns)
 
 [Tailscale Machines](https://login.tailscale.com/admin/machines) 에서
-`tailscale-exit-jp` 의 **Edit route settings → Use as exit node** 를 승인합니다.
+`tailscale-exit` 의 **Edit exit node → Allow exit node routing → Save** 를 승인합니다.
 상시 운영할 노드는 같은 관리 화면에서 **Disable key expiry** 를 설정합니다.
 사용자 지정 ACL/grants 를 쓰는 tailnet 은 클라이언트에서
 `autogroup:internet` 으로 접속하는 권한도 허용되어 있어야 합니다.
@@ -79,7 +79,7 @@ Tailscale 등록 후 `nalbam-bruce` 의 개인 키로 SSH 접속할 수도 있�
 Tailnet 의 ACL/grants 에서 클라이언트의 노드 TCP `22` 접근이 허용되어야 합니다.
 
 ```bash
-ssh -i /path/to/private-key ec2-user@tailscale-exit-jp
+ssh -i /path/to/private-key ec2-user@tailscale-exit
 ```
 
 MagicDNS 를 사용하지 않으면 호스트 이름 대신 EC2 에서 확인한
@@ -87,20 +87,20 @@ MagicDNS 를 사용하지 않으면 호스트 이름 대신 EC2 에서 확인한
 
 ## 클라이언트에서 사용
 
-macOS Tailscale 메뉴에서 **Exit Nodes → tailscale-exit-jp** 를 선택합니다.
+macOS Tailscale 메뉴에서 **Exit Nodes → tailscale-exit** 를 선택합니다.
 집/회사 LAN 도 사용하려면 **Allow Local Network Access** 를 켭니다.
 CLI 가 제공되는 설치에서는 다음 명령도 사용할 수 있습니다.
 
 ```bash
-tailscale set --exit-node=tailscale-exit-jp --exit-node-allow-lan-access=true
+tailscale set --exit-node=tailscale-exit --exit-node-allow-lan-access=true
 tailscale status
-tailscale ping tailscale-exit-jp
+tailscale ping tailscale-exit
 curl -4 https://checkip.amazonaws.com
 ```
 
 IPv4 결과가 `terraform output -raw public_ip` 와 같으면 인터넷 트래픽이
 EC2 를 경유한 것입니다.
-일본 판정은 사용하는 사이트의 IP 위치 데이터에 따라 확인합니다.
+미국 판정은 사용하는 사이트의 IP 위치 데이터에 따라 확인합니다.
 
 해제하려면 메뉴에서 **Exit Nodes → None** 을 선택하거나 실행합니다.
 

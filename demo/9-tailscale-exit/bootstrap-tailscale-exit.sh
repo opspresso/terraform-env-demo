@@ -81,10 +81,10 @@ systemctl enable --now amazon-ssm-agent tailscale-udp-offload tailscaled
 
 # Set preferences without logging a one-time login URL in cloud-init output.
 # Keep the instance's AWS DNS resolver to avoid Amazon Linux DNS loops.
-tailscale set --hostname=tailscale-exit-jp --advertise-exit-node --accept-dns=false
+tailscale set --hostname=tailscale-exit --advertise-exit-node --accept-dns=false
 
 echo "== verify services"
 systemctl is-active amazon-ssm-agent tailscale-udp-offload tailscaled
 tailscale version
 echo "Authenticate once through Session Manager:"
-echo "sudo tailscale up --hostname=tailscale-exit-jp --advertise-exit-node --accept-dns=false"
+echo "sudo tailscale up --hostname=tailscale-exit --advertise-exit-node --accept-dns=false"

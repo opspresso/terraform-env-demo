@@ -1,10 +1,10 @@
 # terraform-env-demo
 
-## Japan Tailscale exit node
+## Oregon Tailscale exit node
 
-[`demo/9-tailscale-exit`](demo/9-tailscale-exit/README.md) creates a Tokyo
-`t4g.nano` exit node. Select `tailscale-exit-jp` in a Tailscale client
-to route internet traffic through its Japanese public IP.
+[`demo/9-tailscale-exit`](demo/9-tailscale-exit/README.md) creates an Oregon
+`t4g.nano` exit node. Select `tailscale-exit` in a Tailscale client
+to route internet traffic through its US public IP.
 
 ## Agent Studio storage
 

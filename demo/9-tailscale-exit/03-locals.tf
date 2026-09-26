@@ -1,7 +1,7 @@
 # locals
 
 locals {
-  name = "tailscale-exit-jp"
+  name = "tailscale-exit"
 
   tags = {
     Environment = "demo"
