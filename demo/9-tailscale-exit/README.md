@@ -13,7 +13,8 @@
 - 디스크: 암호화된 `gp3` 8 GiB, swap 1 GiB
 - 네트워크: 도쿄 기본 VPC 및 `ap-northeast-1a` 기본 public subnet, 공인 IPv4
 - 인바운드: Tailscale 직접 연결용 UDP `41641` 만 허용
-- 관리: AWS Systems Manager Session Manager, SSH key pair 불필요
+- 관리: AWS Systems Manager Session Manager 또는 Tailscale 네트워크의 SSH
+- SSH key pair: `nalbam-bruce` (도쿄 리전에 등록된 key pair)
 - Bootstrap: Tailscale 설치, IP forwarding, 재부팅 시 UDP offload 및 서비스 복원
 - State: 기존 서울 S3 backend 의 별도 `tailscale-exit-jp` key 사용
 
@@ -73,6 +74,16 @@ DNS forwarding loop 를 피합니다. 클라이언트의 DNS 설정을 끄는 �
 사용자 지정 ACL/grants 를 쓰는 tailnet 은 클라이언트에서
 `autogroup:internet` 으로 접속하는 권한도 허용되어 있어야 합니다.
 Exit node 승인과 인터넷 사용 권한은 별개입니다.
+
+Tailscale 등록 후 `nalbam-bruce` 의 개인 키로 SSH 접속할 수도 있습니다.
+Tailnet 의 ACL/grants 에서 클라이언트의 노드 TCP `22` 접근이 허용되어야 합니다.
+
+```bash
+ssh -i /path/to/private-key ec2-user@tailscale-exit-jp
+```
+
+MagicDNS 를 사용하지 않으면 호스트 이름 대신 EC2 에서 확인한
+`sudo tailscale ip -4` 결과를 사용합니다.
 
 ## 클라이언트에서 사용
 

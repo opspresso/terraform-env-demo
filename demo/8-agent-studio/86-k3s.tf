@@ -30,40 +30,10 @@ resource "aws_iam_instance_profile" "k3s" {
   }
 }
 
-data "aws_ami" "al2023" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-2023.*-kernel-*-x86_64"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  filter {
-    name   = "state"
-    values = ["available"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
 resource "aws_security_group" "k3s" {
   name        = "agent-studio-sg"
   description = "agent-studio web"
-  vpc_id      = "vpc-00cf0ebacd562f09e"
+  vpc_id      = data.aws_vpc.default.id
 
   ingress {
     description = "SSH"
@@ -105,15 +75,10 @@ resource "aws_security_group" "k3s" {
   }
 }
 
-data "aws_route53_zone" "k3s" {
-  name         = "opsp.dev"
-  private_zone = false
-}
-
 resource "aws_instance" "k3s" {
   ami                         = data.aws_ami.al2023.id
   instance_type               = "c6i.xlarge"
-  subnet_id                   = "subnet-06b0a3ca13327ae30"
+  subnet_id                   = data.aws_subnet.default.id
   vpc_security_group_ids      = [aws_security_group.k3s.id]
   iam_instance_profile        = aws_iam_instance_profile.k3s.name
   key_name                    = "nalbam-bruce"

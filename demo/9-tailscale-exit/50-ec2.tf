@@ -6,6 +6,7 @@ resource "aws_instance" "exit_node" {
   subnet_id                   = data.aws_subnet.default.id
   vpc_security_group_ids      = [aws_security_group.exit_node.id]
   iam_instance_profile        = aws_iam_instance_profile.exit_node.name
+  key_name                    = "nalbam-bruce"
   associate_public_ip_address = true
   source_dest_check           = false
 
