@@ -124,7 +124,7 @@ resource "aws_instance" "k3s" {
 }
 
 resource "aws_route53_record" "k3s_wildcard" {
-  zone_id = data.aws_route53_zone.k3s.zone_id
+  zone_id = data.aws_route53_zone.k3s_opsp.zone_id
   name    = "*.demo.opsp.dev"
   type    = "A"
   ttl     = 300
@@ -166,10 +166,13 @@ resource "aws_iam_role_policy" "k3s_cert_manager_route53" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid      = "ChangeK3sHostedZone"
-        Effect   = "Allow"
-        Action   = "route53:ChangeResourceRecordSets"
-        Resource = "arn:aws:route53:::hostedzone/${data.aws_route53_zone.k3s.zone_id}"
+        Sid    = "ChangeK3sHostedZone"
+        Effect = "Allow"
+        Action = "route53:ChangeResourceRecordSets"
+        Resource = [
+          "arn:aws:route53:::hostedzone/${data.aws_route53_zone.k3s_opsp.zone_id}",
+          "arn:aws:route53:::hostedzone/${data.aws_route53_zone.k3s_agrt.zone_id}",
+        ]
       },
       {
         Sid    = "ReadRoute53ForDns01"
@@ -188,7 +191,7 @@ resource "aws_iam_role_policy" "k3s_cert_manager_route53" {
 resource "aws_route53_record" "k3s_apps" {
   for_each = toset(["studio", "memory"])
 
-  zone_id = data.aws_route53_zone.k3s.zone_id
+  zone_id = data.aws_route53_zone.k3s_opsp.zone_id
   name    = "${each.value}.opsp.dev"
   type    = "A"
   ttl     = 300

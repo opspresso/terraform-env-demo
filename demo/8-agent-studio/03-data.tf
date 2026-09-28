@@ -48,7 +48,12 @@ data "aws_ami" "al2023" {
   }
 }
 
-data "aws_route53_zone" "k3s" {
+data "aws_route53_zone" "k3s_opsp" {
   name         = "opsp.dev"
+  private_zone = false
+}
+
+data "aws_route53_zone" "k3s_agrt" {
+  name         = "agrt.dev"
   private_zone = false
 }
