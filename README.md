@@ -10,13 +10,25 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | 앱에서 사용할 IAM 역할 |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | 기준 노드 2개 유지 |
+| [6-eks-node](demo/6-eks-node/) | 기준 노드 2개와 제한된 Workspace Auto Mode pool |
 | [8-agent-studio](demo/8-agent-studio/) | S3, ECR, k3s 서버 |
 | [8-comfy-render](demo/8-comfy-render/) | DynamoDB, S3, 작업 큐 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
 
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 `8-agent-studio`는 `4-role` 적용 후 실행합니다.
+
+Workspace pool은 기존 Auto Mode node 역할과 private subnet·EKS primary security group을 재사용한다.
+`workspaces` NodeClass는 암호화된 160Gi ephemeral disk, `DefaultDeny`와 network policy event log를 사용한다.
+전용 taint와 `karpenter.sh/nodepool=workspaces`로 앱·DB와 실행 Pod를 분리하고, pool의 총 한도는
+CPU 16개·메모리 32Gi다. namespace의 Pod·자원 quota는 `argocd-env-demo`가 소유한다.
+노드의 이미지 캐시는 kubelet이 관리하며 Workspace마다 DinD 이미지 사본을 저장하지 않는다.
+`argocd-env-addons`의 EKS network policy controller를 먼저 준비한다.
+
+기존 설치는 승인된 `5-eks` 적용으로 Workspace용 output을 state에 기록한 뒤 `6-eks-node`를 적용한다.
+기존 default NodeClass·baseline/system/general-purpose pool, PVC, ECR, k3s 인스턴스는 변경하지 않는다.
+Terraform apply와 실제 장애 주입은 별도 승인 뒤 진행한다. k3s는 Auto Mode 리소스를 사용하지 않고
+같은 Kubernetes Sandbox와 namespace 격리·quota를 사용한다.
 
 ## 준비
 

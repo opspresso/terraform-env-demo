@@ -1,5 +1,15 @@
 # variable
 
+variable "workspace_ephemeral_storage_gib" {
+  description = "Encrypted Auto Mode node disk for Sandbox emptyDirs and the kubelet-managed image cache."
+  type        = number
+  default     = 160
+  validation {
+    condition     = var.workspace_ephemeral_storage_gib >= 80 && var.workspace_ephemeral_storage_gib <= 1000 && floor(var.workspace_ephemeral_storage_gib) == var.workspace_ephemeral_storage_gib
+    error_message = "workspace_ephemeral_storage_gib must be an integer between 80 and 1000."
+  }
+}
+
 variable "auto_mode_baseline_replicas" {
   description = "EKS Auto Mode가 유지할 기준 노드 수를 입력합니다."
   type        = number
