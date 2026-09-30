@@ -37,6 +37,20 @@ output "node_security_group_id" {
   value = module.eks.node_security_group_id
 }
 
+output "workspace_node_role_name" {
+  description = "Existing Auto Mode node role reused by the workspace NodeClass."
+  value       = module.eks.node_iam_role_name
+}
+
+output "workspace_subnet_ids" {
+  value = local.private_subnets
+}
+
+output "workspace_security_group_id" {
+  description = "EKS-managed primary security group used by Auto Mode nodes."
+  value       = module.eks.cluster_primary_security_group_id
+}
+
 output "oidc_provider" {
   value = module.eks.oidc_provider
 }
