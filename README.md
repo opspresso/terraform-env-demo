@@ -11,7 +11,7 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [4-role](demo/4-role/) | 앱에서 사용할 IAM 역할 |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
 | [6-eks-node](demo/6-eks-node/) | production 기준 노드 4개와 제한된 Workspace Auto Mode pool |
-| [8-agent-studio](demo/8-agent-studio/) | S3, ECR, k3s 서버 |
+| [8-agent-studio](demo/8-agent-studio/README.md) | S3, ECR, k3s 서버와 alpha 메모리 정책 |
 | [8-comfy-render](demo/8-comfy-render/) | DynamoDB, S3, 작업 큐 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
 
