@@ -1,5 +1,15 @@
 # variable
 
+variable "workspace_max_pods" {
+  description = "Workspace Pod capacity; keep aligned with argocd-env-demo env/eks-demo.yaml. Each Pod reserves 1 CPU and 2Gi memory."
+  type        = number
+  default     = 32
+  validation {
+    condition     = var.workspace_max_pods >= 1 && var.workspace_max_pods <= 128 && floor(var.workspace_max_pods) == var.workspace_max_pods
+    error_message = "workspace_max_pods must be an integer between 1 and 128."
+  }
+}
+
 variable "workspace_ephemeral_storage_gib" {
   description = "Encrypted Auto Mode node disk for Sandbox emptyDirs and the kubelet-managed image cache."
   type        = number

@@ -21,7 +21,9 @@ EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 Workspace pool은 기존 Auto Mode node 역할과 private subnet·EKS primary security group을 재사용한다.
 `workspaces` NodeClass는 암호화된 160Gi ephemeral disk, `DefaultDeny`와 network policy event log를 사용한다.
 전용 taint와 `karpenter.sh/nodepool=workspaces`로 앱·DB와 실행 Pod를 분리하고, pool의 총 한도는
-CPU 16개·메모리 32Gi다. namespace의 Pod·자원 quota는 `argocd-env-demo`가 소유한다.
+`workspace_max_pods=32`에서는 CPU 48개·메모리 192Gi다. 4-CPU 노드당 1-CPU/2Gi 실행 Pod
+3개와 kubelet·DaemonSet 여유를 계산하고 교체용 노드 1개를 허용한다. 노드는 수요가 있을 때만
+생성한다. namespace quota와 worker 동시성은 `argocd-env-demo`가 소유하며 같은 용량으로 맞춘다.
 노드의 이미지 캐시는 kubelet이 관리하며 Workspace마다 DinD 이미지 사본을 저장하지 않는다.
 `argocd-env-addons`의 EKS network policy controller를 먼저 준비한다.
 
@@ -45,7 +47,9 @@ aws configure get region
 
 `replace.sh`는 state 저장용 S3 bucket을 만들고 코드의 bucket 이름을 변경합니다. 현재 스크립트가 만드는 DynamoDB 잠금 테이블은 사용하지 않습니다.
 
-DynamoDB 없이 `use_lockfile = true`로 S3 잠금을 사용할 수 있습니다. 현재 코드에는 이 설정이 없습니다. [공식 문서](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking)
+`6-eks-node`는 `use_lockfile = true`로 S3 state 잠금을 사용합니다. 실행 역할은 state 객체 외에
+같은 key의 `.tflock` 객체를 읽고 쓰고 삭제할 수 있어야 합니다. 다른 root에는 이 설정이 없습니다.
+[공식 문서](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking)
 
 ## 실행
 
