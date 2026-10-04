@@ -10,13 +10,17 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | 앱에서 사용할 IAM 역할 |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | 기준 노드 2개와 제한된 Workspace Auto Mode pool |
+| [6-eks-node](demo/6-eks-node/) | production 기준 노드 4개와 제한된 Workspace Auto Mode pool |
 | [8-agent-studio](demo/8-agent-studio/) | S3, ECR, k3s 서버 |
 | [8-comfy-render](demo/8-comfy-render/) | DynamoDB, S3, 작업 큐 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
 
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 `8-agent-studio`는 `4-role` 적용 후 실행합니다.
+
+`eks-demo`의 기본 workload는 노드 한 대의 이탈에도 requests를 수용할 수 있도록 기준 노드
+4개를 유지한다. Workspace 노드와 별도이며 이 기준 용량에는 유휴 시간에도 비용이 발생한다.
+requests·sidecar·DaemonSet 예약을 합산하고 남은 노드의 allocatable과 비교해 조정한다.
 
 Workspace pool은 기존 Auto Mode node 역할과 private subnet·EKS primary security group을 재사용한다.
 `workspaces` NodeClass는 암호화된 160Gi ephemeral disk, `DefaultDeny`와 network policy event log를 사용한다.

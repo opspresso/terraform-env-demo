@@ -1,1 +1,1 @@
-auto_mode_baseline_replicas = 2
+auto_mode_baseline_replicas = 4
