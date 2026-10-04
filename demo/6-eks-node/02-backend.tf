@@ -4,10 +4,11 @@ terraform {
   required_version = "1.15.8" # terraform version
 
   backend "s3" {
-    region  = "ap-northeast-2"
-    bucket  = "terraform-workshop-396608815058"
-    key     = "backend/demo/eks-node-demo/terraform.tfstate"
-    encrypt = true
+    region       = "ap-northeast-2"
+    bucket       = "terraform-workshop-396608815058"
+    key          = "backend/demo/eks-node-demo/terraform.tfstate"
+    encrypt      = true
+    use_lockfile = true
   }
 
   required_providers {

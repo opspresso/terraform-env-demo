@@ -1,3 +1,9 @@
+locals {
+  # A 4-CPU node has room for three 1-CPU/2Gi Pods after kubelet and DaemonSets.
+  # One extra node permits replacement; the memory ceiling also fits 16Gi m nodes.
+  workspace_node_limit = ceil(var.workspace_max_pods / 3) + 1
+}
+
 # Dedicated bounded capacity uses the existing Auto Mode role, subnets and CNI.
 # Do not edit or replace the EKS-managed default NodeClass/NodePools.
 resource "kubernetes_manifest" "workspace_node_class" {
@@ -27,7 +33,7 @@ resource "kubernetes_manifest" "workspace_node_pool" {
     kind       = "NodePool"
     metadata   = { name = "workspaces" }
     spec = {
-      limits = { cpu = "16", memory = "32Gi" }
+      limits = { cpu = tostring(local.workspace_node_limit * 4), memory = "${local.workspace_node_limit * 16}Gi" }
       disruption = {
         consolidationPolicy = "WhenEmpty"
         consolidateAfter    = "5m"
