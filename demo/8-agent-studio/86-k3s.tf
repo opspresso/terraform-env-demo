@@ -103,7 +103,11 @@ resource "aws_instance" "k3s" {
     iops                  = 3000
     throughput            = 125
     encrypted             = false
-    delete_on_termination = true
+    delete_on_termination = false
+
+    tags = {
+      Name = "k3s-demo"
+    }
   }
 
   metadata_options {
