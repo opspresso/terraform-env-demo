@@ -42,7 +42,8 @@ resource "kubernetes_manifest" "workspace_node_pool" {
       template = {
         spec = {
           nodeClassRef = { group = "eks.amazonaws.com", kind = "NodeClass", name = "workspaces" }
-          taints       = [{ key = "agent-studio/workspace", value = "true", effect = "NoSchedule" }]
+          # Keep the existing pool identity; only Forge schedules Sandbox Jobs here.
+          taints = [{ key = "agent-forge/workspace", value = "true", effect = "NoSchedule" }]
           requirements = [
             { key = "kubernetes.io/arch", operator = "In", values = ["amd64"] },
             { key = "kubernetes.io/os", operator = "In", values = ["linux"] },

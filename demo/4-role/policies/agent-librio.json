@@ -1,0 +1,20 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "LibrioObjectExistence",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::agent-librio-static"
+    },
+    {
+      "Sid": "LibrioSources",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:GetObject", "s3:DeleteObject"],
+      "Resource": [
+        "arn:aws:s3:::agent-librio-static/organizations/*/documents/*",
+        "arn:aws:s3:::agent-librio-static/agent-librio/audio/*"
+      ]
+    }
+  ]
+}

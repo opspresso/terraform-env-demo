@@ -8,3 +8,8 @@ output "static_buckets" {
 output "ecr_repositories" {
   value = { for name, repo in aws_ecr_repository.this : name => repo.repository_url }
 }
+
+output "github_ecr_role_arns" {
+  description = "Repository-specific GitHub Actions release roles."
+  value       = { for repository, role in aws_iam_role.github_ecr : repository => role.arn }
+}

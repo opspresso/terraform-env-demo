@@ -33,9 +33,11 @@ locals {
       namespace       = "agent-studio"
       service_account = "agent-studio"
     }
-    "agent-memory" = {
-      namespace       = "agent-memory"
-      service_account = "agent-memory"
+    # Memory and Forge need no AWS data-plane identity. Retain the legacy Memory
+    # IAM resources in 4-role; a future cluster binds source storage to Librio.
+    "agent-librio" = {
+      namespace       = "agent-librio"
+      service_account = "agent-librio"
     }
     "mcp-cloudwatch" = {
       namespace       = "agent-mcps"
