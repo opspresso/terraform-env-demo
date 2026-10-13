@@ -127,7 +127,7 @@ resource "aws_instance" "k3s" {
   }
 }
 
-resource "aws_route53_record" "k3s_wildcard" {
+resource "aws_route53_record" "k3s_opsp_wildcard" {
   zone_id = data.aws_route53_zone.k3s_opsp.zone_id
   name    = "*.demo.opsp.dev"
   type    = "A"
