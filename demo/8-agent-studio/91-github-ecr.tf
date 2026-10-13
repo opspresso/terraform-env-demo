@@ -84,8 +84,9 @@ resource "aws_iam_policy" "github_ecr" {
     Statement = [
       { Effect = "Allow", Action = ["ecr:GetAuthorizationToken"], Resource = "*" },
       {
-        Effect   = "Allow"
-        Action   = local.github_ecr_push_actions
+        Effect = "Allow"
+        # Forge verifies its published Sandbox by pulling and running that image.
+        Action   = each.key == "agent-forge" ? concat(local.github_ecr_push_actions, ["ecr:GetDownloadUrlForLayer"]) : local.github_ecr_push_actions
         Resource = aws_ecr_repository.this[each.key].arn
       },
     ]
