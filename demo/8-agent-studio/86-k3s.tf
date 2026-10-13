@@ -99,7 +99,7 @@ resource "aws_instance" "k3s" {
 
   root_block_device {
     volume_type           = "gp3"
-    volume_size           = 80
+    volume_size           = 120
     iops                  = 3000
     throughput            = 125
     encrypted             = false
