@@ -85,7 +85,7 @@ resource "aws_security_group" "k3s" {
 
 resource "aws_instance" "k3s" {
   ami                         = data.aws_ami.al2023.id
-  instance_type               = "c6i.xlarge"
+  instance_type               = "m6i.xlarge"
   subnet_id                   = data.aws_subnet.default.id
   vpc_security_group_ids      = [aws_security_group.k3s.id]
   iam_instance_profile        = aws_iam_instance_profile.k3s.name

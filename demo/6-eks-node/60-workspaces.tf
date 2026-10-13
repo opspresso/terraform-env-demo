@@ -1,6 +1,6 @@
 locals {
   # A 4-CPU node has room for three 1-CPU/2Gi Pods after kubelet and DaemonSets.
-  # One extra node permits replacement; the memory ceiling also fits 16Gi m nodes.
+  # One extra node permits replacement; the memory ceiling matches 16Gi m nodes.
   workspace_node_limit = ceil(var.workspace_max_pods / 3) + 1
 }
 
@@ -47,7 +47,7 @@ resource "kubernetes_manifest" "workspace_node_pool" {
             { key = "kubernetes.io/arch", operator = "In", values = ["amd64"] },
             { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
             { key = "karpenter.sh/capacity-type", operator = "In", values = ["on-demand"] },
-            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["c", "m"] },
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["4"] },
           ]
           expireAfter            = "336h"
