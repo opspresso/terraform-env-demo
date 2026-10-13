@@ -36,7 +36,7 @@ resource "kubernetes_manifest" "baseline" {
             {
               key      = "eks.amazonaws.com/instance-category"
               operator = "In"
-              values   = ["c"]
+              values   = ["m"]
             },
             {
               key      = "eks.amazonaws.com/instance-cpu"
