@@ -39,8 +39,6 @@ variable "domains" {
         "demo-b.opspresso.com",
       ]
       public = [
-        "studio.opspresso.com",
-        "memory.opspresso.com",
         "*.demo.opspresso.com",
         "*.demo-a.opspresso.com",
         "*.demo-b.opspresso.com",
@@ -50,6 +48,12 @@ variable "domains" {
         "*.demo-in-a.opspresso.com",
         "*.demo-in-b.opspresso.com",
       ]
+    }
+    "agrt.dev" = {
+      certificates = ["agrt.dev"]
+      # Agent DNS stays with the active k3s root until an explicit EKS cutover.
+      public   = []
+      internal = []
     }
   }
 }

@@ -12,6 +12,7 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
 | [6-eks-node](demo/6-eks-node/) | production 기준 노드 4개와 제한된 Workspace Auto Mode pool |
 | [8-agent-studio](demo/8-agent-studio/README.md) | S3, ECR, k3s 서버와 alpha 메모리 정책 |
+| [8-agent-librio](demo/8-agent-librio/README.md) | 미래 EKS Librio의 전용 S3 원본 저장소; k3s alpha에는 미사용 |
 | [8-comfy-render](demo/8-comfy-render/) | DynamoDB, S3, 작업 큐 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
 
@@ -51,8 +52,8 @@ aws configure get region
 
 `replace.sh`는 state 저장용 S3 bucket을 만들고 코드의 bucket 이름을 변경합니다. 현재 스크립트가 만드는 DynamoDB 잠금 테이블은 사용하지 않습니다.
 
-`6-eks-node`는 `use_lockfile = true`로 S3 state 잠금을 사용합니다. 실행 역할은 state 객체 외에
-같은 key의 `.tflock` 객체를 읽고 쓰고 삭제할 수 있어야 합니다. 다른 root에는 이 설정이 없습니다.
+`6-eks-node`, `8-agent-studio`, `8-agent-librio`는 `use_lockfile = true`로 S3 state 잠금을 사용합니다.
+실행 역할은 state 객체 외에 같은 key의 `.tflock` 객체를 읽고 쓰고 삭제할 수 있어야 합니다.
 [공식 문서](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking)
 
 ## 실행
