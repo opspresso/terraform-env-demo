@@ -1,17 +1,16 @@
-# ECR — 앱과 MCP 서버의 이미지
+# ECR — 앱 이미지
 
-# `agent-studio` 는 릴리스 파이프라인이 밀어 넣고, `mcp-*` 는 각 서버 저장소가 밀어 넣습니다.
-# k3s 호스트가 끌어가는 것도 이 넷입니다 (85-k3s-iam.tf 의 pull 정책).
+# 각 앱 저장소의 릴리스 파이프라인이 이미지를 밀어 넣습니다. k3s 호스트는 이 저장소들에서만
+# 이미지를 끌어갑니다 (85-k3s-iam.tf 의 pull 정책).
 #
-# `keep_releases` 가 있는 저장소에만 lifecycle 규칙이 붙습니다 — 지금 실제로 가진 것은
-# mcp-document 뿐이고, 나머지는 모든 이미지를 남깁니다.
+# `keep_releases` 가 있는 저장소에만 lifecycle 규칙이 붙습니다.
 #
 # **"태그 없는 이미지를 만료시킨다" 는 규칙은 쓰지 마세요.** BuildKit 이 provenance
 # attestation 을 붙이던 동안에는 태그가 가리키는 것이 바로 그 태그 없는 매니페스트였고,
 # 그 뻔한 규칙이 릴리스된 태그를 깨뜨립니다 (agent-studio 저장소 docs/OPERATIONS.md).
 locals {
-  # `agent-studio` 만 30 인 것은 릴리스 빈도 때문입니다 — 하루 네댓 번 나가므로 10 은 사흘치
-  # 롤백 창밖에 되지 않습니다. MCP 서버들은 드물게 나가서 10 이 몇 달을 덮습니다.
+  # 30 인 것은 릴리스 빈도 때문입니다 — 하루 네댓 번 나가므로 10 은 사흘치 롤백 창밖에
+  # 되지 않습니다.
   ecr_repositories = {
     "agent-forge"  = { keep_releases = 30 }
     "agent-librio" = { keep_releases = 30 }

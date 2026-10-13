@@ -17,11 +17,8 @@ data "aws_iam_policy_document" "k3s_ecr_pull" {
       "ecr:GetDownloadUrlForLayer",
       "ecr:DescribeImages",
     ]
-    resources = [
-      format("arn:aws:ecr:%s:%s:repository/agent-memory", var.region, local.account_id),
-      format("arn:aws:ecr:%s:%s:repository/agent-studio", var.region, local.account_id),
-      format("arn:aws:ecr:%s:%s:repository/mcp-*", var.region, local.account_id),
-    ]
+    # 90-ecr.tf 가 관리하는 저장소만 허용한다.
+    resources = [for repo in aws_ecr_repository.this : repo.arn]
   }
 }
 
