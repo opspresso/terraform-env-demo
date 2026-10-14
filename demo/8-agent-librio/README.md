@@ -20,7 +20,7 @@ Memory와 Forge는 이 버킷을 사용하지 않습니다.
 1. `terraform init`, `terraform validate`, `terraform plan`으로 이 root의 새 S3 리소스 5개를 확인합니다.
 2. 별도 검토한 plan으로 버킷을 생성한 후 `../4-role`의 `pod-role--agent-librio`를 준비합니다.
 3. 향후 별도로 생성하는 EKS는 `../5-eks`의 Librio ServiceAccount association을 사용합니다.
-4. 앱 GitOps에서 `S3_BUCKET=agent-librio-static`과 기본 AWS 자격증명 체인을 사용합니다.
+4. 앱 GitOps에서 `S3_BUCKET_NAME=agent-librio-static`과 기본 AWS 자격증명 체인을 사용합니다.
    정적 AWS 키를 앱 Secret에 추가하지 않습니다.
 
 공유 PostgreSQL·SSM 연결 Secret은 앱 배포 구성이 관리하며 이 root의 책임이 아닙니다.
