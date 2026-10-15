@@ -44,20 +44,21 @@ if [[ -f "$image_gc_destination" ]]; then
   cp -p "$image_gc_destination" "$image_gc_previous"
   had_image_gc_previous=true
 fi
-install -d -m 0755 /etc/systemd/system/k3s.service.d
-install -d -m 0755 "$(dirname "$image_gc_destination")"
-install -m 0644 "$candidate" "$destination"
-install -m 0644 "$image_gc_candidate" "$image_gc_destination"
-systemctl daemon-reload
-
 restart_and_check() {
   systemctl restart k3s &&
     k3s kubectl wait --for=condition=Ready node --all --timeout=120s &&
     k3s kubectl get --raw=/readyz
 }
 
-if ! restart_and_check; then
-  echo "k3s readiness failed; restoring the previous owned resource profile" >&2
+if ! {
+  install -d -m 0755 /etc/systemd/system/k3s.service.d &&
+    install -d -m 0755 "$(dirname "$image_gc_destination")" &&
+    install -m 0644 "$candidate" "$destination" &&
+    install -m 0644 "$image_gc_candidate" "$image_gc_destination" &&
+    systemctl daemon-reload &&
+    restart_and_check
+}; then
+  echo "k3s resource profile apply failed; restoring the previous owned settings" >&2
   if "$had_previous"; then
     cp -p "$previous" "$destination"
   else
