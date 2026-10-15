@@ -1,5 +1,5 @@
 # Apply to existing nodes as well as new nodes; user_data is intentionally ignored
-# after bootstrap. The script restarts k3s only when this owned drop-in changes.
+# after bootstrap. Restart k3s only when the owned memory or image GC drop-in changes.
 resource "aws_ssm_association" "k3s_resources" {
   name             = "AWS-RunShellScript"
   association_name = "k3s-alpha-resource-profile"
