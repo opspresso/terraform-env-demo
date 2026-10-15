@@ -74,13 +74,36 @@ OIDC subject 형식은 [GitHub 문서](https://docs.github.com/en/actions/refere
 Go 힙이 회수 가능한 여유 메모리를 과도하게 유지하지 않도록 한다.
 
 `aws_ssm_association.k3s_resources`가 기존 인스턴스에도 설정을 반영하고 매일 확인한다.
-`configure-k3s-resources.sh`는 소유한 systemd drop-in만 관리하며, 내용이 바뀔 때만
+`configure-k3s-resources.sh`는 소유한 systemd·kubelet drop-in만 관리하며, 내용이 바뀔 때만
 k3s를 재시작한다. alpha API는 이때 잠시 중단될 수 있다. 인스턴스와 볼륨은 교체하지 않는다.
-새 설정에서 readiness가 실패하면 이전 파일을 복원하고 실패 상태를 반환한다.
+새 설정에서 readiness가 실패하면 두 설정 파일을 이전 상태로 복원하고 실패 상태를 반환한다.
 
 적용 후 SSM association의 `Success`, node `Ready`, 전체 앱의 health/readiness와 Workspace
 실행·취소·복원을 확인한다. 같은 부하에서 k3s RSS·노드 가용 메모리·CPU를 비교한다.
 GC CPU가 과도하거나 API 지연이 증가하면 변수를 올리고 다시 적용한다.
+
+## k3s 이미지 캐시
+
+같은 SSM association이 kubelet의 이미지 정리 정책을 적용한다. k3s 1.32 이상과
+기본 data directory를 사용하며, 설정 파일은
+`/var/lib/rancher/k3s/agent/etc/kubelet.conf.d/30-agent-studio-image-gc.conf`다.
+
+- 디스크 사용률이 70%에 도달하면 미사용 이미지를 오래된 순서로 정리해 60%를 목표로 한다.
+- 디스크 사용률과 관계없이 48시간 동안 사용하지 않은 이미지를 정리한다.
+- 실행 중인 컨테이너의 이미지는 보존한다. 삭제한 캐시는 다음 실행 때 registry에서 다시 받는다.
+
+빈번한 배포로 이전 이미지의 압축 blob과 압축 해제된 레이어가 함께 누적되는 것을 제한한다.
+별도 prune timer를 두지 않고 kubelet이 이미지 수명을 관리한다. PVC·DB·객체 파일은 정리 대상이
+아니다. 사용 중인 이미지나 데이터만으로 임계값을 넘으면 이 정책만으로 용량을 확보할 수 없다.
+kubelet 재시작은 미사용 시간 추적을 초기화하므로 이후 48시간이 지나야 기간 기준이 작동한다.
+
+적용 후 node의 `/proxy/configz`에서 `imageGCHighThresholdPercent=70`,
+`imageGCLowThresholdPercent=60`, `imageMaximumGCAge=48h0m0s`를 확인하고,
+`df -h /`, node `DiskPressure`, 앱 readiness를 확인한다.
+정책은 [Kubernetes 이미지 정리](https://kubernetes.io/docs/concepts/architecture/garbage-collection/#container-image-lifecycle)와
+[K3s kubelet 설정](https://docs.k3s.io/installation/configuration#kubelet-configuration-files)을 따른다.
+
+## k3s 설정 검증
 
 로컬 회귀 검사는 이 디렉터리에서 일회용 root 컨테이너로 실행한다.
 
@@ -89,4 +112,5 @@ docker run --rm --network none --user 0 -v "$PWD:/src:ro" \
   bash:5.2 bash /src/tests/configure-k3s-resources.sh
 ```
 
-최초 적용·재적용·이전 설정 원복·잘못된 입력을 검사하며 운영 호스트를 수정하지 않는다.
+최초 적용·재적용·이미지 정책의 drift 수정·두 설정 원복·잘못된 입력을 검사하며
+운영 호스트를 수정하지 않는다.
