@@ -48,8 +48,8 @@ data "aws_ami" "al2023" {
   }
 }
 
-data "aws_route53_zone" "k3s_opsp" {
-  name         = "opsp.dev"
+data "aws_route53_zone" "k3s_rovr" {
+  name         = "rovr.dev"
   private_zone = false
 }
 

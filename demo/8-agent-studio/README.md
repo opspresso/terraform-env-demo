@@ -38,7 +38,7 @@ SecureString을 위해 node SSM 권한을 더 넓힐 필요가 없다. secret �
 ## 도메인
 
 Agent 앱은 `studio.agrt.dev`, `memory.agrt.dev`, `librio.agrt.dev`, `forge.agrt.dev`만 사용한다.
-이 root는 네 A 레코드를 현재 k3s 인스턴스로 연결하고 이전 Studio·Memory `.opsp.dev`
+이 root는 네 A 레코드를 현재 k3s 인스턴스로 연결하고 이전 Studio·Memory `.rovr.dev`
 레코드를 제거한다. 비 Agent wildcard와 hosted zone은 유지한다.
 모델 카탈로그의 기존 `models.opspresso.com` CNAME은 import 후 `models.agrt.dev`로
 교체한다. 대상 `opspresso.github.io`와 TTL 300은 유지하고, 새 레코드를 먼저 만든다.
@@ -60,7 +60,7 @@ terraform plan -input=false -out=terraform.tfplan
 ```
 
 현재 배포용 plan은 기존 수동 IAM 5개 인수, 신규 게시용 IAM 6개, 신규 `.agrt.dev` DNS 2개,
-이전 `.opsp.dev` DNS 2개 제거, 모델 카탈로그 CNAME 인수·교체와 IAM 관리 태그 변경을 포함한다. EC2·볼륨·기존 버킷·ECR
+이전 `.rovr.dev` DNS 2개 제거, 모델 카탈로그 CNAME 인수·교체와 IAM 관리 태그 변경을 포함한다. EC2·볼륨·기존 버킷·ECR
 리소스 삭제나 교체는 없어야 한다. plan 파일은 state 내용을 포함할 수 있으므로 공개하거나
 커밋하지 않고, 검토한 파일만 적용한다. 이 README의 작업 절차 자체가 apply를 실행하지는 않는다.
 
