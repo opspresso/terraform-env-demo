@@ -1,7 +1,7 @@
 # variable
 
 variable "workspace_max_pods" {
-  description = "Workspace Pod capacity; keep aligned with argocd-env-demo env/eks-demo.yaml. Each Pod reserves 1 CPU and 2Gi memory."
+  description = "Workspace Pod capacity; keep aligned with argocd-env-apps env/eks-demo.yaml. Each Pod reserves 1 CPU and 2Gi memory."
   type        = number
   default     = 32
   validation {

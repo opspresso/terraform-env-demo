@@ -28,7 +28,7 @@ Workspace pool은 기존 Auto Mode node 역할과 private subnet·EKS primary se
 전용 taint와 `karpenter.sh/nodepool=workspaces`로 앱·DB와 실행 Pod를 분리하고, pool의 총 한도는
 `workspace_max_pods=32`에서는 CPU 48개·메모리 192Gi다. 4-CPU 노드당 1-CPU/2Gi 실행 Pod
 3개와 kubelet·DaemonSet 여유를 계산하고 교체용 노드 1개를 허용한다. 노드는 수요가 있을 때만
-생성한다. namespace quota와 worker 동시성은 `argocd-env-demo`가 소유하며 같은 용량으로 맞춘다.
+생성한다. namespace quota와 worker 동시성은 `argocd-env-apps`가 소유하며 같은 용량으로 맞춘다.
 노드의 이미지 캐시는 kubelet이 관리하며 Workspace마다 DinD 이미지 사본을 저장하지 않는다.
 `argocd-env-addons`의 EKS network policy controller를 먼저 준비한다.
 
