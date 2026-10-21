@@ -27,7 +27,8 @@ resource "aws_iam_role_policy" "forwarder" {
       },
       {
         Effect   = "Allow"
-        Action   = "ses:SendEmail"
+        # SESv2 SendEmail with Content.Raw is authorized as SendRawEmail.
+        Action   = "ses:SendRawEmail"
         Resource = aws_sesv2_email_identity.mail.arn
         Condition = {
           StringEquals                = { "ses:FromAddress" = local.address }
