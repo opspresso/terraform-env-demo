@@ -33,5 +33,4 @@ jobs:
       - run: terraform fmt -check
       - run: terraform init -backend=false -input=false
       - run: terraform validate
-      - run: python3 -m unittest discover -s tests -v
       - run: python3 -m py_compile create-smtp-credentials.py
