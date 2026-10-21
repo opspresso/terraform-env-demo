@@ -42,12 +42,16 @@ Terraform `>= 1.15.8, < 2.0`, Python 3, AWS CLI가 필요합니다. 이 모듈�
 5. 권한 있는 profile을 `AWS_PROFILE`로 지정하고 `terraform init`, `terraform fmt -check`, `terraform validate`를 실행합니다.
    전환 작업에서는 먼저 `terraform plan -target=aws_route53_record.mx -target=aws_route53_record.spf -out=terraform.tfplan`으로 이전 zone의 MX·SPF 변경만 검토하고 적용합니다.
    기존 MX TTL인 60초 이상 기다린 뒤 이전 Route 53 nameserver도 Cloudflare MX를 응답하는지 확인합니다. 이 단계의 targeting은 수신 중단을 막기 위한 일회성 전환 절차입니다.
-6. 전체 `terraform plan`으로 SES 발신 identity·SMTP 사용자·S3 원본을 보존하고 이전 전달 함수·수신 규칙만 정리하는지 확인합니다.
-   실패 큐가 비어 있고 활성 SES rule set이 이 모듈의 것인지 확인한 뒤 적용합니다. 다른 rule set이 활성화되어 있으면 삭제를 중단하고 소유 관계부터 확인합니다.
-7. 외부 계정에서 수신 주소로 테스트 메일을 보내 목적지 도착과 원본 `From` 보존을 확인합니다.
+6. 기존 SES 수신 경로가 남아 있는 상태에서 외부 계정으로부터 테스트 메일을 보내 목적지 도착, Cloudflare 경유, 원본 `From` 보존을 확인합니다.
    SES SMTP 발신과 DKIM·SPF·DMARC 통과, 기존 웹사이트 응답도 확인합니다.
+7. 위 검증이 통과한 뒤 전체 `terraform plan`으로 SES 발신 identity·SMTP 사용자·S3 원본을 보존하고 이전 전달 함수·수신 규칙만 정리하는지 확인합니다.
+   실패 큐가 비어 있고 활성 SES rule set이 이 모듈의 것인지 확인한 뒤 적용합니다. 다른 rule set이 활성화되어 있으면 삭제를 중단하고 소유 관계부터 확인합니다.
 
-네임서버 캐시가 남은 동안 이전 Route 53 zone을 삭제하지 않습니다. 되돌릴 때는 실제 수신 가능한 경로를 먼저 복구하고 네임서버를 변경합니다.
+네임서버 캐시가 남은 동안 이전 Route 53 zone을 삭제하지 않습니다.
+검증에 실패하면 기존 SES 수신 리소스를 삭제하지 않습니다. 이전 Terraform 구성을 별도 checkout에서 열고 보관한 private tfvars로 수신 경로를 복구합니다.
+Route 53과 Cloudflare의 루트 MX를 `10 inbound-smtp.ap-northeast-2.amazonaws.com`, 루트 SPF를 `v=spf1 include:amazonses.com -all`로 복원한 뒤 SES 경유 수신을 확인합니다.
+Cloudflare의 잠긴 메일 DNS 레코드는 Email Routing 설정에서 잠금을 해제하거나 라우팅을 비활성화한 뒤 수정합니다.
+네임서버까지 되돌려야 할 때도 양쪽 DNS의 실제 수신 경로를 먼저 복구합니다.
 
 ## SMTP 자격 증명
 
@@ -65,5 +69,5 @@ Cloudflare 유료 발신·Workers Paid·전용 IP·Mail Manager endpoint는 사�
 공유 SES 계정의 요금제는 다른 도메인에도 영향을 주므로 이 모듈에서 변경하지 않습니다.
 [Cloudflare 요금](https://developers.cloudflare.com/email-service/platform/pricing/), [SES 요금](https://aws.amazon.com/ses/pricing/).
 
-이전 S3 원본은 전달 완료 후 7일, 미전달·격리 원본은 생성 후 30일에 만료 대상이 됩니다. 이전 Lambda 로그는 7일 보관합니다.
+이전 S3 원본 중 전달 완료 태그가 있는 객체는 생성 후 7일, 미전달·격리 원본은 생성 후 30일에 만료 대상이 됩니다. 이전 Lambda 로그는 7일 보관합니다.
 S3 bucket은 `prevent_destroy`로 보호합니다. Cloudflare로 전환한 뒤 새 수신 메일은 이 bucket에 저장되지 않습니다.
