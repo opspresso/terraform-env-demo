@@ -26,7 +26,7 @@ resource "aws_iam_role_policy" "forwarder" {
         Resource = "${aws_s3_bucket.mail.arn}/${local.input_prefix}*"
       },
       {
-        Effect   = "Allow"
+        Effect = "Allow"
         # SESv2 SendEmail with Content.Raw is authorized as SendRawEmail.
         Action   = "ses:SendRawEmail"
         Resource = aws_sesv2_email_identity.mail.arn
