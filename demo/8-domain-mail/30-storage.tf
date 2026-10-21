@@ -58,19 +58,6 @@ resource "aws_s3_bucket_policy" "mail" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid       = "ReceiveMailFromSES"
-        Effect    = "Allow"
-        Principal = { Service = "ses.amazonaws.com" }
-        Action    = "s3:PutObject"
-        Resource  = "${aws_s3_bucket.mail.arn}/${local.input_prefix}*"
-        Condition = {
-          StringEquals = { "AWS:SourceAccount" = data.aws_caller_identity.current.account_id }
-          ArnEquals = {
-            "AWS:SourceArn" = "arn:aws:ses:${var.region}:${data.aws_caller_identity.current.account_id}:receipt-rule-set/${local.name}:receipt-rule/admin"
-          }
-        }
-      },
-      {
         Sid       = "DenyInsecureTransport"
         Effect    = "Deny"
         Principal = "*"
@@ -81,12 +68,6 @@ resource "aws_s3_bucket_policy" "mail" {
     ]
   })
   depends_on = [aws_s3_bucket_public_access_block.mail]
-}
-
-resource "aws_sqs_queue" "failures" {
-  name                      = "${local.name}-failures"
-  message_retention_seconds = 1209600
-  sqs_managed_sse_enabled   = true
 }
 
 resource "aws_cloudwatch_log_group" "forwarder" {

@@ -49,11 +49,7 @@ resource "aws_route53_record" "mx" {
   name    = local.domain
   type    = "MX"
   ttl     = 60
-  records = var.receive_enabled ? ["10 inbound-smtp.${var.region}.amazonaws.com"] : [
-    "1 mx1.larksuite.com", "5 mx2.larksuite.com", "10 mx3.larksuite.com"
-  ]
-
-  depends_on = [aws_ses_active_receipt_rule_set.mail]
+  records = var.cloudflare_mx_records
 }
 
 resource "aws_route53_record" "spf" {
@@ -61,15 +57,5 @@ resource "aws_route53_record" "spf" {
   name    = local.domain
   type    = "TXT"
   ttl     = 60
-  records = var.receive_enabled ? ["v=spf1 include:amazonses.com -all"] : ["v=spf1 +include:spf.onlarksuite.com -all"]
-}
-
-import {
-  to = aws_route53_record.mx
-  id = "Z09927883VHDFS344CJ61_opspresso.com_MX"
-}
-
-import {
-  to = aws_route53_record.spf
-  id = "Z09927883VHDFS344CJ61_opspresso.com_TXT"
+  records = ["v=spf1 include:_spf.mx.cloudflare.net ~all"]
 }

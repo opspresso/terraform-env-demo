@@ -1,24 +1,17 @@
 variable "region" {
-  description = "SES receiving and sending region."
+  description = "SES sending region."
   type        = string
   default     = "ap-northeast-2"
 }
 
-variable "forward_to" {
-  description = "Private destination mailbox; supply through an untracked tfvars file."
-  type        = string
-  sensitive   = true
+variable "cloudflare_mx_records" {
+  description = "Exact MX records assigned by Cloudflare Email Routing, mirrored in the former Route 53 zone during DNS cache expiry."
+  type        = list(string)
 
   validation {
-    condition     = can(regex("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$", var.forward_to)) && lower(var.forward_to) != "admin@opspresso.com"
-    error_message = "Set a valid destination distinct from the receiving address."
+    condition     = length(var.cloudflare_mx_records) > 0 && alltrue([for record in var.cloudflare_mx_records : can(regex("^[0-9]+ [a-z0-9-]+\\.mx\\.cloudflare\\.net\\.?$", record))])
+    error_message = "Supply Cloudflare-assigned MX priorities and hostnames."
   }
-}
-
-variable "receive_enabled" {
-  description = "Switch the domain MX to SES after domain authentication and forwarding validation."
-  type        = bool
-  default     = false
 }
 
 locals {
