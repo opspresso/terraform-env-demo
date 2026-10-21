@@ -44,6 +44,7 @@ python3 create-smtp-credentials.py --profile "$AWS_PROFILE"
 
 결과는 `~/.config/opspresso-mail/smtp.json`에 권한 `0600`으로 저장합니다. 기존 파일이나 IAM key가 있으면 중단합니다.
 재발급할 때는 기존 키 사용처를 확인한 뒤 IAM에서 폐기하고 새 키를 설정합니다.
+SMTP IAM 사용자를 삭제할 때도 이 스크립트가 만든 키를 먼저 폐기해야 합니다. Terraform이 관리하지 않는 키를 강제로 삭제하지 않습니다.
 
 ## 비용과 보관
 
