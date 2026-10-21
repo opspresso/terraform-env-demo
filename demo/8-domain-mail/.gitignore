@@ -1,0 +1,4 @@
+private.auto.tfvars
+.build/
+__pycache__/
+tests/__pycache__/

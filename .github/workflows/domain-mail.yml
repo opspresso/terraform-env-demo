@@ -1,0 +1,35 @@
+name: Domain mail validation
+
+on:
+  pull_request:
+    paths:
+      - demo/8-domain-mail/**
+      - .github/workflows/domain-mail.yml
+  push:
+    branches: [main]
+    paths:
+      - demo/8-domain-mail/**
+      - .github/workflows/domain-mail.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: demo/8-domain-mail
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.16.3'
+      - run: terraform fmt -check
+      - run: terraform init -backend=false -input=false
+      - run: terraform validate
+      - run: python3 -m unittest discover -s tests -v
+      - run: python3 -m py_compile create-smtp-credentials.py
