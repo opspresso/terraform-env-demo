@@ -14,6 +14,7 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [8-agent-studio](demo/8-agent-studio/README.md) | S3, ECR, k3s 서버와 alpha 메모리 정책 |
 | [8-agent-librio](demo/8-agent-librio/README.md) | 미래 EKS Librio의 전용 S3 원본 저장소; k3s alpha에는 미사용 |
 | [8-comfy-render](demo/8-comfy-render/) | DynamoDB, S3, 작업 큐 |
+| [8-domain-mail](demo/8-domain-mail/README.md) | admin 도메인 메일 수신 전달과 SES SMTP 발신 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
 
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
