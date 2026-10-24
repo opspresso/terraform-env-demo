@@ -1,0 +1,32 @@
+name: Agent platform infrastructure
+
+on:
+  pull_request:
+    paths:
+      - demo/8-agent-studio/**
+      - .github/workflows/agent-platform.yml
+  push:
+    branches: [main]
+    paths:
+      - demo/8-agent-studio/**
+      - .github/workflows/agent-platform.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: demo/8-agent-studio
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.15.8'
+      - run: terraform fmt -check
+      - run: terraform init -backend=false -input=false
+      - run: terraform validate

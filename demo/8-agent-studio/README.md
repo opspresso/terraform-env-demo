@@ -5,13 +5,13 @@ S3·ECR와 단일 k3s alpha 인스턴스를 관리한다. EKS production 노드 
 
 ## Agent 배포 권한
 
-ECR 저장소는 Studio·Memory·Librio·Forge 네 개다. GitHub Actions 역할
+ECR 저장소는 Studio·Memory·Librio·Forge·Models 다섯 개다. GitHub Actions 역할
 `github--<repository>-ecr`은 해당 저장소의 이미지 게시만 허용한다.
 Forge 서버와 sandbox 이미지는 같은 `agent-forge` 저장소의 서로 다른 태그를 사용한다.
 `ecr:GetAuthorizationToken`만 AWS API 계약에 따라 `Resource="*"`이며,
 이미지 작업은 각 저장소 ARN으로 제한한다.
 
-Librio·Forge는 GitHub API가 반환한 immutable subject prefix와 `refs/tags/v*`만 신뢰한다.
+Librio·Forge·Models는 GitHub API가 반환한 immutable subject prefix와 `refs/tags/v*`만 신뢰한다.
 `main`, Pull Request, environment subject와 다른 저장소는 허용하지 않는다.
 GitHub OIDC의 `aud`는 `sts.amazonaws.com`이어야 한다.
 기존 Studio·Memory 역할은 이번 Terraform 인수에서 trust와 권한을 그대로 보존한다.
@@ -59,9 +59,10 @@ terraform validate
 terraform plan -input=false -out=terraform.tfplan
 ```
 
-현재 배포용 plan은 기존 수동 IAM 5개 인수, 신규 게시용 IAM 6개, 신규 `.agrt.dev` DNS 2개,
-이전 `.rovr.dev` DNS 2개 제거, 모델 카탈로그 CNAME 인수·교체와 IAM 관리 태그 변경을 포함한다. EC2·볼륨·기존 버킷·ECR
-리소스 삭제나 교체는 없어야 한다. plan 파일은 state 내용을 포함할 수 있으므로 공개하거나
+Models 이미지 게시 준비의 plan은 새 ECR·lifecycle policy, 게시용 IAM role·policy·attachment와
+기존 k3s pull 정책에 Models 저장소 ARN을 추가하는 변경이다. 이 단계는 카탈로그 DNS를
+옮기거나 애플리케이션을 배포하지 않는다. EC2·볼륨·기존 버킷·ECR 리소스의 삭제·교체나
+무관한 설정 변경이 있으면 적용하지 않는다. Plan 파일은 state 내용을 포함할 수 있으므로 공개하거나
 커밋하지 않고, 검토한 파일만 적용한다. 이 README의 작업 절차 자체가 apply를 실행하지는 않는다.
 
 OIDC subject 형식은 [GitHub 문서](https://docs.github.com/en/actions/reference/security/oidc)를,
