@@ -201,11 +201,18 @@ resource "aws_iam_role_policy" "k3s_cert_manager_route53" {
 }
 
 resource "aws_route53_record" "k3s_agrt" {
-  for_each = toset(["studio", "memory", "librio", "forge"])
+  for_each = toset(["studio", "memory", "librio", "forge", "models"])
 
   zone_id = data.aws_route53_zone.k3s_agrt.zone_id
   name    = "${each.value}.agrt.dev"
   type    = "A"
   ttl     = 300
   records = [aws_instance.k3s.public_ip]
+}
+
+# models.agrt.dev moves from the GitHub Pages CNAME to the k3s A record. Route 53 rejects an A
+# record beside a same-name CNAME, so the move makes one replacement that destroys the CNAME first.
+moved {
+  from = aws_route53_record.models_catalog
+  to   = aws_route53_record.k3s_agrt["models"]
 }
