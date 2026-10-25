@@ -38,20 +38,14 @@ SecureString을 위해 node SSM 권한을 더 넓힐 필요가 없다. secret �
 ## 도메인
 
 Agent 앱은 `studio.agrt.dev`, `memory.agrt.dev`, `librio.agrt.dev`, `forge.agrt.dev`,
-`models.agrt.dev`만 사용한다. 이 root는 다섯 A 레코드를 현재 k3s 인스턴스로 연결하고 이전
-Studio·Memory `.rovr.dev` 레코드를 제거한다. 비 Agent wildcard와 hosted zone은 유지한다.
+`models.agrt.dev`를 사용한다. 이 root는 `*.agrt.dev` wildcard A 레코드 하나로 이 이름들을 현재
+k3s 인스턴스에 연결한다. 어느 서비스가 응답할지는 k3s Gateway의 listener와 인증서가 정한다.
+새 서비스 host는 DNS 변경 없이 Gateway(`argocd-env-addons`)의 `gateway.hosts`에만 추가한다.
+`*.demo.agrt.dev`·`*.demo.rovr.dev` wildcard와 hosted zone은 유지한다.
 
-`models.agrt.dev`는 GitHub Pages 카탈로그 CNAME에서 Models 서비스의 A 레코드로 바뀐다.
-Route 53은 같은 이름의 CNAME과 A를 함께 둘 수 없다. `86-k3s.tf`의 `moved` block이 기존
-`aws_route53_record.models_catalog`를 `aws_route53_record.k3s_agrt["models"]`로 옮기므로 plan은
-같은 레코드의 in-place 변경(`type` CNAME→A)으로 표시된다. AWS provider 6.60.0은 이 변경을
-기존 레코드 DELETE와 새 레코드 CREATE를 담은 하나의 change batch로 보내므로 두 레코드가 동시에
-존재하거나 이름이 비는 순간이 없다. 적용 후 GitHub Pages의 `models.agrt.dev` custom domain은
-DNS 검증에 실패하므로 Pages 설정에서 custom domain을 제거한다. Models 앱이 준비되기 전에 적용하면
-`models.agrt.dev`는 Gateway의 404 또는 TLS 오류를 반환한다.
-미래 EKS ALB는 `../3-alb`의 기존 `agrt.dev` ACM 인증서(`*.agrt.dev` 포함)를 SNI로 사용한다.
-ALB root는 현재 Agent DNS를 인수하거나 같은 레코드를 중복 관리하지 않는다.
-EKS 전환 때 DNS state 소유권과 레코드 대상을 별도 계획으로 함께 이전해야 한다.
+이전의 서비스별 A 레코드(`aws_route53_record.k3s_agrt`)와 GitHub Pages 카탈로그 CNAME은 wildcard로
+대체됐다. `removed` block은 이 레코드를 삭제하지 않고 state에서만 제거하고, `import` block은 이미
+존재하는 wildcard를 가져온다. 카탈로그(`/models.json` 등)는 Models 서비스가 같은 주소로 제공한다.
 
 ## 계획 확인
 
