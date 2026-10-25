@@ -5,13 +5,13 @@ S3·ECR와 단일 k3s alpha 인스턴스를 관리한다. EKS production 노드 
 
 ## Agent 배포 권한
 
-ECR 저장소는 Studio·Memory·Librio·Forge 네 개다. GitHub Actions 역할
+ECR 저장소는 Studio·Memory·Librio·Forge·Models 다섯 개다. GitHub Actions 역할
 `github--<repository>-ecr`은 해당 저장소의 이미지 게시만 허용한다.
 Forge 서버와 sandbox 이미지는 같은 `agent-forge` 저장소의 서로 다른 태그를 사용한다.
 `ecr:GetAuthorizationToken`만 AWS API 계약에 따라 `Resource="*"`이며,
 이미지 작업은 각 저장소 ARN으로 제한한다.
 
-Librio·Forge는 GitHub API가 반환한 immutable subject prefix와 `refs/tags/v*`만 신뢰한다.
+Librio·Forge·Models는 GitHub API가 반환한 immutable subject prefix와 `refs/tags/v*`만 신뢰한다.
 `main`, Pull Request, environment subject와 다른 저장소는 허용하지 않는다.
 GitHub OIDC의 `aud`는 `sts.amazonaws.com`이어야 한다.
 기존 Studio·Memory 역할은 이번 Terraform 인수에서 trust와 권한을 그대로 보존한다.
@@ -31,19 +31,24 @@ GitHub OIDC의 `aud`는 `sts.amazonaws.com`이어야 한다.
 `bootstrap-k3s.sh`의 기존 Studio·Memory 갱신기는 최초 설치용이다.
 `user_data`가 기존 인스턴스에서 무시되므로 그 파일 변경으로 기존 노드를 갱신할 수 없다.
 
-기존 External Secrets 정책은 `/k8s/*`를 읽으므로 서비스별 DB URL·delegation·metrics
+기존 External Secrets 정책은 `/k8s/*`를 읽으므로 서비스별 DB URL·OIDC client·metrics
 SecureString을 위해 node SSM 권한을 더 넓힐 필요가 없다. secret 값 생성·주입은
 명시적인 앱 bootstrap 절차가 담당하며 Terraform state에 secret 값을 추가하지 않는다.
 
 ## 도메인
 
-Agent 앱은 `studio.agrt.dev`, `memory.agrt.dev`, `librio.agrt.dev`, `forge.agrt.dev`만 사용한다.
-이 root는 네 A 레코드를 현재 k3s 인스턴스로 연결하고 이전 Studio·Memory `.rovr.dev`
-레코드를 제거한다. 비 Agent wildcard와 hosted zone은 유지한다.
-모델 카탈로그의 기존 `models.opspresso.com` CNAME은 import 후 `models.agrt.dev`로
-교체한다. 대상 `opspresso.github.io`와 TTL 300은 유지하고, 새 레코드를 먼저 만든다.
-이 변경은 GitHub Pages의 custom domain·저장소 CNAME·카탈로그 소비자 URL 변경과
-함께 조율해야 한다. DNS만 바꿔서는 새 HTTPS 주소가 완성되지 않는다.
+Agent 앱은 `studio.agrt.dev`, `memory.agrt.dev`, `librio.agrt.dev`, `forge.agrt.dev`,
+`models.agrt.dev`만 사용한다. 이 root는 다섯 A 레코드를 현재 k3s 인스턴스로 연결하고 이전
+Studio·Memory `.rovr.dev` 레코드를 제거한다. 비 Agent wildcard와 hosted zone은 유지한다.
+
+`models.agrt.dev`는 GitHub Pages 카탈로그 CNAME에서 Models 서비스의 A 레코드로 바뀐다.
+Route 53은 같은 이름의 CNAME과 A를 함께 둘 수 없다. `86-k3s.tf`의 `moved` block이 기존
+`aws_route53_record.models_catalog`를 `aws_route53_record.k3s_agrt["models"]`로 옮기므로 plan은
+같은 레코드의 in-place 변경(`type` CNAME→A)으로 표시된다. AWS provider 6.60.0은 이 변경을
+기존 레코드 DELETE와 새 레코드 CREATE를 담은 하나의 change batch로 보내므로 두 레코드가 동시에
+존재하거나 이름이 비는 순간이 없다. 적용 후 GitHub Pages의 `models.agrt.dev` custom domain은
+DNS 검증에 실패하므로 Pages 설정에서 custom domain을 제거한다. Models 앱이 준비되기 전에 적용하면
+`models.agrt.dev`는 Gateway의 404 또는 TLS 오류를 반환한다.
 미래 EKS ALB는 `../3-alb`의 기존 `agrt.dev` ACM 인증서(`*.agrt.dev` 포함)를 SNI로 사용한다.
 ALB root는 현재 Agent DNS를 인수하거나 같은 레코드를 중복 관리하지 않는다.
 EKS 전환 때 DNS state 소유권과 레코드 대상을 별도 계획으로 함께 이전해야 한다.
@@ -59,10 +64,11 @@ terraform validate
 terraform plan -input=false -out=terraform.tfplan
 ```
 
-현재 배포용 plan은 기존 수동 IAM 5개 인수, 신규 게시용 IAM 6개, 신규 `.agrt.dev` DNS 2개,
-이전 `.rovr.dev` DNS 2개 제거, 모델 카탈로그 CNAME 인수·교체와 IAM 관리 태그 변경을 포함한다. EC2·볼륨·기존 버킷·ECR
-리소스 삭제나 교체는 없어야 한다. plan 파일은 state 내용을 포함할 수 있으므로 공개하거나
-커밋하지 않고, 검토한 파일만 적용한다. 이 README의 작업 절차 자체가 apply를 실행하지는 않는다.
+이 브랜치의 plan은 새 Models ECR·lifecycle policy, 게시용 IAM role·policy·attachment,
+기존 k3s pull 정책에 Models 저장소 ARN 추가, `models.agrt.dev` 레코드의 CNAME→A in-place 변경이다
+(5 add, 2 change, 0 destroy). EC2·볼륨·기존 버킷·ECR 리소스의 삭제·교체나 무관한 설정 변경이 있으면
+적용하지 않는다. Plan 파일은 state 내용을 포함할 수 있으므로 공개하거나 커밋하지 않고, 검토한 파일만
+적용한다. 이 README의 작업 절차 자체가 apply를 실행하지는 않는다.
 
 OIDC subject 형식은 [GitHub 문서](https://docs.github.com/en/actions/reference/security/oidc)를,
 게시 권한은 [AWS ECR 문서](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-push-iam.html)를 따른다.
