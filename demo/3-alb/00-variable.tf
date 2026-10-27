@@ -32,11 +32,12 @@ variable "domains" {
   }))
 
   default = {
-    # Management cluster addons (Argo CD, Grafana, Loki, Prometheus) on demo, and the future
-    # service clusters eks-demo-a/b on demo-a/demo-b. rovr.dev is served by Route53.
+    # Management cluster addons (Argo CD, Grafana, Loki, Prometheus) on demo, the future
+    # service clusters eks-demo-a/b on demo-a/demo-b, and the apps that Agent Broker delivers on
+    # apps (agent-platform docs/APP_DELIVERY.md). rovr.dev is served by Route53.
     "rovr.dev" = {
-      certificates = ["demo.rovr.dev", "demo-a.rovr.dev", "demo-b.rovr.dev"]
-      public       = ["*.demo.rovr.dev", "*.demo-a.rovr.dev", "*.demo-b.rovr.dev"]
+      certificates = ["demo.rovr.dev", "demo-a.rovr.dev", "demo-b.rovr.dev", "apps.rovr.dev"]
+      public       = ["*.demo.rovr.dev", "*.demo-a.rovr.dev", "*.demo-b.rovr.dev", "*.apps.rovr.dev"]
       internal     = ["*.demo-in.rovr.dev", "*.demo-in-a.rovr.dev", "*.demo-in-b.rovr.dev"]
     }
     "agrt.dev" = {
@@ -61,5 +62,5 @@ variable "primary_domain" {
 variable "issued_certificates" {
   description = "이 디렉터리가 ACM으로 발급·검증하는 인증서 도메인입니다. 각 도메인과 와일드카드(*.도메인)를 포함합니다."
   type        = list(string)
-  default     = ["demo.rovr.dev", "demo-a.rovr.dev", "demo-b.rovr.dev"]
+  default     = ["demo.rovr.dev", "demo-a.rovr.dev", "demo-b.rovr.dev", "apps.rovr.dev"]
 }

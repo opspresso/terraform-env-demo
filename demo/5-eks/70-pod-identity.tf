@@ -44,6 +44,11 @@ locals {
       namespace       = "agent-mcps"
       service_account = "mcp-cloudwatch"
     }
+    # The Delivery registry step creates projects/* repositories and assumes the per-Project push role.
+    "app-delivery" = {
+      namespace       = "app-delivery"
+      service_account = "delivery-registry"
+    }
   }
 
   # ARN 을 문자열로 조립하지 않고 4-role 이 내보낸 것을 씁니다. 키가 없으면 여기서
