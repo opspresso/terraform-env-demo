@@ -25,8 +25,9 @@ EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 `eks-demo`의 모든 노드는 Graviton(arm64, m7g 이상)이다. 서비스 이미지는 `linux/amd64`·`linux/arm64`
 multi-platform으로 게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
 
-기본 workload는 `baseline` NodePool의 xlarge(4 vCPU·16Gi) 노드 3개에서 실행한다. 렌더한 requests 합계는
-약 6.7 vCPU·14.4Gi(앱·addon·sidecar·DaemonSet)이므로 노드 한 대가 빠져도 남은 두 대가 수용한다.
+기본 workload는 `baseline` NodePool의 xlarge(4 vCPU·16Gi) 노드 2개에서 실행한다. 렌더한 requests 합계는
+약 1.5 vCPU·9.2Gi(앱·addon·sidecar·DaemonSet)이므로 노드 한 대가 빠져도 남은 한 대(3.77 vCPU·14.3Gi
+allocatable)가 수용한다.
 rollout surge나 증가분은 dynamic `general` NodePool(`general_max_cpu`, 기본 16 vCPU)이 추가 노드로 처리하고,
 비거나 활용도가 낮으면 회수한다. 기준 용량에는 유휴 시간에도 비용이 발생한다.
 requests·sidecar·DaemonSet 예약을 합산하고 남은 노드의 allocatable과 비교해 조정한다.
