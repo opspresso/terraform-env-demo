@@ -21,6 +21,11 @@ locals {
       description   = "agent-forge release ECR push from GitHub Actions OIDC"
       legacy_trust  = false
     }
+    agent-broker = {
+      repository_id = "1434015347"
+      description   = "agent-broker release ECR push from GitHub Actions OIDC"
+      legacy_trust  = false
+    }
     agent-models = {
       repository_id = "1339315923"
       description   = "agent-models release ECR push from GitHub Actions OIDC"
