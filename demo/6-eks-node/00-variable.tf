@@ -30,3 +30,14 @@ variable "auto_mode_baseline_replicas" {
     error_message = "auto_mode_baseline_replicas는 1 이상이어야 합니다."
   }
 }
+
+variable "general_max_cpu" {
+  description = "dynamic general NodePool이 baseline 밖에서 추가할 수 있는 최대 vCPU 수입니다."
+  type        = number
+  default     = 16
+
+  validation {
+    condition     = var.general_max_cpu >= 4 && floor(var.general_max_cpu) == var.general_max_cpu
+    error_message = "general_max_cpu는 4 이상의 정수여야 합니다."
+  }
+}
