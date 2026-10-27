@@ -32,29 +32,12 @@ variable "domains" {
   }))
 
   default = {
-    "opspresso.com" = {
-      certificates = [
-        "opspresso.com",
-        "demo.opspresso.com",
-        "demo-a.opspresso.com",
-        "demo-b.opspresso.com",
-      ]
-      public = [
-        "*.demo.opspresso.com",
-        "*.demo-a.opspresso.com",
-        "*.demo-b.opspresso.com",
-      ]
-      internal = [
-        "*.demo-in.opspresso.com",
-        "*.demo-in-a.opspresso.com",
-        "*.demo-in-b.opspresso.com",
-      ]
-    }
-    # Cluster addons (Argo CD, Grafana, Loki, Prometheus) and demo apps. rovr.dev is served by Route53.
+    # Management cluster addons (Argo CD, Grafana, Loki, Prometheus) on demo, and the future
+    # service clusters eks-demo-a/b on demo-a/demo-b. rovr.dev is served by Route53.
     "rovr.dev" = {
-      certificates = ["demo.rovr.dev"]
-      public       = ["*.demo.rovr.dev"]
-      internal     = ["*.demo-in.rovr.dev"]
+      certificates = ["demo.rovr.dev", "demo-a.rovr.dev", "demo-b.rovr.dev"]
+      public       = ["*.demo.rovr.dev", "*.demo-a.rovr.dev", "*.demo-b.rovr.dev"]
+      internal     = ["*.demo-in.rovr.dev", "*.demo-in-a.rovr.dev", "*.demo-in-b.rovr.dev"]
     }
     "agrt.dev" = {
       certificates = ["agrt.dev"]
@@ -67,7 +50,7 @@ variable "domains" {
 
 variable "primary_domain" {
   description = "HTTPS 리스너의 기본(default) 인증서로 쓸 도메인을 입력합니다. 나머지는 SNI 로 추가됩니다."
-  default     = "demo.opspresso.com"
+  default     = "demo.rovr.dev"
 
   validation {
     condition     = contains(flatten([for domain in var.domains : domain.certificates]), var.primary_domain)
@@ -78,5 +61,5 @@ variable "primary_domain" {
 variable "issued_certificates" {
   description = "이 디렉터리가 ACM으로 발급·검증하는 인증서 도메인입니다. 각 도메인과 와일드카드(*.도메인)를 포함합니다."
   type        = list(string)
-  default     = ["demo.rovr.dev"]
+  default     = ["demo.rovr.dev", "demo-a.rovr.dev", "demo-b.rovr.dev"]
 }

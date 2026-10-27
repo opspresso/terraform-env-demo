@@ -34,42 +34,6 @@ resource "aws_route53_record" "internal" {
   }
 }
 
-# moved
-#
-# 와일드카드가 변수(var.domains)에 명시되면서 for_each 키가 "demo.opspresso.com" 에서
-# "*.demo.opspresso.com" 로 바뀌었습니다. 레코드 내용은 그대로이므로 destroy/create 대신
-# state 만 옮깁니다. apply 이후에는 지워도 됩니다.
-
-moved {
-  from = aws_route53_record.public["demo.opspresso.com"]
-  to   = aws_route53_record.public["*.demo.opspresso.com"]
-}
-
-moved {
-  from = aws_route53_record.public["demo-a.opspresso.com"]
-  to   = aws_route53_record.public["*.demo-a.opspresso.com"]
-}
-
-moved {
-  from = aws_route53_record.public["demo-b.opspresso.com"]
-  to   = aws_route53_record.public["*.demo-b.opspresso.com"]
-}
-
-moved {
-  from = aws_route53_record.internal["demo-in.opspresso.com"]
-  to   = aws_route53_record.internal["*.demo-in.opspresso.com"]
-}
-
-moved {
-  from = aws_route53_record.internal["demo-in-a.opspresso.com"]
-  to   = aws_route53_record.internal["*.demo-in-a.opspresso.com"]
-}
-
-moved {
-  from = aws_route53_record.internal["demo-in-b.opspresso.com"]
-  to   = aws_route53_record.internal["*.demo-in-b.opspresso.com"]
-}
-
 # The wildcard used to point at the k3s node and was owned by 8-agent-studio. Adopt the same
 # record here; apply 8-agent-studio (which forgets it) before this directory.
 import {
