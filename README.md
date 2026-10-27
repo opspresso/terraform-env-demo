@@ -12,13 +12,14 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
 | [6-eks-node](demo/6-eks-node/) | Graviton(arm64) 기준 노드 3개, 증가분 dynamic pool, 제한된 Workspace pool |
 | [8-agent-studio](demo/8-agent-studio/README.md) | S3, ECR, k3s 서버와 alpha 메모리 정책 |
+| [8-agent-broker](demo/8-agent-broker/README.md) | Agent Broker KMS key, 공유 bucket, Sandbox·테넌트 IAM 역할 |
 | [8-agent-librio](demo/8-agent-librio/README.md) | 미래 EKS Librio의 전용 S3 원본 저장소; k3s alpha에는 미사용 |
 | [8-comfy-render](demo/8-comfy-render/) | DynamoDB, S3, 작업 큐 |
 | [8-domain-mail](demo/8-domain-mail/README.md) | Cloudflare 수신 전달과 SES SMTP 발신, 이전 수신 원본 보관 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
 
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
-`8-agent-studio`는 `4-role` 적용 후 실행합니다.
+`8-agent-studio`·`8-agent-broker`는 `4-role` 적용 후 실행합니다.
 
 `eks-demo`의 모든 노드는 Graviton(arm64, m7g 이상)이다. 서비스 이미지는 `linux/amd64`·`linux/arm64`
 multi-platform으로 게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
