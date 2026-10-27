@@ -25,10 +25,6 @@ locals {
 
   # 이 클러스터에만 있는 것.
   demo_targets = {
-    "atlantis" = {
-      namespace       = "addon-atlantis"
-      service_account = "atlantis"
-    }
     "agent-studio" = {
       namespace       = "agent-studio"
       service_account = "agent-studio"
