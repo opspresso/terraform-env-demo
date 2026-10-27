@@ -127,12 +127,13 @@ resource "aws_instance" "k3s" {
   }
 }
 
-resource "aws_route53_record" "k3s_rovr_wildcard" {
-  zone_id = data.aws_route53_zone.k3s_rovr.zone_id
-  name    = "*.demo.rovr.dev"
-  type    = "A"
-  ttl     = 300
-  records = [aws_instance.k3s.public_ip]
+# *.demo.rovr.dev moved to the EKS ALB (3-alb) for cluster addons; forget it without deleting.
+removed {
+  from = aws_route53_record.k3s_rovr_wildcard
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 resource "aws_route53_record" "k3s_agrt_wildcard" {

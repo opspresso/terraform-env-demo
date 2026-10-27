@@ -76,3 +76,9 @@ import {
   to = aws_route53_record.public["*.agrt.dev"]
   id = "Z01936462SJ924LB2O65K_*.agrt.dev_A"
 }
+
+# The demo wildcard used to point at the k3s node (8-agent-studio). Adopt it here for the EKS ALB.
+import {
+  to = aws_route53_record.public["*.demo.rovr.dev"]
+  id = "Z08156012ZE4O9NSKVHWK_*.demo.rovr.dev_A"
+}
