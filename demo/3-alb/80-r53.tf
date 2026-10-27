@@ -69,3 +69,10 @@ moved {
   from = aws_route53_record.internal["demo-in-b.opspresso.com"]
   to   = aws_route53_record.internal["*.demo-in-b.opspresso.com"]
 }
+
+# The wildcard used to point at the k3s node and was owned by 8-agent-studio. Adopt the same
+# record here; apply 8-agent-studio (which forgets it) before this directory.
+import {
+  to = aws_route53_record.public["*.agrt.dev"]
+  id = "Z01936462SJ924LB2O65K_*.agrt.dev_A"
+}

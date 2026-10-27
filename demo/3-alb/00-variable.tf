@@ -51,8 +51,8 @@ variable "domains" {
     }
     "agrt.dev" = {
       certificates = ["agrt.dev"]
-      # Agent DNS stays with the active k3s root until an explicit EKS cutover.
-      public   = []
+      # Agent service hosts (studio, memory, librio, forge, models, broker) resolve to the EKS ALB.
+      public   = ["*.agrt.dev"]
       internal = []
     }
   }

@@ -200,14 +200,13 @@ resource "aws_iam_role_policy" "k3s_cert_manager_route53" {
   })
 }
 
-# Every agrt.dev service host (studio, memory, librio, forge, models) resolves through one
-# wildcard to the k3s Gateway; the Gateway listeners and certificate select the host.
-resource "aws_route53_record" "k3s_agrt_services" {
-  zone_id = data.aws_route53_zone.k3s_agrt.zone_id
-  name    = "*.agrt.dev"
-  type    = "A"
-  ttl     = 300
-  records = [aws_instance.k3s.public_ip]
+# The agrt.dev service wildcard moved to 3-alb with the EKS cutover; forget it without deleting.
+removed {
+  from = aws_route53_record.k3s_agrt_services
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 # The per-service records were replaced by the wildcard outside Terraform; forget them only.
@@ -219,7 +218,3 @@ removed {
   }
 }
 
-import {
-  to = aws_route53_record.k3s_agrt_services
-  id = "Z01936462SJ924LB2O65K_*.agrt.dev_A"
-}
