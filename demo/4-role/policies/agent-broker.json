@@ -19,11 +19,19 @@
     {
       "Sid": "BrokerVariableKey",
       "Effect": "Allow",
-      "Action": ["kms:Encrypt", "kms:Decrypt", "kms:GenerateDataKey"],
+      "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:GenerateDataKey"
+      ],
       "Resource": "*",
       "Condition": {
-        "StringEquals": { "kms:ViaService": "ssm.ap-northeast-2.amazonaws.com" },
-        "ForAnyValue:StringEquals": { "kms:ResourceAliases": "alias/agent-broker" }
+        "StringEquals": {
+          "kms:ViaService": "ssm.ap-northeast-2.amazonaws.com"
+        },
+        "ForAnyValue:StringEquals": {
+          "kms:ResourceAliases": "alias/agent-broker"
+        }
       }
     },
     {
@@ -35,8 +43,14 @@
     {
       "Sid": "ObjectPrefixCleanup",
       "Effect": "Allow",
-      "Action": ["s3:ListBucket", "s3:DeleteObject"],
-      "Resource": ["arn:aws:s3:::agent-broker-objects", "arn:aws:s3:::agent-broker-objects/*"]
+      "Action": [
+        "s3:ListBucket",
+        "s3:DeleteObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::agent-broker-objects",
+        "arn:aws:s3:::agent-broker-objects/*"
+      ]
     },
     {
       "Sid": "TenantObjectIdentity",
@@ -45,17 +59,33 @@
         "eks:CreatePodIdentityAssociation",
         "eks:DeletePodIdentityAssociation",
         "eks:DescribePodIdentityAssociation",
-        "eks:ListPodIdentityAssociations"
+        "eks:ListPodIdentityAssociations",
+        "eks:TagResource"
       ],
       "Resource": "*",
       "Condition": {
-        "StringEquals": { "aws:RequestedRegion": "ap-northeast-2" }
+        "StringEquals": {
+          "aws:RequestedRegion": "ap-northeast-2"
+        }
       }
     },
     {
       "Sid": "PassTenantObjectRole",
       "Effect": "Allow",
-      "Action": ["iam:PassRole", "iam:GetRole"],
+      "Action": [
+        "iam:PassRole"
+      ],
+      "Resource": "arn:aws:iam::*:role/agent-broker-tenant-objects",
+      "Condition": {
+        "StringEquals": {
+          "iam:PassedToService": "pods.eks.amazonaws.com"
+        }
+      }
+    },
+    {
+      "Sid": "ReadTenantObjectRole",
+      "Effect": "Allow",
+      "Action": "iam:GetRole",
       "Resource": "arn:aws:iam::*:role/agent-broker-tenant-objects"
     }
   ]
