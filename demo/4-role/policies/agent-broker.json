@@ -92,6 +92,12 @@
       }
     },
     {
+      "Sid": "ReadTenantObjectIdentities",
+      "Effect": "Allow",
+      "Action": "eks:DescribePodIdentityAssociation",
+      "Resource": "arn:aws:eks:ap-northeast-2:*:podidentityassociation/eks-demo/*"
+    },
+    {
       "Sid": "DeleteTenantObjectIdentity",
       "Effect": "Allow",
       "Action": "eks:DeletePodIdentityAssociation",
