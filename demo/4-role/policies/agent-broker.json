@@ -1,0 +1,62 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "BrokerVariables",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:PutParameter",
+        "ssm:GetParameter",
+        "ssm:GetParameters",
+        "ssm:GetParametersByPath",
+        "ssm:DeleteParameter",
+        "ssm:DeleteParameters"
+      ],
+      "Resource": [
+        "arn:aws:ssm:ap-northeast-2:*:parameter/agent-broker/*"
+      ]
+    },
+    {
+      "Sid": "BrokerVariableKey",
+      "Effect": "Allow",
+      "Action": ["kms:Encrypt", "kms:Decrypt", "kms:GenerateDataKey"],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": { "kms:ViaService": "ssm.ap-northeast-2.amazonaws.com" },
+        "ForAnyValue:StringEquals": { "kms:ResourceAliases": "alias/agent-broker" }
+      }
+    },
+    {
+      "Sid": "SandboxObjectCredentials",
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "arn:aws:iam::*:role/agent-broker-sandbox-objects"
+    },
+    {
+      "Sid": "ObjectPrefixCleanup",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket", "s3:DeleteObject"],
+      "Resource": ["arn:aws:s3:::agent-broker-objects", "arn:aws:s3:::agent-broker-objects/*"]
+    },
+    {
+      "Sid": "TenantObjectIdentity",
+      "Effect": "Allow",
+      "Action": [
+        "eks:CreatePodIdentityAssociation",
+        "eks:DeletePodIdentityAssociation",
+        "eks:DescribePodIdentityAssociation",
+        "eks:ListPodIdentityAssociations"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": { "aws:RequestedRegion": "ap-northeast-2" }
+      }
+    },
+    {
+      "Sid": "PassTenantObjectRole",
+      "Effect": "Allow",
+      "Action": ["iam:PassRole", "iam:GetRole"],
+      "Resource": "arn:aws:iam::*:role/agent-broker-tenant-objects"
+    }
+  ]
+}
