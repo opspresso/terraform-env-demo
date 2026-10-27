@@ -6,10 +6,7 @@
       "Effect": "Allow",
       "Action": [
         "ssm:PutParameter",
-        "ssm:GetParameter",
         "ssm:GetParameters",
-        "ssm:GetParametersByPath",
-        "ssm:DeleteParameter",
         "ssm:DeleteParameters"
       ],
       "Resource": [
@@ -53,23 +50,6 @@
       ]
     },
     {
-      "Sid": "TenantObjectIdentity",
-      "Effect": "Allow",
-      "Action": [
-        "eks:CreatePodIdentityAssociation",
-        "eks:DeletePodIdentityAssociation",
-        "eks:DescribePodIdentityAssociation",
-        "eks:ListPodIdentityAssociations",
-        "eks:TagResource"
-      ],
-      "Resource": "*",
-      "Condition": {
-        "StringEquals": {
-          "aws:RequestedRegion": "ap-northeast-2"
-        }
-      }
-    },
-    {
       "Sid": "PassTenantObjectRole",
       "Effect": "Allow",
       "Action": [
@@ -79,6 +59,46 @@
       "Condition": {
         "StringEquals": {
           "iam:PassedToService": "pods.eks.amazonaws.com"
+        }
+      }
+    },
+    {
+      "Sid": "ListTenantObjectIdentities",
+      "Effect": "Allow",
+      "Action": "eks:ListPodIdentityAssociations",
+      "Resource": "arn:aws:eks:ap-northeast-2:*:cluster/eks-demo"
+    },
+    {
+      "Sid": "CreateTenantObjectIdentity",
+      "Effect": "Allow",
+      "Action": [
+        "eks:CreatePodIdentityAssociation",
+        "eks:TagResource"
+      ],
+      "Resource": [
+        "arn:aws:eks:ap-northeast-2:*:cluster/eks-demo",
+        "arn:aws:eks:ap-northeast-2:*:podidentityassociation/eks-demo/*"
+      ],
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/agent-broker/project": "?*"
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "agent-broker/project",
+            "agent-broker/env"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "DeleteTenantObjectIdentity",
+      "Effect": "Allow",
+      "Action": "eks:DeletePodIdentityAssociation",
+      "Resource": "arn:aws:eks:ap-northeast-2:*:podidentityassociation/eks-demo/*",
+      "Condition": {
+        "StringLike": {
+          "aws:ResourceTag/agent-broker/project": "?*"
         }
       }
     },
