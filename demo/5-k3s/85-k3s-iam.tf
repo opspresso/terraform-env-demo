@@ -17,8 +17,8 @@ data "aws_iam_policy_document" "k3s_ecr_pull" {
       "ecr:GetDownloadUrlForLayer",
       "ecr:DescribeImages",
     ]
-    # 90-ecr.tf 가 관리하는 저장소만 허용한다.
-    resources = [for repo in aws_ecr_repository.this : repo.arn]
+    # 8-agent-studio 가 관리하는 Agent 저장소만 허용한다.
+    resources = [for repo in data.aws_ecr_repository.agent : repo.arn]
   }
 }
 
