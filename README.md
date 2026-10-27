@@ -11,9 +11,10 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [4-role](demo/4-role/) | 앱에서 사용할 IAM 역할 |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
 | [6-eks-node](demo/6-eks-node/) | Graviton(arm64) 기준 노드 3개, 증가분 dynamic pool, 제한된 Workspace pool |
-| [8-agent-studio](demo/8-agent-studio/README.md) | S3, ECR, k3s 서버와 alpha 메모리 정책 |
+| [5-k3s](demo/5-k3s/README.md) | 삭제한 k3s 서버의 보관용 코드. 적용하지 않음 |
+| [8-agent-studio](demo/8-agent-studio/README.md) | Studio S3, Agent ECR, GitHub 게시 역할 |
 | [8-agent-broker](demo/8-agent-broker/README.md) | Agent Broker KMS key, 공유 bucket, Sandbox·테넌트 IAM 역할 |
-| [8-agent-librio](demo/8-agent-librio/README.md) | 미래 EKS Librio의 전용 S3 원본 저장소; k3s alpha에는 미사용 |
+| [8-agent-librio](demo/8-agent-librio/README.md) | EKS Librio의 S3 원본 저장소 |
 | [8-comfy-render](demo/8-comfy-render/) | DynamoDB, S3, 작업 큐 |
 | [8-domain-mail](demo/8-domain-mail/README.md) | Cloudflare 수신 전달과 SES SMTP 발신, 이전 수신 원본 보관 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
@@ -40,9 +41,8 @@ Workspace pool은 기존 Auto Mode node 역할과 private subnet·EKS primary se
 `argocd-env-addons`의 EKS network policy controller를 먼저 준비한다.
 
 기존 설치는 승인된 `5-eks` 적용으로 Workspace용 output을 state에 기록한 뒤 `6-eks-node`를 적용한다.
-기존 default NodeClass, PVC, ECR, k3s 인스턴스는 변경하지 않는다.
-Terraform apply와 실제 장애 주입은 별도 승인 뒤 진행한다. k3s는 Auto Mode 리소스를 사용하지 않고
-같은 Kubernetes Sandbox와 namespace 격리·quota를 사용한다.
+기존 default NodeClass, PVC, ECR은 변경하지 않는다.
+Terraform apply와 실제 장애 주입은 별도 승인 뒤 진행한다.
 
 ## 준비
 
@@ -75,4 +75,4 @@ terraform apply
 terraform output
 ```
 
-기존 환경에서는 `default` workspace를 사용합니다. 각 구성의 state는 S3에 따로 저장됩니다. 삭제 전에는 `terraform plan -destroy`로 대상을 확인합니다. 앱 데이터와 일부 k3s 리소스는 `prevent_destroy`로 보호합니다.
+기존 환경에서는 `default` workspace를 사용합니다. 각 구성의 state는 S3에 따로 저장됩니다. 삭제 전에는 `terraform plan -destroy`로 대상을 확인합니다. 앱 데이터(S3·KMS 등)는 `prevent_destroy`로 보호합니다.

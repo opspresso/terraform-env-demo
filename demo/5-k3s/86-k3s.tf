@@ -127,14 +127,6 @@ resource "aws_instance" "k3s" {
   }
 }
 
-# *.demo.rovr.dev moved to the EKS ALB (3-alb) for cluster addons; forget it without deleting.
-removed {
-  from = aws_route53_record.k3s_rovr_wildcard
-
-  lifecycle {
-    destroy = false
-  }
-}
 
 resource "aws_route53_record" "k3s_agrt_wildcard" {
   zone_id = data.aws_route53_zone.k3s_agrt.zone_id
@@ -201,21 +193,5 @@ resource "aws_iam_role_policy" "k3s_cert_manager_route53" {
   })
 }
 
-# The agrt.dev service wildcard moved to 3-alb with the EKS cutover; forget it without deleting.
-removed {
-  from = aws_route53_record.k3s_agrt_services
 
-  lifecycle {
-    destroy = false
-  }
-}
-
-# The per-service records were replaced by the wildcard outside Terraform; forget them only.
-removed {
-  from = aws_route53_record.k3s_agrt
-
-  lifecycle {
-    destroy = false
-  }
-}
 
