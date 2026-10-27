@@ -12,7 +12,7 @@ variable "name" {
 
 variable "kubernetes_version" {
   description = "쿠버네티스 버전을 입력합니다."
-  default     = "1.36"
+  default     = "1.37"
 }
 
 variable "endpoint_public_access_cidrs" {
