@@ -29,22 +29,12 @@ locals {
       namespace       = "agent-studio"
       service_account = "agent-studio"
     }
-    # Broker manages tenant variables (SSM), object credentials and tenant Pod Identity.
-    "agent-broker" = {
-      namespace       = "agent-broker"
-      service_account = "agent-broker"
-    }
     # Agent Delivery manages tenant variables (SSM), object credentials and tenant Pod Identity.
     "agent-delivery" = {
       namespace       = "agent-delivery"
       service_account = "agent-delivery"
     }
     # Memory and Forge need no AWS data-plane identity.
-    # A future cluster binds source storage to Librio.
-    "agent-librio" = {
-      namespace       = "agent-librio"
-      service_account = "agent-librio"
-    }
     # Agent Knowledge stores sources in its own bucket.
     "agent-knowledge" = {
       namespace       = "agent-knowledge"
