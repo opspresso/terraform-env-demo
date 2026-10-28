@@ -19,8 +19,9 @@ resource "aws_iam_role" "push" {
         Effect    = "Allow"
         Principal = { AWS = local.registry_role_arn }
         Action    = "sts:TagSession"
+        # EKS Pod Identity session tags are transitive, so a chained session carries them as well.
         Condition = {
-          "ForAllValues:StringEquals" = { "aws:TagKeys" = ["delivery-project"] }
+          "ForAllValues:StringEquals" = { "aws:TagKeys" = concat(["delivery-project"], local.pod_identity_tag_keys) }
         }
       },
     ]
