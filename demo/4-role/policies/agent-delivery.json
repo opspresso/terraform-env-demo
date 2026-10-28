@@ -1,0 +1,118 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DeliveryVariables",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:PutParameter",
+        "ssm:GetParameters",
+        "ssm:DeleteParameters"
+      ],
+      "Resource": [
+        "arn:aws:ssm:ap-northeast-2:*:parameter/agent-delivery/*"
+      ]
+    },
+    {
+      "Sid": "DeliveryVariableKey",
+      "Effect": "Allow",
+      "Action": [
+        "kms:Encrypt",
+        "kms:Decrypt",
+        "kms:GenerateDataKey"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "kms:ViaService": "ssm.ap-northeast-2.amazonaws.com"
+        },
+        "ForAnyValue:StringEquals": {
+          "kms:ResourceAliases": "alias/agent-delivery"
+        }
+      }
+    },
+    {
+      "Sid": "SandboxObjectCredentials",
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "arn:aws:iam::*:role/agent-delivery-sandbox-objects"
+    },
+    {
+      "Sid": "ObjectPrefixCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:DeleteObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::agent-delivery-objects",
+        "arn:aws:s3:::agent-delivery-objects/*"
+      ]
+    },
+    {
+      "Sid": "PassTenantObjectRole",
+      "Effect": "Allow",
+      "Action": [
+        "iam:PassRole"
+      ],
+      "Resource": "arn:aws:iam::*:role/agent-delivery-tenant-objects",
+      "Condition": {
+        "StringEquals": {
+          "iam:PassedToService": "pods.eks.amazonaws.com"
+        }
+      }
+    },
+    {
+      "Sid": "ListTenantObjectIdentities",
+      "Effect": "Allow",
+      "Action": "eks:ListPodIdentityAssociations",
+      "Resource": "arn:aws:eks:ap-northeast-2:*:cluster/eks-demo"
+    },
+    {
+      "Sid": "CreateTenantObjectIdentity",
+      "Effect": "Allow",
+      "Action": [
+        "eks:CreatePodIdentityAssociation",
+        "eks:TagResource"
+      ],
+      "Resource": [
+        "arn:aws:eks:ap-northeast-2:*:cluster/eks-demo",
+        "arn:aws:eks:ap-northeast-2:*:podidentityassociation/eks-demo/*"
+      ],
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/agent-delivery/project": "?*"
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "agent-delivery/project",
+            "agent-delivery/env"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "ReadTenantObjectIdentities",
+      "Effect": "Allow",
+      "Action": "eks:DescribePodIdentityAssociation",
+      "Resource": "arn:aws:eks:ap-northeast-2:*:podidentityassociation/eks-demo/*"
+    },
+    {
+      "Sid": "DeleteTenantObjectIdentity",
+      "Effect": "Allow",
+      "Action": "eks:DeletePodIdentityAssociation",
+      "Resource": "arn:aws:eks:ap-northeast-2:*:podidentityassociation/eks-demo/*",
+      "Condition": {
+        "StringLike": {
+          "aws:ResourceTag/agent-delivery/project": "?*"
+        }
+      }
+    },
+    {
+      "Sid": "ReadTenantObjectRole",
+      "Effect": "Allow",
+      "Action": "iam:GetRole",
+      "Resource": "arn:aws:iam::*:role/agent-delivery-tenant-objects"
+    }
+  ]
+}

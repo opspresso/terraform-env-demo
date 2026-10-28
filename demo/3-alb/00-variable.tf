@@ -33,7 +33,7 @@ variable "domains" {
 
   default = {
     # Management cluster addons (Argo CD, Grafana, Loki, Prometheus) on demo, the future
-    # service clusters eks-demo-a/b on demo-a/demo-b, and the apps that Agent Broker delivers on
+    # service clusters eks-demo-a/b on demo-a/demo-b, and the apps that Agent Delivery deploys on
     # apps (agent-platform docs/APP_DELIVERY.md). rovr.dev is served by Route53.
     "rovr.dev" = {
       certificates = ["demo.rovr.dev", "demo-a.rovr.dev", "demo-b.rovr.dev", "apps.rovr.dev"]
@@ -42,7 +42,7 @@ variable "domains" {
     }
     "agrt.dev" = {
       certificates = ["agrt.dev"]
-      # Agent service hosts (studio, memory, librio, forge, models, broker) resolve to the EKS ALB.
+      # Agent service hosts (studio, memory, knowledge, forge, models, delivery) resolve to the EKS ALB.
       public   = ["*.agrt.dev"]
       internal = []
     }
