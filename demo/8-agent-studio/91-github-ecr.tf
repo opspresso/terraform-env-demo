@@ -11,9 +11,9 @@ locals {
       description   = "agent-memory ECR push from GitHub Actions OIDC"
       legacy_trust  = true
     }
-    agent-librio = {
+    agent-knowledge = {
       repository_id = "1363501685"
-      description   = "agent-librio release ECR push from GitHub Actions OIDC"
+      description   = "agent-knowledge release ECR push from GitHub Actions OIDC"
       legacy_trust  = false
     }
     agent-forge = {
@@ -21,9 +21,9 @@ locals {
       description   = "agent-forge release ECR push from GitHub Actions OIDC"
       legacy_trust  = false
     }
-    agent-broker = {
+    agent-delivery = {
       repository_id = "1434015347"
-      description   = "agent-broker release ECR push from GitHub Actions OIDC"
+      description   = "agent-delivery release ECR push from GitHub Actions OIDC"
       legacy_trust  = false
     }
     agent-models = {

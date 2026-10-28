@@ -19,5 +19,5 @@ variable "k3s_go_memory_limit_mib" {
 variable "ecr_repositories" {
   description = "Agent ECR repositories (owned by 8-agent-studio) the node may pull from."
   type        = list(string)
-  default     = ["agent-broker", "agent-forge", "agent-librio", "agent-memory", "agent-models", "agent-studio"]
+  default     = ["agent-delivery", "agent-forge", "agent-knowledge", "agent-memory", "agent-models", "agent-studio"]
 }
