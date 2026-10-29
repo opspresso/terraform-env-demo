@@ -56,6 +56,16 @@ locals {
       namespace       = "addon-aws-controllers"
       service_account = "ack-rds-controller"
     }
+    # ACK S3 creates the buckets of kro S3Bucket.
+    "ack-s3" = {
+      namespace       = "addon-aws-controllers"
+      service_account = "ack-s3-controller"
+    }
+    # ACK ElastiCache creates the serverless caches, users and user groups of kro ValkeyCache.
+    "ack-elasticache" = {
+      namespace       = "addon-aws-controllers"
+      service_account = "ack-elasticache-controller"
+    }
   }
 
   # ARN 을 문자열로 조립하지 않고 4-role 이 내보낸 것을 씁니다. 키가 없으면 여기서

@@ -1,0 +1,112 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AppUsers",
+      "Effect": "Allow",
+      "Action": [
+        "elasticache:CreateUser",
+        "elasticache:ModifyUser",
+        "elasticache:DeleteUser",
+        "elasticache:DescribeUsers"
+      ],
+      "Resource": "arn:aws:elasticache:ap-northeast-2:*:user:app-*"
+    },
+    {
+      "Sid": "AppUserGroups",
+      "Effect": "Allow",
+      "Action": [
+        "elasticache:CreateUserGroup",
+        "elasticache:ModifyUserGroup",
+        "elasticache:DeleteUserGroup",
+        "elasticache:DescribeUserGroups"
+      ],
+      "Resource": [
+        "arn:aws:elasticache:ap-northeast-2:*:usergroup:app-*",
+        "arn:aws:elasticache:ap-northeast-2:*:user:app-*"
+      ]
+    },
+    {
+      "Sid": "AppServerlessCaches",
+      "Effect": "Allow",
+      "Action": [
+        "elasticache:CreateServerlessCache",
+        "elasticache:ModifyServerlessCache",
+        "elasticache:DeleteServerlessCache",
+        "elasticache:DescribeServerlessCaches"
+      ],
+      "Resource": [
+        "arn:aws:elasticache:ap-northeast-2:*:serverlesscache:app-*",
+        "arn:aws:elasticache:ap-northeast-2:*:usergroup:app-*"
+      ]
+    },
+    {
+      "Sid": "AppTags",
+      "Effect": "Allow",
+      "Action": [
+        "elasticache:AddTagsToResource",
+        "elasticache:RemoveTagsFromResource",
+        "elasticache:ListTagsForResource"
+      ],
+      "Resource": [
+        "arn:aws:elasticache:ap-northeast-2:*:serverlesscache:app-*",
+        "arn:aws:elasticache:ap-northeast-2:*:user:app-*",
+        "arn:aws:elasticache:ap-northeast-2:*:usergroup:app-*"
+      ]
+    },
+    {
+      "Sid": "ServerlessEndpoint",
+      "Effect": "Allow",
+      "Action": "ec2:CreateVpcEndpoint",
+      "Resource": "arn:aws:ec2:ap-northeast-2:*:vpc-endpoint/*",
+      "Condition": {
+        "StringLike": {
+          "ec2:VpceServiceName": "com.amazonaws.elasticache.serverless.*"
+        }
+      }
+    },
+    {
+      "Sid": "ServerlessEndpointNetwork",
+      "Effect": "Allow",
+      "Action": "ec2:CreateVpcEndpoint",
+      "Resource": [
+        "arn:aws:ec2:ap-northeast-2:*:vpc/vpc-093b5bd80076c011d",
+        "arn:aws:ec2:ap-northeast-2:*:subnet/subnet-0676873c1895088a2",
+        "arn:aws:ec2:ap-northeast-2:*:subnet/subnet-0a41d250a592aa73c"
+      ]
+    },
+    {
+      "Sid": "ServerlessEndpointSecurityGroup",
+      "Effect": "Allow",
+      "Action": "ec2:CreateVpcEndpoint",
+      "Resource": "arn:aws:ec2:ap-northeast-2:*:security-group/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Name": "app-delivery-valkey"
+        }
+      }
+    },
+    {
+      "Sid": "ServerlessEndpointTags",
+      "Effect": "Allow",
+      "Action": "ec2:CreateTags",
+      "Resource": "arn:aws:ec2:ap-northeast-2:*:vpc-endpoint/*",
+      "Condition": {
+        "StringEquals": {
+          "ec2:CreateAction": "CreateVpcEndpoint",
+          "aws:RequestTag/AmazonElastiCacheManaged": "true"
+        }
+      }
+    },
+    {
+      "Sid": "DescribeNetwork",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeVpcs",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeSecurityGroups"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

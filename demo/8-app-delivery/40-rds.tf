@@ -44,9 +44,11 @@ resource "aws_db_parameter_group" "rds" {
   family      = "postgres18"
   description = "Agent Delivery RdsPostgres instances: TLS only"
 
+  # postgres18 already defaults rds.force_ssl to 1, so RDS keeps it as a system parameter and reports apply_method
+  # pending-reboot. Declaring the same apply_method avoids a permanent plan diff; the parameter is dynamic either way.
   parameter {
     name         = "rds.force_ssl"
     value        = "1"
-    apply_method = "immediate"
+    apply_method = "pending-reboot"
   }
 }
