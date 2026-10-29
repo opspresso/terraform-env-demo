@@ -10,7 +10,7 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | 앱에서 사용할 IAM 역할 |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 1개), 증가분 dynamic pool, 제한된 Workspace pool |
+| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 1개), 증가분 dynamic pool, 제한된 Workspace pool과 rovr sandbox pool |
 | [5-k3s](demo/5-k3s/README.md) | 삭제한 k3s 서버의 보관용 코드. 적용하지 않음 |
 | [8-agent-studio](demo/8-agent-studio/README.md) | Studio S3, Agent ECR, GitHub 게시 역할 |
 | [8-agent-delivery](demo/8-agent-delivery/README.md) | Agent Delivery KMS key, 공유 bucket, Sandbox·테넌트 IAM 역할 |
@@ -42,6 +42,12 @@ Workspace pool은 기존 Auto Mode node 역할과 private subnet·EKS primary se
 생성한다. namespace quota와 worker 동시성은 `argocd-env-apps`가 소유하며 같은 용량으로 맞춘다.
 노드의 이미지 캐시는 kubelet이 관리하며 Workspace마다 DinD 이미지 사본을 저장하지 않는다.
 `argocd-env-addons`의 EKS network policy controller를 먼저 준비한다.
+
+rovr sandbox pool(`rovr-sandboxes`)은 `workspaces` NodeClass를 재사용하고 taint `rovr.dev/sandbox`로
+rovr 실행 Pod만 받는다. 실행 Pod는 2 CPU·4Gi를 요청하므로 8-CPU m 노드(32Gi)에 3개씩 배치한다.
+한도는 `rovr_sandbox_max_pods=6`에서 노드 3대(CPU 24개·메모리 96Gi)이며 교체용 노드 1대를 포함한다.
+이 값은 `argocd-env-apps`의 `env/eks-demo.yaml` `rovr.sandbox.max_runs`와 같게 유지한다.
+실행 Pod는 `karpenter.sh/do-not-disrupt`를 달고, 노드 drain은 rovr sandbox 마감(90분)까지 기다린다.
 
 기존 설치는 승인된 `5-eks` 적용으로 Workspace용 output을 state에 기록한 뒤 `6-eks-node`를 적용한다.
 기존 default NodeClass, PVC, ECR은 변경하지 않는다.

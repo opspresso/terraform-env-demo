@@ -1,0 +1,41 @@
+name: Cluster edge validation
+
+# The public ALB (3-alb) and the Auto Mode NodePools (6-eks-node) had no
+# check before apply. This runs the same offline checks as the other
+# directories: format, provider install and configuration validity.
+on:
+  pull_request:
+    paths:
+      - demo/3-alb/**
+      - demo/6-eks-node/**
+      - .github/workflows/cluster-edge.yml
+  push:
+    branches: [main]
+    paths:
+      - demo/3-alb/**
+      - demo/6-eks-node/**
+      - .github/workflows/cluster-edge.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        directory: [demo/3-alb, demo/6-eks-node]
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.17.1'
+      - run: terraform fmt -check
+      - run: terraform init -backend=false -input=false
+      - run: terraform validate

@@ -31,6 +31,11 @@ locals {
       description   = "agent-models release ECR push from GitHub Actions OIDC"
       legacy_trust  = false
     }
+    rovr = {
+      repository_id = "1438204517"
+      description   = "rovr release ECR push from GitHub Actions OIDC"
+      legacy_trust  = false
+    }
   }
   github_ecr_subject_prefixes = {
     for repository, publisher in local.github_ecr_publishers : repository =>

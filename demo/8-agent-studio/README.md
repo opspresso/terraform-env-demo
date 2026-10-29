@@ -5,13 +5,13 @@ Agent Studio S3, Agent 서비스 ECR, GitHub Actions 게시 역할을 관리한�
 
 ## Agent 배포 권한
 
-ECR 저장소는 Studio·Memory·Knowledge·Forge·Models·Delivery 여섯 개다. GitHub Actions 역할
+ECR 저장소는 Studio·Memory·Knowledge·Forge·Models·Delivery와 rovr, 일곱 개다. GitHub Actions 역할
 `github--<repository>-ecr`은 해당 저장소의 이미지 게시만 허용한다.
-Forge 서버와 sandbox 이미지는 같은 `agent-forge` 저장소의 서로 다른 태그를 사용한다.
+Forge와 rovr는 서버와 sandbox 이미지를 같은 저장소의 서로 다른 태그(`v*`, `sandbox-v*`)로 게시한다.
 `ecr:GetAuthorizationToken`만 AWS API 계약에 따라 `Resource="*"`이며,
 이미지 작업은 각 저장소 ARN으로 제한한다.
 
-Knowledge·Forge·Models·Delivery는 GitHub API가 반환한 immutable subject prefix와 `refs/tags/v*`만 신뢰한다.
+Knowledge·Forge·Models·Delivery·rovr는 GitHub API가 반환한 immutable subject prefix와 `refs/tags/v*`만 신뢰한다.
 `main`, Pull Request, environment subject와 다른 저장소는 허용하지 않는다.
 GitHub OIDC의 `aud`는 `sts.amazonaws.com`이어야 한다.
 기존 Studio·Memory 역할은 이번 Terraform 인수에서 trust와 권한을 그대로 보존한다.
