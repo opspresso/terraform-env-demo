@@ -21,3 +21,13 @@ output "rds_parameter_group_name" {
   description = "RdsPostgres의 DB parameter group(TLS 강제). argocd-env-addons env의 `delivery_resources.rds.parameter_group`입니다."
   value       = aws_db_parameter_group.rds.name
 }
+
+output "valkey_security_group_id" {
+  description = "ValkeyCache의 security group. argocd-env-addons env의 `delivery_resources.valkey.security_group_id`입니다."
+  value       = aws_security_group.valkey.id
+}
+
+output "intra_subnet_ids" {
+  description = "RDS·Valkey가 쓰는 intra subnet. argocd-env-addons env의 `delivery_resources.valkey.subnet_ids`입니다."
+  value       = data.terraform_remote_state.vpc.outputs.intra_subnets
+}

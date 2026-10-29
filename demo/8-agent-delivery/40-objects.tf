@@ -118,6 +118,38 @@ resource "aws_iam_role_policy" "tenant_objects" {
         Action   = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject", "s3:AbortMultipartUpload", "s3:ListMultipartUploadParts"]
         Resource = "${aws_s3_bucket.objects.arn}/$${aws:PrincipalTag/eks-cluster-name}/$${aws:PrincipalTag/kubernetes-namespace}/*"
       },
+      # Dedicated buckets of kro S3Bucket (argocd-env-addons charts/kro): <cluster>-<hash>, tagged with the cluster and
+      # the instance namespace, with ABAC on. The name alone does not identify the namespace, so the bucket tags decide.
+      # Only kro and the ACK S3 controller set those tags; tenants cannot create Bucket objects or tag buckets.
+      {
+        Sid      = "OwnNamespaceBuckets"
+        Effect   = "Allow"
+        Action   = ["s3:ListBucket", "s3:ListBucketVersions", "s3:ListBucketMultipartUploads", "s3:GetBucketLocation"]
+        Resource = "arn:aws:s3:::$${aws:PrincipalTag/eks-cluster-name}-*"
+        Condition = {
+          StringEquals = {
+            "aws:ResourceTag/eks-cluster-name"     = "$${aws:PrincipalTag/eks-cluster-name}"
+            "aws:ResourceTag/kubernetes-namespace" = "$${aws:PrincipalTag/kubernetes-namespace}"
+          }
+          Bool = { "aws:SecureTransport" = "true" }
+        }
+      },
+      {
+        Sid    = "OwnNamespaceBucketObjects"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject", "s3:GetObjectVersion", "s3:PutObject", "s3:DeleteObject", "s3:DeleteObjectVersion",
+          "s3:AbortMultipartUpload", "s3:ListMultipartUploadParts",
+        ]
+        Resource = "arn:aws:s3:::$${aws:PrincipalTag/eks-cluster-name}-*/*"
+        Condition = {
+          StringEquals = {
+            "aws:ResourceTag/eks-cluster-name"     = "$${aws:PrincipalTag/eks-cluster-name}"
+            "aws:ResourceTag/kubernetes-namespace" = "$${aws:PrincipalTag/kubernetes-namespace}"
+          }
+          Bool = { "aws:SecureTransport" = "true" }
+        }
+      },
     ]
   })
 }
