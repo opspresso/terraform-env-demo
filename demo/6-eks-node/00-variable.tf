@@ -20,14 +20,25 @@ variable "workspace_ephemeral_storage_gib" {
   }
 }
 
-variable "auto_mode_baseline_replicas" {
-  description = "EKS Auto Mode가 유지할 기준 노드 수를 입력합니다."
-  type        = number
-  default     = 2
+variable "baseline_zones" {
+  description = "기준 노드를 둘 AZ 목록입니다. default NodeClass의 private subnet AZ와 일치해야 합니다."
+  type        = list(string)
+  default     = ["ap-northeast-2a", "ap-northeast-2c"]
 
   validation {
-    condition     = var.auto_mode_baseline_replicas >= 1
-    error_message = "auto_mode_baseline_replicas는 1 이상이어야 합니다."
+    condition     = length(var.baseline_zones) >= 2 && length(distinct(var.baseline_zones)) == length(var.baseline_zones)
+    error_message = "baseline_zones는 서로 다른 AZ 2개 이상이어야 합니다."
+  }
+}
+
+variable "auto_mode_baseline_replicas_per_zone" {
+  description = "EKS Auto Mode가 AZ마다 유지할 기준 노드 수를 입력합니다."
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.auto_mode_baseline_replicas_per_zone >= 1 && floor(var.auto_mode_baseline_replicas_per_zone) == var.auto_mode_baseline_replicas_per_zone
+    error_message = "auto_mode_baseline_replicas_per_zone은 1 이상의 정수여야 합니다."
   }
 }
 
