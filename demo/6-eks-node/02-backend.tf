@@ -1,7 +1,7 @@
 # backend
 
 terraform {
-  required_version = "1.15.8" # terraform version
+  required_version = "1.17.1" # terraform version
 
   backend "s3" {
     region       = "ap-northeast-2"
@@ -14,7 +14,7 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "3.2.1" # terraform kubernetes provider version
+      version = "3.4.0" # terraform kubernetes provider version
     }
   }
 }

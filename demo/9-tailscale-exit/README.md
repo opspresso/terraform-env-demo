@@ -32,7 +32,7 @@ baseline 으로 제한됩니다. 장시간 고속 전송이 필요하면 인스�
 
 ## 생성
 
-저장소와 같은 Terraform `1.15.8`, AWS provider `6.60.0` 을 사용합니다.
+저장소와 같은 Terraform `1.17.1`, AWS provider `6.71.0` 을 사용합니다.
 
 ```bash
 cd demo/9-tailscale-exit

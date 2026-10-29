@@ -47,7 +47,7 @@ Terraform apply와 실제 장애 주입은 별도 승인 뒤 진행한다.
 
 ## 준비
 
-Terraform `1.15.8`, AWS CLI, `jq`가 필요합니다. 다른 계정에서 사용하려면 도메인과 기존 AWS 리소스 참조도 맞춰야 합니다.
+Terraform `1.17.1`, AWS CLI, `jq`가 필요합니다. 다른 계정에서 사용하려면 도메인과 기존 AWS 리소스 참조도 맞춰야 합니다.
 
 새 backend를 만들 때 저장소 루트에서 실행합니다. AWS profile의 리전은 `ap-northeast-2`로 설정합니다.
 

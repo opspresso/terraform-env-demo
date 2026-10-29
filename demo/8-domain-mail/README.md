@@ -31,7 +31,7 @@ Cloudflare가 권한 DNS입니다. 기존 Route 53 zone의 레코드만 수정�
 
 ## 전환과 검증
 
-Terraform `>= 1.15.8, < 2.0`, Python 3, AWS CLI가 필요합니다. 이 모듈은 Opspresso AWS 계정으로 실행합니다.
+Terraform `>= 1.17.1, < 2.0`, Python 3, AWS CLI가 필요합니다. 이 모듈은 Opspresso AWS 계정으로 실행합니다.
 
 1. Route 53의 전체 레코드를 백업하고 Cloudflare Free zone에 가져옵니다. A·AAAA alias는 같은 대상의 CNAME으로 옮깁니다.
    기존 웹서비스 동작을 유지하려면 레코드를 DNS only로 설정합니다. SES DKIM과 `mail.opspresso.com` MX·SPF도 보존합니다.
