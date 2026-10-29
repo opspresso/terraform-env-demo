@@ -20,6 +20,7 @@ locals {
     "agent-memory"    = { keep_releases = 30, release_tag_prefixes = ["v"] }
     "agent-models"    = { keep_releases = 30, release_tag_prefixes = ["v"] }
     "agent-studio"    = { keep_releases = 30, release_tag_prefixes = ["v"] }
+    "rovr"            = { keep_releases = 30, release_tag_prefixes = ["v", "sandbox-v"] }
   }
 }
 
