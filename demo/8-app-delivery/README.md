@@ -13,8 +13,8 @@ Argo Workflows의 앱 Delivery가 쓰는 AWS 리소스입니다. 이미지 push 
 registry 단계의 Pod 역할 `pod-role--app-delivery`(`4-role/policies/app-delivery.json`)는 `projects/*` repository를 만들고
 이 역할을 assume합니다. Pod Identity association(namespace `app-delivery`, ServiceAccount `delivery-registry`)은 `5-eks`가 만듭니다.
 
-RDS 인스턴스는 `argocd-env-addons`의 ACK RDS controller가 만듭니다. 그 역할 `pod-role--ack-rds`(`4-role/policies/ack-rds.json`)는
-식별자 `app-*`의 PostgreSQL 인스턴스, 이 subnet group·parameter group, 삭제 때의 final snapshot(`snapshot:app-*`)만 사용할 수 있습니다. Pod Identity association(namespace `addon-ack-rds`,
+RDS 인스턴스는 `argocd-env-addons`의 `aws-controllers` addon에 있는 ACK RDS controller가 만듭니다. 그 역할 `pod-role--ack-rds`(`4-role/policies/ack-rds.json`)는
+식별자 `app-*`의 PostgreSQL 인스턴스, 이 subnet group·parameter group, 삭제 때의 final snapshot(`snapshot:app-*`)만 사용할 수 있습니다. Pod Identity association(namespace `addon-aws-controllers`,
 ServiceAccount `ack-rds-controller`)은 `5-eks`가 만듭니다.
 
 ## 적용 순서
