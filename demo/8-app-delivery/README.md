@@ -9,6 +9,7 @@ Argo Workflows의 앱 Delivery가 쓰는 AWS 리소스입니다. 이미지 push 
 | DB subnet group `app-delivery-rds` | `RdsPostgres` 인스턴스만 쓰는 VPC intra subnet(`2-vpc`, 인터넷 경로 없음)입니다. 노드·Pod 주소가 없으므로 `RdsPostgres` NetworkPolicy가 이 대역의 5432를 열어도 클러스터의 다른 PostgreSQL에는 닿지 않습니다 |
 | Security group `app-delivery-rds` | EKS cluster primary security group(Auto Mode 노드와 Pod)에서 TCP 5432만 허용합니다. 어느 namespace가 접속할지는 클러스터의 NetworkPolicy가 정합니다 |
 | Security group `app-delivery-valkey` | `ValkeyCache` cache(intra subnet)의 security group입니다. EKS cluster primary security group에서 TCP 6379만 허용합니다. reader endpoint 포트 6380은 열지 않습니다 |
+| IAM inline policy `valkey-endpoint-security-group` | `4-role`의 `pod-role--ack-elasticache`가 serverless cache endpoint에 붙일 수 있는 security group을 `app-delivery-valkey`의 ID 하나로 제한합니다. ID는 이 스택을 적용한 뒤에 생기므로 `4-role` 정책이 아니라 여기에 둡니다 |
 | Service-linked role `AWSServiceRoleForRDS`·`AWSServiceRoleForElastiCache` | ACK가 첫 RDS instance·serverless cache를 만들 때 필요한 계정 공용 역할입니다. 없으면 첫 생성이 `ServiceLinkedRoles` 오류로 실패합니다. RDS 역할은 이미 있어 `import` 블록으로 가져옵니다. 다른 서비스도 쓰므로 `prevent_destroy`로 보호합니다 |
 | DB parameter group `app-delivery-postgres18` | `rds.force_ssl=1`로 TLS 없는 연결을 거부합니다. 앱은 `sslmode=require`로 연결합니다. family는 RDS 기본 major 버전(현재 18)과 같아야 합니다 |
 
