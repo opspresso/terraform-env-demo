@@ -2,10 +2,12 @@
 # (argocd-env-addons charts/kro, agent-platform docs/DELIVERY_V2.md). Each instance gets its own
 # DB identifier and master password; the subnet group and security group are shared and free.
 
+# The intra subnets of 2-vpc hold only these instances: no node or Pod has an address there, so the RdsPostgres
+# NetworkPolicy that opens TCP 5432 to these subnets reaches no other PostgreSQL in the cluster.
 resource "aws_db_subnet_group" "rds" {
   name        = "app-delivery-rds"
   description = "Agent Delivery RdsPostgres instances"
-  subnet_ids  = data.terraform_remote_state.vpc.outputs.private_subnets
+  subnet_ids  = data.terraform_remote_state.vpc.outputs.intra_subnets
 }
 
 resource "aws_security_group" "rds" {
