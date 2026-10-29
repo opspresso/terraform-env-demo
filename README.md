@@ -10,7 +10,7 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | 앱에서 사용할 IAM 역할 |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) 기준 노드 3개, 증가분 dynamic pool, 제한된 Workspace pool |
+| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 1개), 증가분 dynamic pool, 제한된 Workspace pool |
 | [5-k3s](demo/5-k3s/README.md) | 삭제한 k3s 서버의 보관용 코드. 적용하지 않음 |
 | [8-agent-studio](demo/8-agent-studio/README.md) | Studio S3, Agent ECR, GitHub 게시 역할 |
 | [8-agent-delivery](demo/8-agent-delivery/README.md) | Agent Delivery KMS key, 공유 bucket, Sandbox·테넌트 IAM 역할 |
@@ -25,9 +25,11 @@ EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 `eks-demo`의 모든 노드는 Graviton(arm64, m7g 이상)이다. 서비스 이미지는 `linux/amd64`·`linux/arm64`
 multi-platform으로 게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
 
-기본 workload는 `baseline` NodePool의 xlarge(4 vCPU·16Gi) 노드 2개에서 실행한다. 렌더한 requests 합계는
-약 1.5 vCPU·9.2Gi(앱·addon·sidecar·DaemonSet)이므로 노드 한 대가 빠져도 남은 한 대(3.77 vCPU·14.3Gi
-allocatable)가 수용한다.
+기본 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 xlarge(4 vCPU·16Gi) 노드 2개에서 실행한다.
+정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다. requests 합계는
+약 2.0 vCPU·11.8Gi(앱·addon·sidecar·DaemonSet)이므로 노드 한 대 또는 AZ 하나가 빠져도 남은 한 대(3.77 vCPU·14.3Gi
+allocatable)가 수용한다. EBS PersistentVolume은 생성된 AZ에 묶이므로 그 AZ에 노드가 없으면 `general` NodePool이
+같은 AZ에 노드를 추가한다.
 rollout surge나 증가분은 dynamic `general` NodePool(`general_max_cpu`, 기본 16 vCPU)이 추가 노드로 처리하고,
 비거나 활용도가 낮으면 회수한다. 기준 용량에는 유휴 시간에도 비용이 발생한다.
 requests·sidecar·DaemonSet 예약을 합산하고 남은 노드의 allocatable과 비교해 조정한다.
