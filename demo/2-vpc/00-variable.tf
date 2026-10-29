@@ -34,16 +34,16 @@ variable "azs" {
 }
 
 variable "az_subnets" {
-  description = "AZ 별 서브넷 CIDR 을 입력합니다. 리스트 순서와 무관하게 AZ 문자에 CIDR 이 고정됩니다."
+  description = "AZ 별 서브넷 CIDR 을 입력합니다. 리스트 순서와 무관하게 AZ 문자에 CIDR 이 고정됩니다. intra 는 인터넷 경로가 없는 서브넷으로, Agent Delivery RDS(8-app-delivery)만 씁니다."
   type = map(object({
     public  = string
     private = string
     intra   = optional(string)
   }))
   default = {
-    a = { public = "10.10.16.0/20", private = "10.10.112.0/20" } # intra = "10.10.208.0/20"
+    a = { public = "10.10.16.0/20", private = "10.10.112.0/20", intra = "10.10.208.0/20" }
     b = { public = "10.10.32.0/20", private = "10.10.128.0/20" } # intra = "10.10.224.0/20"
-    c = { public = "10.10.48.0/20", private = "10.10.144.0/20" } # intra = "10.10.240.0/20"
+    c = { public = "10.10.48.0/20", private = "10.10.144.0/20", intra = "10.10.240.0/20" }
   }
 }
 

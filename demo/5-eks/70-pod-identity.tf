@@ -49,6 +49,11 @@ locals {
       namespace       = "app-delivery"
       service_account = "delivery-registry"
     }
+    # ACK RDS creates the RDS instances of kro RdsPostgres (argocd-env-addons charts/ack-rds).
+    "ack-rds" = {
+      namespace       = "addon-ack-rds"
+      service_account = "ack-rds-controller"
+    }
   }
 
   # ARN 을 문자열로 조립하지 않고 4-role 이 내보낸 것을 씁니다. 키가 없으면 여기서
