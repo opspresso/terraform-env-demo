@@ -31,6 +31,7 @@
         "s3:GetBucketNotification",
         "s3:GetBucketPolicy",
         "s3:GetReplicationConfiguration",
+        "s3:PutReplicationConfiguration",
         "s3:GetBucketRequestPayment",
         "s3:GetBucketWebsite",
         "s3:GetBucketObjectLockConfiguration",
