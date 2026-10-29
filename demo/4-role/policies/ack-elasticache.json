@@ -76,17 +76,6 @@
       ]
     },
     {
-      "Sid": "ServerlessEndpointSecurityGroup",
-      "Effect": "Allow",
-      "Action": "ec2:CreateVpcEndpoint",
-      "Resource": "arn:aws:ec2:ap-northeast-2:*:security-group/*",
-      "Condition": {
-        "StringEquals": {
-          "aws:ResourceTag/Name": "app-delivery-valkey"
-        }
-      }
-    },
-    {
       "Sid": "ServerlessEndpointTags",
       "Effect": "Allow",
       "Action": "ec2:CreateTags",

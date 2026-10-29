@@ -27,3 +27,21 @@ resource "aws_vpc_security_group_ingress_rule" "valkey_from_eks" {
     Name = "app-delivery-valkey-from-eks"
   }
 }
+
+# The ACK ElastiCache controller attaches this exact security group to the serverless cache endpoints.
+# The group ID exists only after this stack is applied, so this grant lives here instead of the 4-role policy,
+# where a Name tag condition would also match any other group given the same tag.
+resource "aws_iam_role_policy" "ack_elasticache_endpoint_security_group" {
+  name = "valkey-endpoint-security-group"
+  role = "pod-role--ack-elasticache"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid      = "ServerlessEndpointSecurityGroup"
+      Effect   = "Allow"
+      Action   = "ec2:CreateVpcEndpoint"
+      Resource = "arn:aws:ec2:${var.region}:${local.account_id}:security-group/${aws_security_group.valkey.id}"
+    }]
+  })
+}
