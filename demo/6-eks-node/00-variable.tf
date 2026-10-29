@@ -20,6 +20,16 @@ variable "workspace_ephemeral_storage_gib" {
   }
 }
 
+variable "rovr_sandbox_max_pods" {
+  description = "rovr sandbox Pod capacity; keep aligned with rovr.sandbox.max_runs in argocd-env-apps env/eks-demo.yaml. Each Pod reserves 2 CPU and 4Gi memory."
+  type        = number
+  default     = 6
+  validation {
+    condition     = var.rovr_sandbox_max_pods >= 1 && var.rovr_sandbox_max_pods <= 60 && floor(var.rovr_sandbox_max_pods) == var.rovr_sandbox_max_pods
+    error_message = "rovr_sandbox_max_pods must be an integer between 1 and 60."
+  }
+}
+
 variable "baseline_zones" {
   description = "기준 노드를 둘 AZ 목록입니다. default NodeClass의 private subnet AZ와 일치해야 합니다."
   type        = list(string)
