@@ -1,0 +1,65 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "CreateAppInstance",
+      "Effect": "Allow",
+      "Action": "rds:CreateDBInstance",
+      "Resource": "arn:aws:rds:ap-northeast-2:*:db:app-*",
+      "Condition": {
+        "StringEquals": {
+          "rds:DatabaseEngine": "postgres",
+          "rds:DatabaseClass": [
+            "db.t4g.micro",
+            "db.t4g.small"
+          ]
+        },
+        "NumericLessThanEquals": {
+          "rds:StorageSize": "100"
+        },
+        "BoolIfExists": {
+          "rds:MultiAz": "false",
+          "rds:PubliclyAccessible": "false",
+          "rds:StorageEncrypted": "true"
+        }
+      }
+    },
+    {
+      "Sid": "AppInstanceDependencies",
+      "Effect": "Allow",
+      "Action": [
+        "rds:CreateDBInstance",
+        "rds:ModifyDBInstance"
+      ],
+      "Resource": [
+        "arn:aws:rds:ap-northeast-2:*:subgrp:app-delivery-rds",
+        "arn:aws:rds:ap-northeast-2:*:pg:default.postgres*",
+        "arn:aws:rds:ap-northeast-2:*:og:default:postgres-*"
+      ]
+    },
+    {
+      "Sid": "ManageAppInstance",
+      "Effect": "Allow",
+      "Action": [
+        "rds:DescribeDBInstances",
+        "rds:ModifyDBInstance",
+        "rds:DeleteDBInstance",
+        "rds:AddTagsToResource",
+        "rds:RemoveTagsFromResource",
+        "rds:ListTagsForResource"
+      ],
+      "Resource": "arn:aws:rds:ap-northeast-2:*:db:app-*"
+    },
+    {
+      "Sid": "RdsServiceLinkedRole",
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "arn:aws:iam::*:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
+      "Condition": {
+        "StringEquals": {
+          "iam:AWSServiceName": "rds.amazonaws.com"
+        }
+      }
+    }
+  ]
+}
