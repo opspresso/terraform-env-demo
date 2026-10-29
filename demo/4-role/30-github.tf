@@ -20,8 +20,8 @@ resource "aws_iam_role" "github_ecr_public_pull" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          # Immutable owner and repository IDs: a renamed or recreated repository does not match.
-          "token.actions.githubusercontent.com:sub" = "repo:opspresso@38965494/argocd-env-addons@485232980:ref:refs/heads/main"
+          # The repository uses the default subject format (immutable subjects are off).
+          "token.actions.githubusercontent.com:sub" = "repo:opspresso/argocd-env-addons:ref:refs/heads/main"
         }
       }
     }]
