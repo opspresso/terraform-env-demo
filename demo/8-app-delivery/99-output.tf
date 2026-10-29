@@ -16,3 +16,8 @@ output "rds_security_group_id" {
   description = "RdsPostgres의 security group. argocd-env-addons env의 `delivery_resources.rds.security_group_id`입니다."
   value       = aws_security_group.rds.id
 }
+
+output "rds_parameter_group_name" {
+  description = "RdsPostgres의 DB parameter group(TLS 강제). argocd-env-addons env의 `delivery_resources.rds.parameter_group`입니다."
+  value       = aws_db_parameter_group.rds.name
+}

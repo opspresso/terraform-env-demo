@@ -33,7 +33,7 @@
       ],
       "Resource": [
         "arn:aws:rds:ap-northeast-2:*:subgrp:app-delivery-rds",
-        "arn:aws:rds:ap-northeast-2:*:pg:default.postgres*",
+        "arn:aws:rds:ap-northeast-2:*:pg:app-delivery-postgres*",
         "arn:aws:rds:ap-northeast-2:*:og:default:postgres-*"
       ]
     },
@@ -49,6 +49,18 @@
         "rds:ListTagsForResource"
       ],
       "Resource": "arn:aws:rds:ap-northeast-2:*:db:app-*"
+    },
+    {
+      "Sid": "FinalSnapshot",
+      "Effect": "Allow",
+      "Action": [
+        "rds:CreateDBSnapshot",
+        "rds:AddTagsToResource"
+      ],
+      "Resource": [
+        "arn:aws:rds:ap-northeast-2:*:db:app-*",
+        "arn:aws:rds:ap-northeast-2:*:snapshot:app-*"
+      ]
     },
     {
       "Sid": "RdsServiceLinkedRole",

@@ -35,3 +35,18 @@ resource "aws_vpc_security_group_ingress_rule" "rds_from_eks" {
     Name = "app-delivery-rds-from-eks"
   }
 }
+
+# Every RdsPostgres instance uses this group: rds.force_ssl rejects connections without TLS, so the instance
+# credentials are never sent in clear text. The family must match the major version RDS creates by default
+# (the RdsPostgres template does not pin engineVersion); a mismatch fails the instance with a terminal error.
+resource "aws_db_parameter_group" "rds" {
+  name        = "app-delivery-postgres18"
+  family      = "postgres18"
+  description = "Agent Delivery RdsPostgres instances: TLS only"
+
+  parameter {
+    name         = "rds.force_ssl"
+    value        = "1"
+    apply_method = "immediate"
+  }
+}
