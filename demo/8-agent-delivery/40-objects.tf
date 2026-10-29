@@ -128,6 +128,8 @@ resource "aws_iam_role_policy" "tenant_objects" {
         Resource = "arn:aws:s3:::$${aws:PrincipalTag/eks-cluster-name}-*"
         Condition = {
           StringEquals = {
+            # A bucket of the same name in another account (bucket names are global) never matches.
+            "aws:ResourceAccount"                  = local.account_id
             "aws:ResourceTag/eks-cluster-name"     = "$${aws:PrincipalTag/eks-cluster-name}"
             "aws:ResourceTag/kubernetes-namespace" = "$${aws:PrincipalTag/kubernetes-namespace}"
           }
@@ -144,6 +146,8 @@ resource "aws_iam_role_policy" "tenant_objects" {
         Resource = "arn:aws:s3:::$${aws:PrincipalTag/eks-cluster-name}-*/*"
         Condition = {
           StringEquals = {
+            # A bucket of the same name in another account (bucket names are global) never matches.
+            "aws:ResourceAccount"                  = local.account_id
             "aws:ResourceTag/eks-cluster-name"     = "$${aws:PrincipalTag/eks-cluster-name}"
             "aws:ResourceTag/kubernetes-namespace" = "$${aws:PrincipalTag/kubernetes-namespace}"
           }

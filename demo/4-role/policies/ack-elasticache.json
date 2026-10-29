@@ -70,10 +70,21 @@
       "Effect": "Allow",
       "Action": "ec2:CreateVpcEndpoint",
       "Resource": [
-        "arn:aws:ec2:ap-northeast-2:*:vpc/*",
-        "arn:aws:ec2:ap-northeast-2:*:subnet/*",
-        "arn:aws:ec2:ap-northeast-2:*:security-group/*"
+        "arn:aws:ec2:ap-northeast-2:*:vpc/vpc-093b5bd80076c011d",
+        "arn:aws:ec2:ap-northeast-2:*:subnet/subnet-0676873c1895088a2",
+        "arn:aws:ec2:ap-northeast-2:*:subnet/subnet-0a41d250a592aa73c"
       ]
+    },
+    {
+      "Sid": "ServerlessEndpointSecurityGroup",
+      "Effect": "Allow",
+      "Action": "ec2:CreateVpcEndpoint",
+      "Resource": "arn:aws:ec2:ap-northeast-2:*:security-group/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Name": "app-delivery-valkey"
+        }
+      }
     },
     {
       "Sid": "ServerlessEndpointTags",
@@ -96,17 +107,6 @@
         "ec2:DescribeSecurityGroups"
       ],
       "Resource": "*"
-    },
-    {
-      "Sid": "ElastiCacheServiceLinkedRole",
-      "Effect": "Allow",
-      "Action": "iam:CreateServiceLinkedRole",
-      "Resource": "arn:aws:iam::*:role/aws-service-role/elasticache.amazonaws.com/AWSServiceRoleForElastiCache",
-      "Condition": {
-        "StringEquals": {
-          "iam:AWSServiceName": "elasticache.amazonaws.com"
-        }
-      }
     }
   ]
 }
