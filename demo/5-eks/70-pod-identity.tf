@@ -49,9 +49,11 @@ locals {
       namespace       = "app-delivery"
       service_account = "delivery-registry"
     }
-    # ACK RDS creates the RDS instances of kro RdsPostgres (argocd-env-addons charts/ack-rds).
+    # ACK controllers (argocd-env-addons charts/aws-controllers) share one namespace. Each controller keeps its own
+    # ServiceAccount ack-<service>-controller and role pod-role--ack-<service>.
+    # ACK RDS creates the RDS instances of kro RdsPostgres.
     "ack-rds" = {
-      namespace       = "addon-ack-rds"
+      namespace       = "addon-aws-controllers"
       service_account = "ack-rds-controller"
     }
   }
