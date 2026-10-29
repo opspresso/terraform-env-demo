@@ -27,7 +27,7 @@ Agent Knowledge 버킷은 [`../8-agent-knowledge`](../8-agent-knowledge/README.m
 
 ## 계획 확인
 
-Terraform `1.15.8`과 AWS provider `6.60.0`을 사용한다. `default` workspace에서 실행한다.
+Terraform `1.17.1`과 AWS provider `6.71.0`을 사용한다. `default` workspace에서 실행한다.
 
 ```bash
 terraform init
