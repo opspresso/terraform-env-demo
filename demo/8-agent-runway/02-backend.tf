@@ -2,8 +2,9 @@ terraform {
   required_version = "1.17.1"
 
   backend "s3" {
-    region       = "ap-northeast-2"
-    bucket       = "terraform-workshop-396608815058"
+    region = "ap-northeast-2"
+    bucket = "terraform-workshop-396608815058"
+    # Keep the existing backend key so the move preserves Terraform state and resources.
     key          = "backend/demo/agent-delivery-demo/terraform.tfstate"
     encrypt      = true
     use_lockfile = true
@@ -23,7 +24,7 @@ provider "aws" {
     tags = {
       Environment = "demo"
       ManagedBy   = "Terraform"
-      Project     = "terraform-env-demo/demo/8-agent-delivery"
+      Project     = "terraform-env-demo/demo/8-agent-runway"
     }
   }
 }
