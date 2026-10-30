@@ -33,7 +33,7 @@ variable "domains" {
 
   default = {
     # Management cluster addons (Argo CD, Grafana, Loki, Prometheus) on demo, the future
-    # service clusters eks-demo-a/b on demo-a/demo-b, and the apps that Agent Delivery deploys on
+    # service clusters eks-demo-a/b on demo-a/demo-b, and the apps that Agent Runway deploys on
     # apps (agent-platform docs/APP_DELIVERY.md), and the rovr SaaS on the apex rovr.dev
     # (argocd-env-apps docs/rovr.md). rovr.dev is served by Route53.
     "rovr.dev" = {

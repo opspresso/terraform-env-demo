@@ -6,13 +6,13 @@
 # NetworkPolicy that opens TCP 5432 to these subnets reaches no other PostgreSQL in the cluster.
 resource "aws_db_subnet_group" "rds" {
   name        = "app-delivery-rds"
-  description = "Agent Delivery RdsPostgres instances"
+  description = "Agent Runway RdsPostgres instances"
   subnet_ids  = data.terraform_remote_state.vpc.outputs.intra_subnets
 }
 
 resource "aws_security_group" "rds" {
   name        = "app-delivery-rds"
-  description = "Agent Delivery RdsPostgres instances"
+  description = "Agent Runway RdsPostgres instances"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
   tags = {
@@ -42,7 +42,7 @@ resource "aws_vpc_security_group_ingress_rule" "rds_from_eks" {
 resource "aws_db_parameter_group" "rds" {
   name        = "app-delivery-postgres18"
   family      = "postgres18"
-  description = "Agent Delivery RdsPostgres instances: TLS only"
+  description = "Agent Runway RdsPostgres instances: TLS only"
 
   # postgres18 already defaults rds.force_ssl to 1, so RDS keeps it as a system parameter and reports apply_method
   # pending-reboot. Declaring the same apply_method avoids a permanent plan diff; the parameter is dynamic either way.

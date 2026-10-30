@@ -42,7 +42,7 @@ resource "aws_s3_bucket_policy" "objects" {
   depends_on = [aws_s3_bucket_public_access_block.objects]
 }
 
-# Sandbox용 1시간 credential. Agent Delivery가 AssumeRole하면서 session policy로 리소스 prefix 하나로 좁힙니다.
+# Sandbox용 1시간 credential. Agent Runway가 AssumeRole하면서 session policy로 리소스 prefix 하나로 좁힙니다.
 resource "aws_iam_role" "sandbox_objects" {
   name                 = "agent-delivery-sandbox-objects"
   max_session_duration = 3600
@@ -79,7 +79,7 @@ resource "aws_iam_role_policy" "sandbox_objects" {
 }
 
 # 배포된 테넌트 앱(namespace `app-<project>-<env>`, SA `app`)의 Pod Identity 역할입니다.
-# Agent Delivery가 bucket 리소스가 있는 namespace에만 association을 만듭니다.
+# Agent Runway가 bucket 리소스가 있는 namespace에만 association을 만듭니다.
 # Pod Identity session tag로 자기 namespace prefix만 허용하므로 역할 하나를 모든 테넌트가 공유합니다.
 resource "aws_iam_role" "tenant_objects" {
   name = "agent-delivery-tenant-objects"

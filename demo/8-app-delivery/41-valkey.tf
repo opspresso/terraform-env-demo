@@ -4,7 +4,7 @@
 
 resource "aws_security_group" "valkey" {
   name        = "app-delivery-valkey"
-  description = "Agent Delivery ValkeyCache serverless caches"
+  description = "Agent Runway ValkeyCache serverless caches"
   vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
 
   tags = {
