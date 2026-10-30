@@ -1,5 +1,5 @@
 variable "region" {
-  description = "Agent Delivery를 실행하는 리전입니다."
+  description = "Agent Runway를 실행하는 리전입니다."
   type        = string
   default     = "ap-northeast-2"
 }
@@ -10,7 +10,7 @@ locals {
 }
 
 variable "cluster_name" {
-  description = "Agent Delivery가 테넌트 Pod Identity를 만드는 EKS 클러스터 이름입니다."
+  description = "Agent Runway가 테넌트 Pod Identity를 만드는 EKS 클러스터 이름입니다."
   type        = string
   default     = "eks-demo"
 }

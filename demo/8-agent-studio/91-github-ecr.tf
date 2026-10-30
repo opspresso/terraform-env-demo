@@ -22,9 +22,11 @@ locals {
       legacy_trust  = false
     }
     agent-delivery = {
-      repository_id = "1434015347"
-      description   = "agent-delivery release ECR push from GitHub Actions OIDC"
-      legacy_trust  = false
+      repository_id   = "1434015347"
+      repository_name = "agent-runway"
+      previous_name   = "agent-delivery"
+      description     = "agent-runway release ECR push from GitHub Actions OIDC"
+      legacy_trust    = false
     }
     agent-models = {
       repository_id = "1339315923"
@@ -39,7 +41,7 @@ locals {
   }
   github_ecr_subject_prefixes = {
     for repository, publisher in local.github_ecr_publishers : repository =>
-    "repo:opspresso@38965494/${repository}@${publisher.repository_id}"
+    "repo:opspresso@38965494/${try(publisher.repository_name, repository)}@${publisher.repository_id}"
   }
   github_ecr_push_actions = [
     "ecr:BatchCheckLayerAvailability",
@@ -77,7 +79,10 @@ resource "aws_iam_role" "github_ecr" {
             "${local.github_ecr_subject_prefixes[each.key]}:ref:refs/heads/main",
             "repo:opspresso/${each.key}:ref:refs/tags/v*",
             "repo:opspresso/${each.key}:ref:refs/heads/main",
-          ] : ["${local.github_ecr_subject_prefixes[each.key]}:ref:refs/tags/v*"]
+            ] : concat(
+            ["${local.github_ecr_subject_prefixes[each.key]}:ref:refs/tags/v*"],
+            try(["repo:opspresso@38965494/${each.value.previous_name}@${each.value.repository_id}:ref:refs/tags/v*"], []),
+          )
         }
       }
     }]
