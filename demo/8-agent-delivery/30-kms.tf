@@ -14,3 +14,9 @@ resource "aws_kms_alias" "variables" {
   name          = "alias/agent-delivery"
   target_key_id = aws_kms_key.variables.key_id
 }
+
+# Both aliases refer to the existing key; the old alias remains for rollback.
+resource "aws_kms_alias" "runway_variables" {
+  name          = "alias/agent-runway"
+  target_key_id = aws_kms_key.variables.key_id
+}
