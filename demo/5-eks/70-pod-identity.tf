@@ -34,10 +34,6 @@ locals {
       namespace       = "agent-delivery"
       service_account = "agent-delivery"
     }
-    "agent-runway" = {
-      namespace       = "agent-runway"
-      service_account = "agent-runway"
-    }
     # Memory and Forge need no AWS data-plane identity.
     # Agent Knowledge stores sources in its own bucket.
     "agent-knowledge" = {
