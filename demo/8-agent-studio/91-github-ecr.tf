@@ -28,6 +28,11 @@ locals {
       description     = "agent-runway release ECR push from GitHub Actions OIDC"
       legacy_trust    = false
     }
+    agent-runway = {
+      repository_id = "1434015347"
+      description   = "agent-runway release ECR push from GitHub Actions OIDC"
+      legacy_trust  = false
+    }
     agent-models = {
       repository_id = "1339315923"
       description   = "agent-models release ECR push from GitHub Actions OIDC"
