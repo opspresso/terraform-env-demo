@@ -6,7 +6,7 @@ data "aws_iam_openid_connect_provider" "github" {
 
 # argocd-env-addons CI pulls the ACK charts from oci://public.ecr.aws. Anonymous pulls share a per-IP data limit
 # with every other GitHub-hosted runner and fail with 429; an authenticated pull does not have that limit.
-# The role can only get the ECR Public pull token. Main and the scoped Runway cutover validation branch can assume it.
+# The role can only get the ECR Public pull token. Only main-branch runs (push and manual validate) can assume it.
 resource "aws_iam_role" "github_ecr_public_pull" {
   name                 = "github--argocd-env-addons-ecr-public"
   description          = "argocd-env-addons CI pulls public.ecr.aws charts with an authenticated token"
@@ -21,10 +21,7 @@ resource "aws_iam_role" "github_ecr_public_pull" {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           # The repository uses the default subject format (immutable subjects are off).
-          "token.actions.githubusercontent.com:sub" = [
-            "repo:opspresso/argocd-env-addons:ref:refs/heads/main",
-            "repo:opspresso/argocd-env-addons:ref:refs/heads/feat/runway-tenant-cutover-20261030",
-          ]
+          "token.actions.githubusercontent.com:sub" = "repo:opspresso/argocd-env-addons:ref:refs/heads/main"
         }
       }
     }]
