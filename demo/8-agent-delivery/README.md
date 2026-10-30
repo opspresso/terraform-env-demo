@@ -25,3 +25,10 @@ terraform apply
 ```
 
 KMS key와 bucket은 `prevent_destroy`로 보호합니다. 테넌트 Variable과 객체가 남아 있으면 삭제하지 않습니다.
+
+## Runway 전환 준비
+
+`alias/agent-runway`는 기존 key를 가리킵니다. `agent-runway-objects`와
+`agent-runway-sandbox-objects`, `agent-runway-tenant-objects`, `agent-runway-tenant-secrets` 역할은 새 이름으로 별도 생성합니다.
+`4-role`의 `pod-role--agent-runway`를 먼저 적용한 다음 이 디렉터리를 적용합니다. 기존 bucket, key, 역할과 parameter는 유지합니다.
+서비스가 새 이름을 사용하기 전에 원본 객체와 parameter를 대상에 보존하고 접근 권한을 검증해야 합니다.
