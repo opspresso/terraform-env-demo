@@ -15,6 +15,7 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [8-agent-studio](demo/8-agent-studio/README.md) | Studio S3, Agent ECR, GitHub 게시 역할 |
 | [8-agent-runway](demo/8-agent-runway/README.md) | Agent Runway KMS key, 공유 bucket, Sandbox·테넌트 IAM 역할 |
 | [8-agent-knowledge](demo/8-agent-knowledge/README.md) | Agent Knowledge의 S3 원본 저장소 |
+| [8-rovr](demo/8-rovr/README.md) | rovr 샌드박스 공유 캐시 EFS |
 | [8-comfy-render](demo/8-comfy-render/) | DynamoDB, S3, 작업 큐 |
 | [8-domain-mail](demo/8-domain-mail/README.md) | Cloudflare 수신 전달과 SES SMTP 발신, 이전 수신 원본 보관 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
@@ -68,7 +69,7 @@ aws configure get region
 
 `replace.sh`는 state 저장용 S3 bucket을 만들고 코드의 bucket 이름을 변경합니다. 현재 스크립트가 만드는 DynamoDB 잠금 테이블은 사용하지 않습니다.
 
-`6-eks-node`, `8-agent-studio`, `8-agent-runway`, `8-agent-knowledge`는 `use_lockfile = true`로 S3 state 잠금을 사용합니다.
+`6-eks-node`, `8-agent-studio`, `8-agent-runway`, `8-agent-knowledge`, `8-rovr`는 `use_lockfile = true`로 S3 state 잠금을 사용합니다.
 실행 역할은 state 객체 외에 같은 key의 `.tflock` 객체를 읽고 쓰고 삭제할 수 있어야 합니다.
 [공식 문서](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking)
 

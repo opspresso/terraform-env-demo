@@ -31,6 +31,14 @@ module "eks" {
 
   access_entries = local.access_entries
 
+  addons = {
+    # Auto Mode에는 EBS 드라이버만 내장되어 있습니다. EFS는 정적 PV로만 쓰므로 컨트롤러에 AWS 권한을 주지 않습니다.
+    aws-efs-csi-driver = {
+      addon_version               = "v3.5.3-eksbuild.1"
+      resolve_conflicts_on_create = "OVERWRITE"
+    }
+  }
+
   # 공통 태그는 provider default_tags 로 적용됩니다. 여기에 Name 을 넣으면
   # 모듈이 계산한 Name(예: eks-demo-eks-irsa)을 덮어씁니다.
 }
