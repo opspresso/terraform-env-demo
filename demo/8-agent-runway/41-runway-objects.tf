@@ -154,6 +154,23 @@ resource "aws_iam_role_policy" "runway_tenant_objects" {
           Bool = { "aws:SecureTransport" = "true" }
         }
       },
+      # Dedicated tables of kro DynamoTable (argocd-env-addons charts/kro): app-<hash>, tagged like the buckets above.
+      # Only kro and the ACK DynamoDB controller set those tags; tenants cannot create Table objects or tag tables.
+      {
+        Sid    = "OwnNamespaceTables"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:DescribeTable", "dynamodb:GetItem", "dynamodb:BatchGetItem", "dynamodb:Query", "dynamodb:Scan",
+          "dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:DeleteItem", "dynamodb:BatchWriteItem", "dynamodb:ConditionCheckItem",
+        ]
+        Resource = "arn:aws:dynamodb:${var.region}:${local.account_id}:table/app-*"
+        Condition = {
+          StringEquals = {
+            "aws:ResourceTag/eks-cluster-name"     = "$${aws:PrincipalTag/eks-cluster-name}"
+            "aws:ResourceTag/kubernetes-namespace" = "$${aws:PrincipalTag/kubernetes-namespace}"
+          }
+        }
+      },
     ]
   })
 }
