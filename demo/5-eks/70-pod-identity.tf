@@ -61,6 +61,11 @@ locals {
       namespace       = "addon-aws-controllers"
       service_account = "ack-s3-controller"
     }
+    # ACK DynamoDB creates the tables of kro DynamoTable.
+    "ack-dynamodb" = {
+      namespace       = "addon-aws-controllers"
+      service_account = "ack-dynamodb-controller"
+    }
     # ACK ElastiCache creates the serverless caches, users and user groups of kro ValkeyCache.
     "ack-elasticache" = {
       namespace       = "addon-aws-controllers"
