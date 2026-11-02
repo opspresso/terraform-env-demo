@@ -32,24 +32,6 @@
       }
     },
     {
-      "Sid": "SandboxObjectCredentials",
-      "Effect": "Allow",
-      "Action": "sts:AssumeRole",
-      "Resource": "arn:aws:iam::*:role/agent-runway-sandbox-objects"
-    },
-    {
-      "Sid": "ObjectPrefixCleanup",
-      "Effect": "Allow",
-      "Action": [
-        "s3:ListBucket",
-        "s3:DeleteObject"
-      ],
-      "Resource": [
-        "arn:aws:s3:::agent-runway-objects",
-        "arn:aws:s3:::agent-runway-objects/*"
-      ]
-    },
-    {
       "Sid": "PassTenantObjectRole",
       "Effect": "Allow",
       "Action": [
