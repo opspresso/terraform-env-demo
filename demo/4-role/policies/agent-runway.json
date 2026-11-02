@@ -34,7 +34,10 @@
     {
       "Sid": "SandboxObjectCredentials",
       "Effect": "Allow",
-      "Action": "sts:AssumeRole",
+      "Action": [
+        "sts:AssumeRole",
+        "sts:TagSession"
+      ],
       "Resource": "arn:aws:iam::*:role/agent-runway-sandbox-objects"
     },
     {

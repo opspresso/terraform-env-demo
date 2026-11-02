@@ -51,7 +51,8 @@ resource "aws_iam_role" "runway_sandbox_objects" {
     Statement = [{
       Effect    = "Allow"
       Principal = { AWS = local.runway_role_arn }
-      Action    = "sts:AssumeRole"
+      # EKS Pod Identity session tags are transitive, so the chained session needs sts:TagSession.
+      Action = ["sts:AssumeRole", "sts:TagSession"]
     }]
   })
 }
