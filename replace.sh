@@ -7,9 +7,10 @@ command -v jq >/dev/null || { echo "jq is required" >&2; exit 1; }
 identity="$(aws sts get-caller-identity --output json)"
 account_id="$(jq -r '.Account' <<<"$identity")"
 [[ "$account_id" =~ ^[0-9]{12}$ ]] || { echo "Could not determine AWS account ID" >&2; exit 1; }
-region="$(aws configure get region 2>/dev/null || true)"
-region="${region:-${AWS_REGION:-${AWS_DEFAULT_REGION:-}}}"
-[[ -n "$region" ]] || { echo "Set the AWS CLI default region or AWS_REGION" >&2; exit 1; }
+region="${AWS_REGION:-${AWS_DEFAULT_REGION:-$(aws configure get region 2>/dev/null || true)}}"
+[[ -n "$region" ]] || { echo "Set AWS_REGION, AWS_DEFAULT_REGION, or the AWS CLI default region" >&2; exit 1; }
+[[ "$region" == "ap-northeast-2" ]] || { echo "This repository configures Terraform backends in ap-northeast-2; refusing region $region" >&2; exit 1; }
+[[ -d demo && -r demo ]] || { echo "Run replace.sh from the repository root: demo/ not found or not readable" >&2; exit 1; }
 
 bucket="terraform-workshop-${1:-$account_id}"
 if [[ "$bucket" != "terraform-workshop-${account_id}" ]]; then
