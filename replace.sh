@@ -1,112 +1,60 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-OS_NAME="$(uname | awk '{print tolower($0)}')"
+command -v aws >/dev/null || { echo "aws CLI is required" >&2; exit 1; }
+command -v jq >/dev/null || { echo "jq is required" >&2; exit 1; }
 
-command -v tput >/dev/null && TPUT=true
+identity="$(aws sts get-caller-identity --output json)"
+account_id="$(jq -r '.Account' <<<"$identity")"
+[[ "$account_id" =~ ^[0-9]{12}$ ]] || { echo "Could not determine AWS account ID" >&2; exit 1; }
+region="${AWS_REGION:-${AWS_DEFAULT_REGION:-$(aws configure get region 2>/dev/null || true)}}"
+[[ -n "$region" ]] || { echo "Set AWS_REGION, AWS_DEFAULT_REGION, or the AWS CLI default region" >&2; exit 1; }
+[[ "$region" == "ap-northeast-2" ]] || { echo "This repository configures Terraform backends in ap-northeast-2; refusing region $region" >&2; exit 1; }
+[[ -d demo && -r demo ]] || { echo "Run replace.sh from the repository root: demo/ not found or not readable" >&2; exit 1; }
 
-_echo() {
-  if [ "${TPUT}" != "" ] && [ "$2" != "" ]; then
-    echo -e "$(tput setaf $2)$1$(tput sgr0)"
-  else
-    echo -e "$1"
-  fi
-}
-
-_warn() {
-  echo
-  _echo "- $@" 5
-}
-
-_result() {
-  echo
-  _echo "# $@" 4
-}
-
-_command() {
-  echo
-  _echo "$ $@" 3
-}
-
-_success() {
-  echo
-  _echo "+ $@" 2
-  exit 0
-}
-
-_error() {
-  echo
-  _echo "- $@" 1
+bucket="terraform-workshop-${1:-$account_id}"
+if [[ "$bucket" != "terraform-workshop-${account_id}" ]]; then
+  echo "Refusing bucket '$bucket': it must match the authenticated account $account_id" >&2
   exit 1
-}
+fi
 
-_replace() {
-  if [ "${OS_NAME}" == "darwin" ]; then
-    sed -i "" -e "$1" "$2"
+printf 'AWS account: %s\nRegion: %s\nTerraform state bucket: %s\n' "$account_id" "$region" "$bucket"
+
+if aws s3api head-bucket --bucket "$bucket" >/dev/null 2>&1; then
+  echo "S3 bucket already exists; keeping it."
+else
+  if [[ "$region" == "us-east-1" ]]; then
+    aws s3api create-bucket --bucket "$bucket" --region "$region"
   else
-    sed -i -e "$1" "$2"
+    aws s3api create-bucket --bucket "$bucket" --region "$region" \
+      --create-bucket-configuration "LocationConstraint=$region"
+  fi
+fi
+
+aws s3api put-public-access-block --bucket "$bucket" \
+  --public-access-block-configuration \
+  BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+aws s3api put-bucket-encryption --bucket "$bucket" \
+  --server-side-encryption-configuration \
+  '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+aws s3api put-bucket-versioning --bucket "$bucket" \
+  --versioning-configuration Status=Enabled
+
+replace_bucket() {
+  local file="$1"
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    sed -i '' -E "s/terraform-workshop-[[:alnum:]-]+/${bucket}/g" "$file"
+  else
+    sed -i -E "s/terraform-workshop-[[:alnum:]-]+/${bucket}/g" "$file"
   fi
 }
 
-_find_replace() {
-  _command "find . -name \"$2\" -exec sed -e \"$1\""
-  _result "$(find . -name "$2" | wc -l | xargs) files matched \"$2\""
+while IFS= read -r -d '' file; do
+  replace_bucket "$file"
+done < <(find demo -type f -name '*.tf' -print0)
 
-  if [ "${OS_NAME}" == "darwin" ]; then
-    find . -name "$2" -exec sed -i "" -e "$1" {} \;
-  else
-    find . -name "$2" -exec sed -i -e "$1" {} \;
-  fi
-}
-
-_main() {
-  # variable
-  _command "aws sts get-caller-identity"
-  export ACCOUNT_ID=$(aws sts get-caller-identity | jq .Account -r)
-
-  _command "aws configure get region"
-  export REGION="$(aws configure get region)"
-
-  export BUCKET="terraform-workshop-${1:-${ACCOUNT_ID}}"
-
-  export LOCK_TABLE="terraform-resource-lock"
-
-  _result "ACCOUNT_ID = ${ACCOUNT_ID}"
-
-  _result "REGION = ${REGION}"
-  _result "BUCKET = ${BUCKET}"
-  _result "LOCK_TABLE = ${LOCK_TABLE}"
-
-  # create s3 bucket
-  _command "aws s3 ls | grep ${BUCKET}"
-  COUNT=$(aws s3 ls | grep ${BUCKET} | wc -l | xargs)
-  if [ "x${COUNT}" == "x0" ]; then
-    _command "aws s3 mb s3://${BUCKET}"
-    aws s3 mb s3://${BUCKET} --region ${REGION}
-  else
-    _warn "s3 bucket ${BUCKET} already exists, skipped"
-  fi
-
-  # create dynamodb table
-  _command "aws dynamodb list-tables | grep ${LOCK_TABLE}"
-  COUNT=$(aws dynamodb list-tables | jq -r .TableNames | grep ${LOCK_TABLE} | wc -l | xargs)
-  if [ "x${COUNT}" == "x0" ]; then
-    _command "aws dynamodb create-table --table-name ${LOCK_TABLE}"
-    aws dynamodb create-table \
-      --table-name ${LOCK_TABLE} \
-      --attribute-definitions AttributeName=LockID,AttributeType=S \
-      --key-schema AttributeName=LockID,KeyType=HASH \
-      --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
-      --region ${REGION} | jq .
-  else
-    _warn "dynamodb table ${LOCK_TABLE} already exists, skipped"
-  fi
-
-  # replace
-  _find_replace "s/terraform-workshop-[[:alnum:]]*/${BUCKET}/g" "*.tf"
-
-  _result "$(grep -rl "${BUCKET}" --include='*.tf' . 2>/dev/null | wc -l | xargs) *.tf files reference ${BUCKET}"
-
-  _success "done"
-}
-
-_main
+if rg -n 'dynamodb_table|terraform-resource-lock' demo -g '*.tf'; then
+  echo "Unexpected DynamoDB Terraform state-lock configuration remains." >&2
+  exit 1
+fi
+printf 'Updated Terraform backend bucket references and enabled S3 state versioning.\n'
