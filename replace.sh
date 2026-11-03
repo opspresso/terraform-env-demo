@@ -7,7 +7,7 @@ command -v jq >/dev/null || { echo "jq is required" >&2; exit 1; }
 identity="$(aws sts get-caller-identity --output json)"
 account_id="$(jq -r '.Account' <<<"$identity")"
 [[ "$account_id" =~ ^[0-9]{12}$ ]] || { echo "Could not determine AWS account ID" >&2; exit 1; }
-region="$(aws configure get region)"
+region="$(aws configure get region 2>/dev/null || true)"
 region="${region:-${AWS_REGION:-${AWS_DEFAULT_REGION:-}}}"
 [[ -n "$region" ]] || { echo "Set the AWS CLI default region or AWS_REGION" >&2; exit 1; }
 
