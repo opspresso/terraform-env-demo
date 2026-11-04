@@ -1,5 +1,5 @@
 # ACM certificates this directory issues (var.issued_certificates), validated through Route53.
-# Each covers the domain and one wildcard level under it, e.g. demo.rovr.dev and *.demo.rovr.dev.
+# Each covers the domain and one wildcard level under it, e.g. demo.opsp.dev and *.demo.opsp.dev.
 
 locals {
   # The zone is the domains key whose certificates list contains the issued domain.
