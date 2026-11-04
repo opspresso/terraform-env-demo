@@ -45,8 +45,8 @@ rovr 실행 Pod만 받는다. 실행 Pod는 2 CPU·4Gi를 요청하므로 8-CPU 
 이 값은 `argocd-env-apps`의 `env/eks-demo.yaml` `rovr.sandbox.max_runs`와 같게 유지한다.
 실행 Pod는 `karpenter.sh/do-not-disrupt`를 달고, 노드 drain은 rovr sandbox 마감(90분)까지 기다린다.
 
-Harbor pool(`harbor-amd64`)은 Harbor 2.15 이미지가 amd64 전용이라 둔 amd64 노드다. taint `opspresso.com/harbor`를
-Harbor만 허용한다. Harbor가 arm64 이미지(2.16 이상)로 바뀌면 이 pool을 지운다.
+Harbor pool(`harbor-amd64`)은 Harbor 2.15 이미지가 amd64 전용이라 둔 amd64 노드다. taint `opspresso.com/harbor`가
+다른 Pod를 막고, Harbor는 `kubernetes.io/arch: amd64`를 선택하고 이 taint를 허용한다. Harbor가 arm64 이미지(2.16 이상)로 바뀌면 이 pool을 지운다.
 
 기존 설치는 승인된 `5-eks` 적용으로 Workspace용 output을 state에 기록한 뒤 `6-eks-node`를 적용한다.
 기존 default NodeClass, PVC, ECR은 변경하지 않는다.

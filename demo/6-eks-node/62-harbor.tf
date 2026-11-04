@@ -1,5 +1,6 @@
 # Harbor (argocd-env-addons charts/harbor). Harbor 2.15 publishes amd64 images
-# only, and every other NodePool is arm64. Only Harbor tolerates the taint.
+# only, and every other NodePool is arm64. The taint keeps other Pods off;
+# Harbor selects kubernetes.io/arch=amd64 and tolerates the taint.
 # Remove this pool when Harbor runs on arm64 images (2.16 or later).
 resource "kubernetes_manifest" "harbor_node_pool" {
   manifest = {
