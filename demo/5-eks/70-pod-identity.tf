@@ -49,6 +49,11 @@ locals {
       namespace       = "app-delivery"
       service_account = "delivery-registry"
     }
+    # Atlantis (argocd-env-addons charts/atlantis) runs Terraform for the terraform-* repositories.
+    "atlantis" = {
+      namespace       = "addon-atlantis"
+      service_account = "atlantis"
+    }
     # GitLab (argocd-env-addons charts/gitlab) keeps its objects in the opspresso-gitlab-* buckets
     # (terraform-env-apps demo/8-gitlab). Every GitLab Pod uses the one ServiceAccount gitlab.
     "gitlab" = {
