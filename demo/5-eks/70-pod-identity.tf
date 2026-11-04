@@ -49,6 +49,12 @@ locals {
       namespace       = "app-delivery"
       service_account = "delivery-registry"
     }
+    # GitLab (argocd-env-addons charts/gitlab) keeps its objects in the opspresso-gitlab-* buckets
+    # (terraform-env-apps demo/8-gitlab). Every GitLab Pod uses the one ServiceAccount gitlab.
+    "gitlab" = {
+      namespace       = "addon-gitlab"
+      service_account = "gitlab"
+    }
     # ACK controllers (argocd-env-addons charts/aws-controllers) share one namespace. Each controller keeps its own
     # ServiceAccount ack-<service>-controller and role pod-role--ack-<service>.
     # ACK RDS creates the RDS instances of kro RdsPostgres.
