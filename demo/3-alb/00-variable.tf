@@ -12,7 +12,7 @@ variable "name" {
 
 variable "root_domain" {
   description = "listener rule 의 host_header 가 사용하는 ROOT 도메인을 입력합니다. (argocd, grafana, *.demo-a 등)"
-  default     = "rovr.dev"
+  default     = "opsp.dev"
 }
 
 variable "domains" {
@@ -32,14 +32,19 @@ variable "domains" {
   }))
 
   default = {
-    # Management cluster addons (Argo CD, Grafana, Loki, Prometheus) on demo, the future
-    # service clusters eks-demo-a/b on demo-a/demo-b, and the apps that Agent Runway deploys on
-    # apps (agent-platform docs/APP_DELIVERY.md), and the rovr SaaS on the apex rovr.dev
-    # (argocd-env-apps docs/rovr.md). rovr.dev is served by Route53.
+    # Management cluster addons (Argo CD, Grafana, Keep, Loki, Prometheus) on demo, and the future
+    # service clusters eks-demo-a/b on demo-a/demo-b.
+    "opsp.dev" = {
+      certificates = ["demo.opsp.dev", "demo-a.opsp.dev", "demo-b.opsp.dev"]
+      public       = ["*.demo.opsp.dev", "*.demo-a.opsp.dev", "*.demo-b.opsp.dev"]
+      internal     = ["*.demo-in.opsp.dev", "*.demo-in-a.opsp.dev", "*.demo-in-b.opsp.dev"]
+    }
+    # The rovr SaaS on the apex rovr.dev (argocd-env-apps docs/rovr.md) and the apps that Agent Runway
+    # deploys on apps (agent-platform docs/APP_DELIVERY.md).
     "rovr.dev" = {
-      certificates = ["rovr.dev", "demo.rovr.dev", "demo-a.rovr.dev", "demo-b.rovr.dev", "apps.rovr.dev"]
-      public       = ["rovr.dev", "*.demo.rovr.dev", "*.demo-a.rovr.dev", "*.demo-b.rovr.dev", "*.apps.rovr.dev"]
-      internal     = ["*.demo-in.rovr.dev", "*.demo-in-a.rovr.dev", "*.demo-in-b.rovr.dev"]
+      certificates = ["rovr.dev", "apps.rovr.dev"]
+      public       = ["rovr.dev", "*.apps.rovr.dev"]
+      internal     = []
     }
     "agrt.dev" = {
       certificates = ["agrt.dev"]
@@ -52,7 +57,7 @@ variable "domains" {
 
 variable "primary_domain" {
   description = "HTTPS 리스너의 기본(default) 인증서로 쓸 도메인을 입력합니다. 나머지는 SNI 로 추가됩니다."
-  default     = "demo.rovr.dev"
+  default     = "demo.opsp.dev"
 
   validation {
     condition     = contains(flatten([for domain in var.domains : domain.certificates]), var.primary_domain)
@@ -63,5 +68,5 @@ variable "primary_domain" {
 variable "issued_certificates" {
   description = "이 디렉터리가 ACM으로 발급·검증하는 인증서 도메인입니다. 각 도메인과 와일드카드(*.도메인)를 포함합니다."
   type        = list(string)
-  default     = ["rovr.dev", "demo.rovr.dev", "demo-a.rovr.dev", "demo-b.rovr.dev", "apps.rovr.dev"]
+  default     = ["rovr.dev", "apps.rovr.dev", "demo.opsp.dev", "demo-a.opsp.dev", "demo-b.opsp.dev"]
 }
