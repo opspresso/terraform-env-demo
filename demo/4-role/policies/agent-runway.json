@@ -129,6 +129,14 @@
       "Effect": "Allow",
       "Action": "iam:GetRole",
       "Resource": "arn:aws:iam::*:role/agent-runway-tenant-objects"
+    },
+    {
+      "Sid": "ProjectImageCleanup",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:DeleteRepository"
+      ],
+      "Resource": "arn:aws:ecr:ap-northeast-2:*:repository/projects/*"
     }
   ]
 }
