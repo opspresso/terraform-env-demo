@@ -82,3 +82,13 @@ variable "gha_runner_ephemeral_storage_gib" {
     error_message = "gha_runner_ephemeral_storage_gib must be an integer between 80 and 1000."
   }
 }
+
+variable "gha_runner_amd64_max_runners" {
+  description = "amd64 GitHub Actions runner Pod capacity; keep aligned with maxRunners of eks-amd64 in argocd-env-addons charts/arc-runners. Each Pod reserves 3.5 CPU and 14Gi memory."
+  type        = number
+  default     = 4
+  validation {
+    condition     = var.gha_runner_amd64_max_runners >= 1 && var.gha_runner_amd64_max_runners <= 20 && floor(var.gha_runner_amd64_max_runners) == var.gha_runner_amd64_max_runners
+    error_message = "gha_runner_amd64_max_runners must be an integer between 1 and 20."
+  }
+}

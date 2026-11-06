@@ -2,7 +2,8 @@ locals {
   # An 8-CPU m node (32Gi) holds two runner Pods (runner + dind sidecar,
   # 3.5 CPU / 14Gi requests) after kubelet and DaemonSets. One extra node
   # permits replacement.
-  gha_runner_node_limit = ceil(var.gha_runner_max_runners / 2) + 1
+  gha_runner_node_limit       = ceil(var.gha_runner_max_runners / 2) + 1
+  gha_runner_amd64_node_limit = ceil(var.gha_runner_amd64_max_runners / 2) + 1
 }
 
 # GitHub Actions runners (argocd-env-addons charts/arc-runners). Runner Pods
@@ -60,6 +61,46 @@ resource "kubernetes_manifest" "gha_runner_node_pool" {
           ]
           expireAfter = "336h"
           # Matches the longest runner job timeout (60 minutes) plus drain time.
+          terminationGracePeriod = "70m"
+        }
+      }
+    }
+  }
+  depends_on = [kubernetes_manifest.gha_runner_node_class]
+}
+
+# amd64 runners (scale set eks-amd64). Release jobs build and check the
+# linux/amd64 image natively: Bun-based CLIs (Claude Code, OpenCode) abort
+# under QEMU user emulation on the arm64 nodes. Same class, taint and
+# disruption rules as the arm64 pool.
+resource "kubernetes_manifest" "gha_runner_amd64_node_pool" {
+  manifest = {
+    apiVersion = "karpenter.sh/v1"
+    kind       = "NodePool"
+    metadata   = { name = "gha-runners-amd64" }
+    spec = {
+      limits = { cpu = tostring(local.gha_runner_amd64_node_limit * 8), memory = "${local.gha_runner_amd64_node_limit * 32}Gi" }
+      disruption = {
+        consolidationPolicy = "WhenEmpty"
+        consolidateAfter    = "10m"
+        budgets = [
+          { nodes = "100%", reasons = ["Empty"] },
+          { nodes = "1", reasons = ["Drifted"] },
+        ]
+      }
+      template = {
+        spec = {
+          nodeClassRef = { group = "eks.amazonaws.com", kind = "NodeClass", name = "gha-runners" }
+          taints       = [{ key = "opspresso.com/gha-runner", value = "true", effect = "NoSchedule" }]
+          requirements = [
+            { key = "kubernetes.io/arch", operator = "In", values = ["amd64"] },
+            { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
+            { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot", "on-demand"] },
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
+            { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
+            { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["8"] },
+          ]
+          expireAfter            = "336h"
           terminationGracePeriod = "70m"
         }
       }

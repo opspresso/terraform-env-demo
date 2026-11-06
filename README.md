@@ -10,7 +10,7 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | 앱에서 사용할 IAM 역할 |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 1개), 증가분 dynamic pool, 제한된 Workspace pool, rovr sandbox pool, Harbor용 amd64 pool, GitHub Actions runner pool |
+| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 1개), 증가분 dynamic pool, 제한된 Workspace pool, rovr sandbox pool, Harbor용 amd64 pool, GitHub Actions runner pool(arm64·amd64) |
 | [5-k3s](demo/5-k3s/README.md) | 삭제한 k3s 서버의 보관용 코드. 적용하지 않음 |
 | [8-domain-mail](demo/8-domain-mail/README.md) | Cloudflare 수신 전달과 SES SMTP 발신, 이전 수신 원본 보관 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
@@ -55,6 +55,9 @@ runner Pod만 받는다. runner Pod 하나는 runner와 dind sidecar를 합쳐 3
 한도는 `gha_runner_max_runners=6`에서 노드 4대(CPU 32개·메모리 128Gi)이며 교체용 노드 1대를 포함한다. 이 값은
 `charts/arc-runners`의 `maxRunners`와 같게 유지한다. job이 있을 때만 Spot(부족하면 on-demand) 노드를 만들고, 비면 10분 뒤 회수한다.
 runner Pod는 `karpenter.sh/do-not-disrupt`를 달아 통합 회수가 job을 끊지 않는다. Spot 회수는 실행 중인 job을 실패시킨다.
+amd64 pool(`gha-runners-amd64`)은 scale set `eks-amd64`가 쓴다. release job이 `linux/amd64` image를 네이티브로 build·검사한다.
+arm64 노드의 QEMU 에뮬레이션에서는 Bun 기반 CLI(Claude Code·OpenCode)가 중단되기 때문이다. NodeClass·taint·회수 규칙은 arm64 pool과 같고,
+한도는 `gha_runner_amd64_max_runners=4`에서 노드 3대(CPU 24개·메모리 96Gi)다.
 
 기존 설치는 승인된 `5-eks` 적용으로 Workspace용 output을 state에 기록한 뒤 `6-eks-node`를 적용한다.
 기존 default NodeClass, PVC, ECR은 변경하지 않는다.
