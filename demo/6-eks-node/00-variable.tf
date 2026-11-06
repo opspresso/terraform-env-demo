@@ -62,3 +62,23 @@ variable "general_max_cpu" {
     error_message = "general_max_cpu는 4 이상의 정수여야 합니다."
   }
 }
+
+variable "gha_runner_max_runners" {
+  description = "GitHub Actions runner Pod capacity; keep aligned with maxRunners in argocd-env-addons charts/arc-runners. Each Pod reserves 3.5 CPU and 14Gi memory."
+  type        = number
+  default     = 6
+  validation {
+    condition     = var.gha_runner_max_runners >= 1 && var.gha_runner_max_runners <= 20 && floor(var.gha_runner_max_runners) == var.gha_runner_max_runners
+    error_message = "gha_runner_max_runners must be an integer between 1 and 20."
+  }
+}
+
+variable "gha_runner_ephemeral_storage_gib" {
+  description = "Auto Mode node disk for runner work directories and the dind image store."
+  type        = number
+  default     = 200
+  validation {
+    condition     = var.gha_runner_ephemeral_storage_gib >= 80 && var.gha_runner_ephemeral_storage_gib <= 1000 && floor(var.gha_runner_ephemeral_storage_gib) == var.gha_runner_ephemeral_storage_gib
+    error_message = "gha_runner_ephemeral_storage_gib must be an integer between 80 and 1000."
+  }
+}
