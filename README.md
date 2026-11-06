@@ -18,8 +18,8 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 프로젝트별 리소스는 [terraform-env-apps](https://github.com/opspresso/terraform-env-apps)에서 관리합니다. `4-role`과 `5-eks`는 앱에 필요한 공통 Pod Identity 역할과 연결을 관리합니다.
 
-`eks-demo`의 모든 노드는 Graviton(arm64, m7g 이상)이다. 서비스 이미지는 `linux/amd64`·`linux/arm64`
-multi-platform으로 게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
+`eks-demo`의 모든 노드는 Graviton(arm64, m7g 이상)이다. 서비스 이미지는 `linux/arm64`로
+게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
 
 기본 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 xlarge(4 vCPU·16Gi) 노드 2개에서 실행한다.
 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다. requests 합계는
