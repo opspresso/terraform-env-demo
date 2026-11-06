@@ -40,7 +40,11 @@ resource "kubernetes_manifest" "gha_runner_node_pool" {
       disruption = {
         consolidationPolicy = "WhenEmpty"
         consolidateAfter    = "10m"
-        budgets             = [{ nodes = "1" }]
+        # Empty nodes go together after the last job; drift replaces one at a time.
+        budgets = [
+          { nodes = "100%", reasons = ["Empty"] },
+          { nodes = "1", reasons = ["Drifted"] },
+        ]
       }
       template = {
         spec = {
