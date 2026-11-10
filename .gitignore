@@ -32,3 +32,10 @@ build/
 
 # Temp
 .output/
+
+# claude worktrees
+.claude/worktrees/
+
+# prompt files
+*.prompt.md
+*.prompt*.md
