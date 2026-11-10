@@ -37,7 +37,7 @@ Terraform `>= 1.17.1, < 2.0`, Python 3, AWS CLI가 필요합니다. 이 모듈�
    기존 웹서비스 동작을 유지하려면 레코드를 DNS only로 설정합니다. SES DKIM과 `mail.opspresso.com` MX·SPF도 보존합니다.
 2. Cloudflare에서 전달 목적지를 인증하고 `admin@opspresso.com`의 전달 규칙을 구성합니다.
 3. 모든 기존 레코드를 확인한 뒤 등록기관의 네임서버를 Cloudflare가 지정한 값으로 변경합니다. DNSSEC를 사용 중이면 DS 처리도 함께 확인합니다.
-4. Cloudflare Email Routing의 MX·SPF를 확인하고, 동일한 MX 값을 미추적 `private.auto.tfvars`의 `cloudflare_mx_records`에 지정합니다.
+4. Cloudflare Email Routing의 MX·SPF를 확인하고, `00-variables.tf`의 `cloudflare_mx_records` 기본값이 같은지 확인합니다. 값이 다르면 기본값을 Cloudflare 값으로 갱신합니다.
    실제 개인 메일 주소나 자격 증명을 Git·PR·로그에 넣지 않습니다.
 5. 권한 있는 profile을 `AWS_PROFILE`로 지정하고 `terraform init`, `terraform fmt -check`, `terraform validate`를 실행합니다.
    전환 작업에서는 먼저 `terraform plan -target=aws_route53_record.mx -target=aws_route53_record.spf -out=terraform.tfplan`으로 이전 zone의 MX·SPF 변경만 검토하고 적용합니다.
