@@ -53,8 +53,8 @@ runner Pod만 받는다. runner Pod 하나는 runner와 dind sidecar를 합쳐 3
 runner Pod는 `karpenter.sh/do-not-disrupt`를 달아 통합 회수가 job을 끊지 않는다. Spot 회수는 실행 중인 job을 실패시킨다.
 
 공유 Agent PostgreSQL pool(`agent-database`)은 `argocd-env-apps`의 `charts/postgresql`(namespace `agent-studio`)만 쓴다.
-다른 NodePool은 모두 Spot이다. Spot 회수는 모든 Agent 서비스가 함께 쓰는 DB를 멈추고, 열린 연결을 `admin_shutdown`으로 끊는다.
-따라서 이 pool만 on-demand medium 노드(1 vCPU·4Gi, m 7세대 이상) 1대를 쓴다. taint `opspresso.com/agent-database`로 PostgreSQL Pod만 받는다.
+다른 사용자 정의 NodePool은 모두 Spot이다(내장 `system` pool은 on-demand). Spot 회수는 모든 Agent 서비스가 함께 쓰는 DB를 멈추고, 열린 연결을 `admin_shutdown`으로 끊는다.
+따라서 이 pool만 on-demand large 노드(2 vCPU·8Gi, m 7세대 이상) 1대를 쓴다. Auto Mode는 vCPU가 1개보다 많은 인스턴스만 띄운다. taint `opspresso.com/agent-database`로 PostgreSQL Pod만 받는다.
 EBS volume이 Pod의 AZ를 정하므로 pool은 baseline AZ를 모두 허용한다. 노드 교체(drift·만료)는 계획된 drain으로 DB를 한 번 재시작한다.
 
 기존 설치는 승인된 `5-eks` 적용으로 Workspace용 output을 state에 기록한 뒤 `6-eks-node`를 적용한다.

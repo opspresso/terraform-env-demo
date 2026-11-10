@@ -1,9 +1,10 @@
 # On-demand capacity for the shared Agent PostgreSQL (argocd-env-apps charts/postgresql, namespace
-# agent-studio). Every other NodePool is Spot. A Spot reclaim stops the database that every Agent service
+# agent-studio). Every other custom NodePool is Spot. A Spot reclaim stops the database that every Agent service
 # shares, so open connections end with admin_shutdown and running work such as memory dreaming stops.
 # The taint keeps other Pods off; only the PostgreSQL Pod tolerates it. The EBS volume pins the Pod to its
 # AZ, so the pool allows every baseline zone and Karpenter launches the node in the volume's zone.
-# One medium node (1 vCPU, 4Gi) fits the Pod (requests 50m·768Mi, limit 2Gi) and the DaemonSets.
+# Auto Mode launches only instances with more than 1 vCPU, so one large node (2 vCPU, 8Gi) holds the Pod
+# (requests 50m·768Mi, limit 2Gi) and the DaemonSets.
 resource "kubernetes_manifest" "agent_database_node_pool" {
   manifest = {
     apiVersion = "karpenter.sh/v1"
@@ -11,7 +12,7 @@ resource "kubernetes_manifest" "agent_database_node_pool" {
     metadata   = { name = "agent-database" }
     spec = {
       # One node plus one for replacement during drift or expiry.
-      limits = { cpu = "2", memory = "8Gi" }
+      limits = { cpu = "4", memory = "16Gi" }
       disruption = {
         consolidationPolicy = "WhenEmpty"
         consolidateAfter    = "10m"
@@ -27,7 +28,7 @@ resource "kubernetes_manifest" "agent_database_node_pool" {
             { key = "karpenter.sh/capacity-type", operator = "In", values = ["on-demand"] },
             { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
             { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
-            { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["1"] },
+            { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["2"] },
             { key = "topology.kubernetes.io/zone", operator = "In", values = var.baseline_zones },
           ]
         }
