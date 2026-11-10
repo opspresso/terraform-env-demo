@@ -33,7 +33,8 @@ resource "kubernetes_manifest" "rovr_sandbox_node_pool" {
           ]
           expireAfter = "336h"
           # Sandbox Pods are karpenter.sh/do-not-disrupt; a drain waits for a
-          # run up to rovr's 90-minute sandbox deadline.
+          # run up to rovr's 90-minute sandbox deadline. A Spot reclaim still
+          # interrupts a run after its two-minute notice.
           terminationGracePeriod = "90m"
         }
       }

@@ -25,7 +25,7 @@ EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다. requests 합계는
 약 2.0 vCPU·11.8Gi(앱·addon·sidecar·DaemonSet)이므로 노드 한 대 또는 AZ 하나가 빠져도 남은 한 대(3.77 vCPU·14.3Gi
 allocatable)가 수용한다. EBS PersistentVolume은 생성된 AZ에 묶이므로 그 AZ에 노드가 없으면 `general` NodePool이
-같은 AZ에 노드를 추가한다.
+같은 AZ에 Spot 노드를 추가한다. 해당 AZ에 맞는 Spot 용량이 없으면 용량이 생길 때까지 EBS 기반 Pod가 대기한다.
 rollout surge나 증가분은 dynamic `general` NodePool(`general_max_cpu`, 기본 16 vCPU)이 추가 노드로 처리하고,
 비거나 활용도가 낮으면 회수한다. 기준 용량에는 유휴 시간에도 비용이 발생한다.
 requests·sidecar·DaemonSet 예약을 합산하고 남은 노드의 allocatable과 비교해 조정한다.
@@ -43,7 +43,7 @@ rovr sandbox pool(`rovr-sandboxes`)은 `workspaces` NodeClass를 재사용하고
 rovr 실행 Pod만 받는다. 실행 Pod는 2 CPU·4Gi를 요청하므로 8-CPU m 노드(32Gi)에 3개씩 배치한다.
 한도는 `rovr_sandbox_max_pods=6`에서 노드 3대(CPU 24개·메모리 96Gi)이며 교체용 노드 1대를 포함한다.
 이 값은 `argocd-env-apps`의 `env/eks-demo.yaml` `rovr.sandbox.max_runs`와 같게 유지한다.
-실행 Pod는 `karpenter.sh/do-not-disrupt`를 달고, 노드 drain은 rovr sandbox 마감(90분)까지 기다린다.
+실행 Pod는 `karpenter.sh/do-not-disrupt`를 달고, 노드 drain은 rovr sandbox 마감(90분)까지 기다린다. Spot 회수는 2분 예고 뒤 실행 중인 run을 중단시킨다.
 
 GitHub Actions runner pool(`gha-runners`)은 `argocd-env-addons`의 ARC runner scale set(`charts/arc-runners`)이 쓴다.
 전용 `gha-runners` NodeClass는 Workspace와 같은 node 역할·subnet·security group을 쓰지만, image build와 kind가
