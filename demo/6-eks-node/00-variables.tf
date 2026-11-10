@@ -42,7 +42,8 @@ variable "baseline_zones" {
 variable "auto_mode_baseline_replicas_per_zone" {
   description = "EKS Auto Mode가 AZ마다 유지할 기준 노드 수를 입력합니다."
   type        = number
-  default     = 1
+  # Three 2-vCPU Spot nodes per AZ cost less than two xlarge ones, and one Spot reclaim takes a smaller share.
+  default = 3
 
   validation {
     condition     = var.auto_mode_baseline_replicas_per_zone >= 1 && floor(var.auto_mode_baseline_replicas_per_zone) == var.auto_mode_baseline_replicas_per_zone
