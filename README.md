@@ -18,10 +18,10 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 프로젝트별 리소스는 [terraform-env-apps](https://github.com/opspresso/terraform-env-apps)에서 관리합니다. `4-role`과 `5-eks`는 앱에 필요한 공통 Pod Identity 역할과 연결을 관리합니다.
 
-`eks-demo`의 모든 노드는 Graviton(arm64, m7g 이상)이다. 서비스 이미지는 `linux/arm64`로
+`eks-demo`의 모든 노드는 Graviton(arm64, m·r 7세대 이상)이다. 서비스 이미지는 `linux/arm64`로
 게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
 
-기본 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 xlarge(4 vCPU·16Gi) 노드 2개에서 실행한다.
+기본 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 xlarge(4 vCPU, m 16Gi·r 32Gi) 노드 2개에서 실행한다.
 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다. requests 합계는
 약 2.0 vCPU·11.8Gi(앱·addon·sidecar·DaemonSet)이므로 노드 한 대 또는 AZ 하나가 빠져도 남은 한 대(3.77 vCPU·14.3Gi
 allocatable)가 수용한다. EBS PersistentVolume은 생성된 AZ에 묶이므로 그 AZ에 노드가 없으면 `general` NodePool이
@@ -33,23 +33,23 @@ requests·sidecar·DaemonSet 예약을 합산하고 남은 노드의 allocatable
 Workspace pool은 기존 Auto Mode node 역할과 private subnet·EKS primary security group을 재사용한다.
 `workspaces` NodeClass는 암호화된 160Gi ephemeral disk, `DefaultDeny`와 network policy event log를 사용한다.
 전용 taint와 `karpenter.sh/nodepool=workspaces`로 앱·DB와 실행 Pod를 분리하고, pool의 총 한도는
-`workspace_max_pods=32`에서는 CPU 48개·메모리 192Gi다. 4-CPU 노드당 1-CPU/2Gi 실행 Pod
+`workspace_max_pods=32`에서는 CPU 48개·메모리 384Gi다. 4-CPU 노드당 1-CPU/2Gi 실행 Pod
 3개와 kubelet·DaemonSet 여유를 계산하고 교체용 노드 1개를 허용한다. 노드는 수요가 있을 때만
 생성한다. namespace quota와 worker 동시성은 `argocd-env-apps`가 소유하며 같은 용량으로 맞춘다.
 노드의 이미지 캐시는 kubelet이 관리하며 Workspace마다 DinD 이미지 사본을 저장하지 않는다.
 `argocd-env-addons`의 EKS network policy controller를 먼저 준비한다.
 
 rovr sandbox pool(`rovr-sandboxes`)은 `workspaces` NodeClass를 재사용하고 taint `rovr.dev/sandbox`로
-rovr 실행 Pod만 받는다. 실행 Pod는 2 CPU·4Gi를 요청하므로 8-CPU m 노드(32Gi)에 3개씩 배치한다.
-한도는 `rovr_sandbox_max_pods=6`에서 노드 3대(CPU 24개·메모리 96Gi)이며 교체용 노드 1대를 포함한다.
+rovr 실행 Pod만 받는다. 실행 Pod는 2 CPU·4Gi를 요청하므로 8-CPU m·r 노드(32Gi 이상)에 3개씩 배치한다.
+한도는 `rovr_sandbox_max_pods=6`에서 노드 3대(CPU 24개·메모리 192Gi)이며 교체용 노드 1대를 포함한다.
 이 값은 `argocd-env-apps`의 `env/eks-demo.yaml` `rovr.sandbox.max_runs`와 같게 유지한다.
 실행 Pod는 `karpenter.sh/do-not-disrupt`를 달고, 노드 drain은 rovr sandbox 마감(90분)까지 기다린다. Spot 회수는 2분 예고 뒤 실행 중인 run을 중단시킨다.
 
 GitHub Actions runner pool(`gha-runners`)은 `argocd-env-addons`의 ARC runner scale set(`charts/arc-runners`)이 쓴다.
 전용 `gha-runners` NodeClass는 Workspace와 같은 node 역할·subnet·security group을 쓰지만, image build와 kind가
 외부 registry에 접근하도록 `DefaultAllow`이고 Docker 저장소용 200Gi ephemeral disk를 둔다. taint `opspresso.com/gha-runner`로
-runner Pod만 받는다. runner Pod 하나는 runner와 dind sidecar를 합쳐 3.5 CPU·14Gi를 요청하므로 8-CPU m 노드(32Gi)에 2개씩 배치한다.
-한도는 `gha_runner_max_runners=6`에서 노드 4대(CPU 32개·메모리 128Gi)이며 교체용 노드 1대를 포함한다. 이 값은
+runner Pod만 받는다. runner Pod 하나는 runner와 dind sidecar를 합쳐 3.5 CPU·14Gi를 요청하므로 8-CPU m·r 노드(32Gi 이상)에 2개씩 배치한다.
+한도는 `gha_runner_max_runners=6`에서 노드 4대(CPU 32개·메모리 256Gi)이며 교체용 노드 1대를 포함한다. 이 값은
 `charts/arc-runners`의 `maxRunners`와 같게 유지한다. job이 있을 때만 Spot 노드를 만들고(Spot이 부족하면 job이 대기한다), 비면 10분 뒤 회수한다.
 runner Pod는 `karpenter.sh/do-not-disrupt`를 달아 통합 회수가 job을 끊지 않는다. Spot 회수는 실행 중인 job을 실패시킨다.
 

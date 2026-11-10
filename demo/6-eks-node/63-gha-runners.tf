@@ -1,5 +1,5 @@
 locals {
-  # An 8-CPU m node (32Gi) holds two runner Pods (runner + dind sidecar,
+  # An 8-CPU m node (32Gi; r 64Gi) holds two runner Pods (runner + dind sidecar,
   # 3.5 CPU / 14Gi requests) after kubelet and DaemonSets. One extra node
   # permits replacement.
   gha_runner_node_limit = ceil(var.gha_runner_max_runners / 2) + 1
@@ -36,7 +36,7 @@ resource "kubernetes_manifest" "gha_runner_node_pool" {
     kind       = "NodePool"
     metadata   = { name = "gha-runners" }
     spec = {
-      limits = { cpu = tostring(local.gha_runner_node_limit * 8), memory = "${local.gha_runner_node_limit * 32}Gi" }
+      limits = { cpu = tostring(local.gha_runner_node_limit * 8), memory = "${local.gha_runner_node_limit * 64}Gi" }
       disruption = {
         consolidationPolicy = "WhenEmpty"
         consolidateAfter    = "10m"
@@ -54,7 +54,7 @@ resource "kubernetes_manifest" "gha_runner_node_pool" {
             { key = "kubernetes.io/arch", operator = "In", values = ["arm64"] },
             { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
             { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
-            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m", "r"] },
             { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["8"] },
           ]
