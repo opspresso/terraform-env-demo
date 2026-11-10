@@ -49,6 +49,12 @@ locals {
       namespace       = "app-delivery"
       service_account = "delivery-registry"
     }
+    # The steps of the VM Target Workflows (argocd-env-projects app-deploy-eb, app-remove-eb) assume the deploy role
+    # agent-runway-target-deploy of the Target account (terraform-env-apps demo/8-runway-target).
+    "delivery-target" = {
+      namespace       = "app-delivery"
+      service_account = "delivery-target"
+    }
     # Atlantis (argocd-env-addons charts/atlantis) runs Terraform for the terraform-* repositories.
     "atlantis" = {
       namespace       = "addon-atlantis"
