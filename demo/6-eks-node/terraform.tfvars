@@ -1,1 +1,1 @@
-auto_mode_baseline_replicas_per_zone = 2
+auto_mode_baseline_replicas_per_zone = 3
