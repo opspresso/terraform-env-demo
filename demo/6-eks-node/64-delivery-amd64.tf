@@ -10,7 +10,7 @@ resource "kubernetes_manifest" "delivery_amd64_node_pool" {
     kind       = "NodePool"
     metadata   = { name = "delivery-amd64" }
     spec = {
-      limits = { cpu = "16", memory = "64Gi" }
+      limits = { cpu = "16", memory = "128Gi" }
       disruption = {
         consolidationPolicy = "WhenEmpty"
         consolidateAfter    = "10m"
@@ -24,7 +24,7 @@ resource "kubernetes_manifest" "delivery_amd64_node_pool" {
             { key = "kubernetes.io/arch", operator = "In", values = ["amd64"] },
             { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
             { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
-            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m", "c"] },
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m", "c", "r"] },
             { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["4", "8"] },
           ]

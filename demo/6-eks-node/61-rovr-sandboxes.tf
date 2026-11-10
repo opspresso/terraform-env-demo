@@ -1,5 +1,5 @@
 locals {
-  # An 8-CPU m node (32Gi) holds three 2-CPU/4Gi rovr sandboxes after kubelet
+  # An 8-CPU m node (32Gi; r 64Gi) holds three 2-CPU/4Gi rovr sandboxes after kubelet
   # and DaemonSets. One extra node permits replacement.
   rovr_sandbox_node_limit = ceil(var.rovr_sandbox_max_pods / 3) + 1
 }
@@ -13,7 +13,7 @@ resource "kubernetes_manifest" "rovr_sandbox_node_pool" {
     kind       = "NodePool"
     metadata   = { name = "rovr-sandboxes" }
     spec = {
-      limits = { cpu = tostring(local.rovr_sandbox_node_limit * 8), memory = "${local.rovr_sandbox_node_limit * 32}Gi" }
+      limits = { cpu = tostring(local.rovr_sandbox_node_limit * 8), memory = "${local.rovr_sandbox_node_limit * 64}Gi" }
       disruption = {
         consolidationPolicy = "WhenEmpty"
         consolidateAfter    = "5m"
@@ -27,7 +27,7 @@ resource "kubernetes_manifest" "rovr_sandbox_node_pool" {
             { key = "kubernetes.io/arch", operator = "In", values = ["arm64"] },
             { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
             { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
-            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m", "r"] },
             { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["8"] },
           ]

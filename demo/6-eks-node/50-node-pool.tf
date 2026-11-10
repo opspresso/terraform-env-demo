@@ -7,12 +7,13 @@
 # plan 시점에 EKS API가 필요하므로 5-eks를 먼저 적용합니다.
 
 locals {
-  # m7g·m8g 이상 Graviton 범용 인스턴스.
+  # m·r 7세대 이상 Graviton 인스턴스. r은 같은 vCPU에 메모리가 두 배라 m 기준 배치가 그대로 맞고,
+  # 후보 Spot pool을 늘려 회수와 용량 부족을 줄입니다.
   graviton_requirements = [
     { key = "kubernetes.io/arch", operator = "In", values = ["arm64"] },
     { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
     { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
-    { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
+    { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m", "r"] },
     { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
   ]
 }
@@ -40,7 +41,7 @@ resource "kubernetes_manifest" "baseline_zone" {
             name  = "default"
           }
 
-          # 고정 용량을 계산할 수 있도록 4 vCPU·16Gi(xlarge)로 고정합니다.
+          # 고정 용량을 계산할 수 있도록 4 vCPU(xlarge: m 16Gi, r 32Gi)로 고정합니다.
           requirements = concat(local.graviton_requirements, [
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["4"] },
             { key = "topology.kubernetes.io/zone", operator = "In", values = [each.key] },
@@ -89,7 +90,7 @@ resource "kubernetes_manifest" "general" {
 
       limits = {
         cpu    = tostring(var.general_max_cpu)
-        memory = "${var.general_max_cpu * 4}Gi"
+        memory = "${var.general_max_cpu * 8}Gi"
       }
     }
   }

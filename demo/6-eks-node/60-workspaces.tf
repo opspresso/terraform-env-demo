@@ -1,6 +1,6 @@
 locals {
   # A 4-CPU node has room for three 1-CPU/2Gi Pods after kubelet and DaemonSets.
-  # One extra node permits replacement; the memory ceiling matches 16Gi m nodes.
+  # One extra node permits replacement; the memory ceiling matches 32Gi r nodes.
   workspace_node_limit = ceil(var.workspace_max_pods / 3) + 1
 }
 
@@ -33,7 +33,7 @@ resource "kubernetes_manifest" "workspace_node_pool" {
     kind       = "NodePool"
     metadata   = { name = "workspaces" }
     spec = {
-      limits = { cpu = tostring(local.workspace_node_limit * 4), memory = "${local.workspace_node_limit * 16}Gi" }
+      limits = { cpu = tostring(local.workspace_node_limit * 4), memory = "${local.workspace_node_limit * 32}Gi" }
       disruption = {
         consolidationPolicy = "WhenEmpty"
         consolidateAfter    = "5m"
@@ -48,7 +48,7 @@ resource "kubernetes_manifest" "workspace_node_pool" {
             { key = "kubernetes.io/arch", operator = "In", values = ["arm64"] },
             { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
             { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
-            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m", "r"] },
             { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["4"] },
           ]
