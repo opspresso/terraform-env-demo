@@ -1,7 +1,5 @@
-# backend
-
 terraform {
-  required_version = "1.17.1" # terraform version
+  required_version = "1.17.1"
 
   backend "s3" {
     region       = "ap-northeast-2"
@@ -14,12 +12,10 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "3.4.0" # terraform kubernetes provider version
+      version = "3.4.0"
     }
   }
 }
-
-# provider
 
 provider "kubernetes" {
   host                   = data.terraform_remote_state.eks.outputs.cluster_endpoint

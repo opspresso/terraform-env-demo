@@ -1,5 +1,3 @@
-# locals access_entries
-
 locals {
   access_sso_ids = {
     # IAM Identity Center permission set used for the AWS console (me@nalbam.com).

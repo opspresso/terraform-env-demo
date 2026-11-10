@@ -1,5 +1,3 @@
-# security group
-
 resource "aws_security_group" "exit_node" {
   name        = "${local.name}-sg"
   description = "Tailscale direct connections"

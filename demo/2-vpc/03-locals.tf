@@ -1,5 +1,3 @@
-# locals
-
 locals {
   azs = [for az in var.azs : format("%s%s", var.region, az)]
 

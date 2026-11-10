@@ -1,5 +1,3 @@
-# aws_lb_target_group
-
 resource "aws_lb_target_group" "internal_http_0" {
   name        = format("%s-in-http-0", var.name)
   port        = 80
@@ -65,22 +63,6 @@ resource "aws_lb_target_group" "internal_http_b" {
     "eks:eks-cluster-name" = "eks-demo-b"
   }
 }
-
-# output
-
-output "internal_http_0" {
-  value = aws_lb_target_group.internal_http_0.arn
-}
-
-output "internal_http_a" {
-  value = aws_lb_target_group.internal_http_a.arn
-}
-
-output "internal_http_b" {
-  value = aws_lb_target_group.internal_http_b.arn
-}
-
-# save ssm
 
 resource "aws_ssm_parameter" "internal_http_0" {
   name  = format("/k8s/common/%s/internal_http_0", var.name)

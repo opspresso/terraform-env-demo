@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.17.1, < 2.0"
+  required_version = "1.17.1"
 
   backend "s3" {
     region       = "ap-northeast-2"
@@ -20,10 +20,8 @@ terraform {
 provider "aws" {
   region              = var.region
   allowed_account_ids = ["396608815058"]
+
   default_tags {
-    tags = {
-      ManagedBy = "Terraform"
-      Project   = "terraform-env-demo/demo/8-domain-mail"
-    }
+    tags = local.tags
   }
 }

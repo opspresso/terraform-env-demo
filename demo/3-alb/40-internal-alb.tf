@@ -1,5 +1,3 @@
-# aws_lb
-
 resource "aws_lb" "internal" {
   name = format("%s-in", var.name)
 
@@ -23,8 +21,3 @@ resource "aws_lb" "internal" {
   }
 }
 
-# output
-
-output "internal" {
-  value = aws_lb.internal.dns_name
-}

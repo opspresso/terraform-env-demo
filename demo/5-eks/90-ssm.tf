@@ -1,5 +1,3 @@
-# save ssm
-
 resource "aws_ssm_parameter" "cluster_oidc_url" {
   name  = format("/k8s/common/%s/cluster_oidc_url", var.name)
   type  = "String"

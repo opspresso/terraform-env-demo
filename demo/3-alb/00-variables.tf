@@ -1,17 +1,18 @@
-# variable
-
 variable "region" {
   description = "리전을 입력 합니다. e.g: ap-northeast-2"
+  type        = string
   default     = "ap-northeast-2"
 }
 
 variable "name" {
   description = "생성될 ALB 이름을 입력합니다."
+  type        = string
   default     = "demo"
 }
 
 variable "root_domain" {
   description = "listener rule 의 host_header 가 사용하는 ROOT 도메인을 입력합니다. (argocd, grafana, *.demo-a 등)"
+  type        = string
   default     = "opsp.dev"
 }
 
@@ -57,6 +58,7 @@ variable "domains" {
 
 variable "primary_domain" {
   description = "HTTPS 리스너의 기본(default) 인증서로 쓸 도메인을 입력합니다. 나머지는 SNI 로 추가됩니다."
+  type        = string
   default     = "demo.opsp.dev"
 
   validation {

@@ -1,5 +1,3 @@
-# aws_lb_listener
-
 resource "aws_lb_listener" "internal_http" {
   load_balancer_arn = aws_lb.internal.arn
 
