@@ -27,7 +27,7 @@ resource "kubernetes_manifest" "gha_runner_node_class" {
   }
 }
 
-# Nodes exist only while jobs run: Spot first, on-demand when Spot is short.
+# Nodes exist only while jobs run. Spot only: jobs wait while Spot is short.
 # Runner Pods carry karpenter.sh/do-not-disrupt, so consolidation waits for
 # the job; a Spot interruption fails the running job.
 resource "kubernetes_manifest" "gha_runner_node_pool" {
@@ -53,7 +53,7 @@ resource "kubernetes_manifest" "gha_runner_node_pool" {
           requirements = [
             { key = "kubernetes.io/arch", operator = "In", values = ["arm64"] },
             { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
-            { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot", "on-demand"] },
+            { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
             { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
             { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["8"] },

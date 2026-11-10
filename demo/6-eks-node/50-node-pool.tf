@@ -1,4 +1,6 @@
-# EKS Auto Mode capacity on Graviton (arm64)
+# EKS Auto Mode capacity on Graviton (arm64) Spot
+# Every custom NodePool in this root is Spot-only. A reclaimed node is replaced by Karpenter; a reclaimed
+# baseline node leaves its AZ without a baseline node until Spot capacity returns.
 # baseline은 AZ마다 기준 노드 수를 고정하고, 증가분은 같은 조건의 dynamic `general` NodePool이 처리합니다.
 # 정적 NodePool은 노드를 AZ에 분산하지 않으므로 AZ별 NodePool을 둡니다. 한 AZ가 장애 나도 다른 AZ의 노드가 남습니다.
 # 5-eks는 내장 general-purpose pool을 켜지 않으므로 앱 Pod는 이 arm64 노드에서만 실행됩니다.
@@ -9,7 +11,7 @@ locals {
   graviton_requirements = [
     { key = "kubernetes.io/arch", operator = "In", values = ["arm64"] },
     { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
-    { key = "karpenter.sh/capacity-type", operator = "In", values = ["on-demand"] },
+    { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
     { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
     { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
   ]

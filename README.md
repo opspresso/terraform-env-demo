@@ -50,7 +50,7 @@ GitHub Actions runner pool(`gha-runners`)은 `argocd-env-addons`의 ARC runner s
 외부 registry에 접근하도록 `DefaultAllow`이고 Docker 저장소용 200Gi ephemeral disk를 둔다. taint `opspresso.com/gha-runner`로
 runner Pod만 받는다. runner Pod 하나는 runner와 dind sidecar를 합쳐 3.5 CPU·14Gi를 요청하므로 8-CPU m 노드(32Gi)에 2개씩 배치한다.
 한도는 `gha_runner_max_runners=6`에서 노드 4대(CPU 32개·메모리 128Gi)이며 교체용 노드 1대를 포함한다. 이 값은
-`charts/arc-runners`의 `maxRunners`와 같게 유지한다. job이 있을 때만 Spot(부족하면 on-demand) 노드를 만들고, 비면 10분 뒤 회수한다.
+`charts/arc-runners`의 `maxRunners`와 같게 유지한다. job이 있을 때만 Spot 노드를 만들고(Spot이 부족하면 job이 대기한다), 비면 10분 뒤 회수한다.
 runner Pod는 `karpenter.sh/do-not-disrupt`를 달아 통합 회수가 job을 끊지 않는다. Spot 회수는 실행 중인 job을 실패시킨다.
 
 기존 설치는 승인된 `5-eks` 적용으로 Workspace용 output을 state에 기록한 뒤 `6-eks-node`를 적용한다.

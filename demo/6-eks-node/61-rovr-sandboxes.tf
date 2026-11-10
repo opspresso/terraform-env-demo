@@ -26,7 +26,7 @@ resource "kubernetes_manifest" "rovr_sandbox_node_pool" {
           requirements = [
             { key = "kubernetes.io/arch", operator = "In", values = ["arm64"] },
             { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
-            { key = "karpenter.sh/capacity-type", operator = "In", values = ["on-demand"] },
+            { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
             { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
             { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["8"] },
