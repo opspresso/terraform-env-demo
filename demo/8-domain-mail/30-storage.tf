@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "mail" {
-  bucket = "${local.name}-${data.aws_caller_identity.current.account_id}-${var.region}"
+  bucket = "${local.name}-${data.aws_caller_identity.current.account_id}-${local.region}"
   lifecycle {
     prevent_destroy = true
   }

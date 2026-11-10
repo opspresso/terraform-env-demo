@@ -46,7 +46,7 @@ data "aws_iam_policy_document" "k3s_ssm_read" {
       "ssm:GetParametersByPath",
     ]
     resources = [
-      format("arn:aws:ssm:%s:%s:parameter/k8s/common/*", var.region, local.account_id),
+      format("arn:aws:ssm:%s:%s:parameter/k8s/common/*", local.region, local.account_id),
     ]
   }
 
@@ -59,7 +59,7 @@ data "aws_iam_policy_document" "k3s_ssm_read" {
     condition {
       test     = "StringEquals"
       variable = "kms:ViaService"
-      values   = [format("ssm.%s.amazonaws.com", var.region)]
+      values   = [format("ssm.%s.amazonaws.com", local.region)]
     }
   }
 }

@@ -1,4 +1,7 @@
 locals {
+  # The backend and remote state blocks cannot read locals and repeat this region.
+  region = "ap-northeast-2"
+
   # var.domains 를 리소스가 쓰는 형태로 폅니다.
   # certificate_domains 는 인증서 도메인 집합, *_records 는 {레코드 이름 => 그 레코드가 속한 zone} 입니다.
   certificate_domains = toset(flatten([for domain in var.domains : domain.certificates]))

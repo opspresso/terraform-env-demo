@@ -71,7 +71,7 @@ Terraform apply와 실제 장애 주입은 별도 승인 뒤 진행한다.
 
 | 파일 | 담는 블록 |
 | --- | --- |
-| `00-variables.tf` | 모든 `variable` |
+| `00-variables.tf` | 모든 `variable`. `variable`이 없는 root에는 두지 않습니다 |
 | `02-backend.tf` | `terraform`(`required_version`·`backend`·`required_providers`)과 `provider` |
 | `02-remote-state.tf` | `data "terraform_remote_state"` |
 | `03-data.tf` | 여러 파일이 함께 쓰는 `data` |
@@ -87,6 +87,9 @@ Terraform apply와 실제 장애 주입은 별도 승인 뒤 진행한다.
 - S3 backend는 `encrypt = true`와 `use_lockfile = true`를 씁니다.
 - AWS provider는 `default_tags { tags = local.tags }`로 태그를 붙이고, `local.tags`는 `03-locals.tf`에 둡니다.
 - `variable`에는 `description`과 `type`을 씁니다.
+- 각 root는 `demo` 환경 하나만 배포합니다. 값은 `variable`의 `default`에 두고, 커밋하는 `terraform.tfvars`는 쓰지 않습니다.
+- 공개하면 안 되는 값(사무실 IP 대역, 개인 메일 주소 등)은 `default`에 두지 않고 Git이 무시하는 `private.auto.tfvars`로 넘깁니다.
+- 바꾸면 backend·remote state와 어긋나거나 리소스가 교체되는 고정값(`region` 등)은 `variable`이 아닌 `03-locals.tf`의 `locals`에 둡니다.
 - 파일마다 `locals` 블록은 하나만 둡니다. 본문이 없는 블록은 `data "aws_caller_identity" "current" {}`처럼 한 줄로 씁니다.
 - 주석은 코드만으로 알 수 없는 이유·제약·외부 연결을 설명합니다. 파일 이름이나 블록 종류를 반복하는 머리 주석(`# variable`, `# output` 등)은 쓰지 않습니다.
 - 파일 이름을 바꾸거나 블록을 다른 파일로 옮겨도 state 주소는 바뀌지 않습니다. 리소스 이름을 바꿀 때는 `moved` 블록을 함께 씁니다.

@@ -29,7 +29,6 @@ for root in demo/*/; do
 
   version="$(sed -nE 's/^  required_version = "([^"]+)"$/\1/p' "$root/02-backend.tf" 2>/dev/null || true)"
   [[ -f "$root/02-backend.tf" ]] || err "$root" "missing 02-backend.tf"
-  [[ -f "$root/00-variables.tf" ]] || err "$root" "missing 00-variables.tf"
   [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || err "$root/02-backend.tf" "required_version must pin an exact version"
   [[ "$(cat "$root/.terraform-version" 2>/dev/null || true)" == "$version" ]] ||
     err "$root/.terraform-version" "must equal required_version ($version)"

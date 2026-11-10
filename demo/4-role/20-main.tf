@@ -1,25 +1,25 @@
 resource "aws_iam_role" "this" {
   for_each = local.roles
 
-  name = format("%s--%s", var.prefix_name, each.key)
+  name = format("%s--%s", local.prefix_name, each.key)
 
   assume_role_policy = data.aws_iam_policy_document.this.json
 
   tags = {
-    Name = format("%s--%s", var.prefix_name, each.key)
+    Name = format("%s--%s", local.prefix_name, each.key)
   }
 }
 
 resource "aws_iam_policy" "this" {
   for_each = toset(local.policies)
 
-  name        = format("%s--%s", var.prefix_name, each.key)
-  description = format("%s--%s -- pod identity", var.prefix_name, each.key)
+  name        = format("%s--%s", local.prefix_name, each.key)
+  description = format("%s--%s -- pod identity", local.prefix_name, each.key)
 
   policy = file(format("%s/policies/%s.json", path.module, each.key))
 
   tags = {
-    Name = format("%s--%s", var.prefix_name, each.key)
+    Name = format("%s--%s", local.prefix_name, each.key)
   }
 }
 
