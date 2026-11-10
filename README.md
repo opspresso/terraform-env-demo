@@ -13,7 +13,6 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 3개), 증가분 dynamic pool, 제한된 Workspace pool, rovr sandbox pool, GitHub Actions runner pool, Agent Runway amd64 build pool(`delivery-amd64`), 공유 Agent PostgreSQL용 on-demand pool(`agent-database`) |
 | [5-k3s](demo/5-k3s/README.md) | 삭제한 k3s 서버의 보관용 코드. 적용하지 않음 |
 | [8-domain-mail](demo/8-domain-mail/README.md) | Cloudflare 수신 전달과 SES SMTP 발신, 이전 수신 원본 보관 |
-| [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
 
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 프로젝트별 리소스는 [terraform-env-apps](https://github.com/opspresso/terraform-env-apps)에서 관리합니다. `4-role`과 `5-eks`는 앱에 필요한 공통 Pod Identity 역할과 연결을 관리합니다.

@@ -40,7 +40,6 @@ jobs:
           - demo/5-k3s
           - demo/6-eks-node
           - demo/8-domain-mail
-          - demo/9-tailscale-exit
     defaults:
       run:
         working-directory: ${{ matrix.directory }}
