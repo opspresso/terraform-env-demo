@@ -10,7 +10,7 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | 앱에서 사용할 IAM 역할 |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 3개), 증가분 dynamic pool, 제한된 Workspace pool, rovr sandbox pool, GitHub Actions runner pool, Agent Runway amd64 build pool(`delivery-amd64`) |
+| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 3개), 증가분 dynamic pool, 제한된 Workspace pool, rovr sandbox pool, GitHub Actions runner pool, Agent Runway amd64 build pool(`delivery-amd64`), 공유 Agent PostgreSQL용 on-demand pool(`agent-database`) |
 | [5-k3s](demo/5-k3s/README.md) | 삭제한 k3s 서버의 보관용 코드. 적용하지 않음 |
 | [8-domain-mail](demo/8-domain-mail/README.md) | Cloudflare 수신 전달과 SES SMTP 발신, 이전 수신 원본 보관 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
@@ -52,6 +52,11 @@ runner Pod만 받는다. runner Pod 하나는 runner와 dind sidecar를 합쳐 3
 한도는 `gha_runner_max_runners=6`에서 노드 4대(CPU 32개·메모리 256Gi)이며 교체용 노드 1대를 포함한다. 이 값은
 `charts/arc-runners`의 `maxRunners`와 같게 유지한다. job이 있을 때만 Spot 노드를 만들고(Spot이 부족하면 job이 대기한다), 비면 10분 뒤 회수한다.
 runner Pod는 `karpenter.sh/do-not-disrupt`를 달아 통합 회수가 job을 끊지 않는다. Spot 회수는 실행 중인 job을 실패시킨다.
+
+공유 Agent PostgreSQL pool(`agent-database`)은 `argocd-env-apps`의 `charts/postgresql`(namespace `agent-studio`)만 쓴다.
+다른 NodePool은 모두 Spot이다. Spot 회수는 모든 Agent 서비스가 함께 쓰는 DB를 멈추고, 열린 연결을 `admin_shutdown`으로 끊는다.
+따라서 이 pool만 on-demand medium 노드(1 vCPU·4Gi, m 7세대 이상) 1대를 쓴다. taint `opspresso.com/agent-database`로 PostgreSQL Pod만 받는다.
+EBS volume이 Pod의 AZ를 정하므로 pool은 baseline AZ를 모두 허용한다. 노드 교체(drift·만료)는 계획된 drain으로 DB를 한 번 재시작한다.
 
 기존 설치는 승인된 `5-eks` 적용으로 Workspace용 output을 state에 기록한 뒤 `6-eks-node`를 적용한다.
 기존 default NodeClass, PVC, ECR은 변경하지 않는다.
