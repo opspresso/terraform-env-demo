@@ -37,14 +37,6 @@ resource "aws_lb_target_group" "public_grpc_0" {
   }
 }
 
-# output
-
-output "public_grpc_0" {
-  value = aws_lb_target_group.public_grpc_0.arn
-}
-
-# save ssm
-
 resource "aws_ssm_parameter" "public_grpc_0" {
   name  = format("/k8s/common/%s/public_grpc_0", var.name)
   type  = "String"

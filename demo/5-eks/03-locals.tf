@@ -1,10 +1,6 @@
-# locals
-
 locals {
   account_id = data.aws_caller_identity.current.account_id
-}
 
-locals {
   vpc_id          = data.terraform_remote_state.vpc.outputs.vpc_id
   private_subnets = data.terraform_remote_state.vpc.outputs.private_subnets
 
@@ -24,9 +20,7 @@ locals {
       security_group_id = local.alb_security_group_ids[pair[0]]
     }
   }
-}
 
-locals {
   tags = {
     ClusterName = var.name
     Environment = "demo"

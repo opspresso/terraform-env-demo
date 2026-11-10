@@ -1,5 +1,3 @@
-# output
-
 output "instance_id" {
   description = "Session Manager 로 접속할 EC2 ID"
   value       = aws_instance.exit_node.id

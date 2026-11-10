@@ -1,5 +1,3 @@
-# aws_lb_listener
-
 resource "aws_lb_listener" "public_https" {
   load_balancer_arn = aws_lb.public.arn
 
@@ -78,7 +76,7 @@ resource "aws_lb_listener_rule" "public_https--grafana" {
 
 # The one host that needs HTTP/2 all the way to the backend. Everything else
 # falls through to the default action, which is the HTTP1 group — see
-# 34-public-tgs-grpc.tf for why one group cannot serve both.
+# 32-public-tgs-grpc.tf for why one group cannot serve both.
 resource "aws_lb_listener_rule" "public_https--sample-grpc" {
   listener_arn = aws_lb_listener.public_https.arn
   priority     = 7

@@ -1,5 +1,3 @@
-# route53
-
 data "aws_route53_zone" "this" {
   for_each = var.domains
 

@@ -27,10 +27,4 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: '1.17.1'
-      - run: terraform fmt -check
-      - run: terraform init -backend=false -input=false
-      - run: terraform validate
       - run: python3 -m py_compile create-smtp-credentials.py

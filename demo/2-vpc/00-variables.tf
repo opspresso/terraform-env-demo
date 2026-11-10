@@ -1,17 +1,18 @@
-# variable
-
 variable "region" {
   description = "생성될 리전을 입력 합니다. e.g: ap-northeast-2"
+  type        = string
   default     = "ap-northeast-2"
 }
 
 variable "name" {
   description = "생성될 VPC 이름을 입력합니다."
+  type        = string
   default     = "vpc-demo"
 }
 
 variable "cidr" {
   description = "생성될 cidr 를 입력합니다."
+  type        = string
   default     = "10.10.0.0/16"
 }
 
@@ -49,20 +50,24 @@ variable "az_subnets" {
 
 variable "enable_nat_gateway" {
   description = "nat gateway 를 사용할지 여부를 입력합니다."
+  type        = bool
   default     = true
 }
 
 variable "single_nat_gateway" {
   description = "single nat gateway 를 사용할지 여부를 입력합니다."
+  type        = bool
   default     = true
 }
 
 variable "enable_ipv6" {
   description = "ipv6 를 사용할지 여부를 입력합니다."
+  type        = bool
   default     = false
 }
 
 variable "enable_dns_hostnames" {
   description = "dns 호스트 이름을 사용할지 여부를 입력합니다."
+  type        = bool
   default     = true
 }

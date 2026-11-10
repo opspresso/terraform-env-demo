@@ -1,5 +1,3 @@
-# locals
-
 locals {
   name = "tailscale-exit"
 

@@ -1,5 +1,3 @@
-# aws_security_group
-
 resource "aws_security_group" "public" {
   name = var.name
 
@@ -67,12 +65,3 @@ resource "aws_security_group" "internal" {
   }
 }
 
-# output
-
-output "security_group_id" {
-  value = aws_security_group.public.id
-}
-
-output "internal_security_group_id" {
-  value = aws_security_group.internal.id
-}

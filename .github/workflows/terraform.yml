@@ -1,0 +1,56 @@
+name: Terraform validation
+
+# Offline checks of every root: the layout rules in README.md, format,
+# provider install and configuration validity. They need no AWS access.
+on:
+  pull_request:
+    paths:
+      - demo/**
+      - scripts/check-layout.sh
+      - .github/workflows/terraform.yml
+  push:
+    branches: [main]
+    paths:
+      - demo/**
+      - scripts/check-layout.sh
+      - .github/workflows/terraform.yml
+
+permissions:
+  contents: read
+
+jobs:
+  layout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: ./scripts/check-layout.sh
+
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        directory:
+          - demo/2-vpc
+          - demo/3-alb
+          - demo/4-role
+          - demo/5-eks
+          - demo/5-k3s
+          - demo/6-eks-node
+          - demo/8-domain-mail
+          - demo/9-tailscale-exit
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.17.1'
+      - run: terraform fmt -check
+      - run: terraform init -backend=false -input=false
+      - run: terraform validate

@@ -1,5 +1,3 @@
-# aws_lb_target_group
-
 resource "aws_lb_target_group" "public_http_0" {
   name     = format("%s-h1-0", var.name)
   port     = 80
@@ -104,22 +102,6 @@ resource "aws_lb_target_group" "public_http_b" {
     "eks:eks-cluster-name" = "eks-demo-b"
   }
 }
-
-# output
-
-output "public_http_0" {
-  value = aws_lb_target_group.public_http_0.arn
-}
-
-output "public_http_a" {
-  value = aws_lb_target_group.public_http_a.arn
-}
-
-output "public_http_b" {
-  value = aws_lb_target_group.public_http_b.arn
-}
-
-# save ssm
 
 resource "aws_ssm_parameter" "public_http_0" {
   name  = format("/k8s/common/%s/public_http_0", var.name)

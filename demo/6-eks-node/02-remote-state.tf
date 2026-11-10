@@ -1,5 +1,3 @@
-# remote
-
 data "terraform_remote_state" "eks" {
   backend   = "s3"
   workspace = terraform.workspace

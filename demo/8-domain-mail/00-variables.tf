@@ -13,18 +13,3 @@ variable "cloudflare_mx_records" {
     error_message = "Supply Cloudflare-assigned MX priorities and hostnames."
   }
 }
-
-locals {
-  domain       = "opspresso.com"
-  address      = "admin@${local.domain}"
-  name         = "opspresso-admin-mail"
-  mail_from    = "mail.${local.domain}"
-  input_prefix = "incoming/"
-}
-
-data "aws_caller_identity" "current" {}
-
-data "aws_route53_zone" "mail" {
-  name         = local.domain
-  private_zone = false
-}

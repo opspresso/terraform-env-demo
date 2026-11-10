@@ -57,6 +57,36 @@ runner Pod는 `karpenter.sh/do-not-disrupt`를 달아 통합 회수가 job을 �
 기존 default NodeClass, PVC, ECR은 변경하지 않는다.
 Terraform apply와 실제 장애 주입은 별도 승인 뒤 진행한다.
 
+## Terraform 작성 규칙
+
+`demo/`의 모든 root는 같은 파일 배치와 작성 규칙을 따릅니다. `scripts/check-layout.sh`가 파일 배치를 검사하고, CI가 이 스크립트와 `terraform fmt -check`·`terraform validate`를 실행합니다.
+
+### 파일 이름
+
+파일 이름은 `NN-<주제>.tf`입니다. `NN`은 두 자리 숫자이고, 주제는 소문자·숫자·`-`로 씁니다.
+
+| 파일 | 담는 블록 |
+| --- | --- |
+| `00-variables.tf` | 모든 `variable` |
+| `02-backend.tf` | `terraform`(`required_version`·`backend`·`required_providers`)과 `provider` |
+| `02-remote-state.tf` | `data "terraform_remote_state"` |
+| `03-data.tf` | 여러 파일이 함께 쓰는 `data` |
+| `03-locals.tf` | 여러 파일이 함께 쓰는 `locals`와 `default_tags`용 `local.tags` |
+| `04-`~`98-<주제>.tf` | 주제별 리소스와 그 주제의 `data`·`locals`. 의존 순서대로 번호를 붙이고, 한 주제를 여러 파일로 나누면 같은 번호를 씁니다(예: `32-public-tgs-http.tf`, `32-public-tgs-grpc.tf`) |
+| `99-outputs.tf` | 모든 `output` |
+
+각 root에는 `required_version`과 같은 값의 `.terraform-version`을 둡니다.
+
+### 코드
+
+- `required_version`과 provider `version`은 정확한 버전으로 고정합니다(예: `"1.17.1"`, `"6.71.0"`). 범위 지정은 쓰지 않습니다.
+- S3 backend는 `encrypt = true`와 `use_lockfile = true`를 씁니다.
+- AWS provider는 `default_tags { tags = local.tags }`로 태그를 붙이고, `local.tags`는 `03-locals.tf`에 둡니다.
+- `variable`에는 `description`과 `type`을 씁니다.
+- 파일마다 `locals` 블록은 하나만 둡니다. 본문이 없는 블록은 `data "aws_caller_identity" "current" {}`처럼 한 줄로 씁니다.
+- 주석은 코드만으로 알 수 없는 이유·제약·외부 연결을 설명합니다. 파일 이름이나 블록 종류를 반복하는 머리 주석(`# variable`, `# output` 등)은 쓰지 않습니다.
+- 파일 이름을 바꾸거나 블록을 다른 파일로 옮겨도 state 주소는 바뀌지 않습니다. 리소스 이름을 바꿀 때는 `moved` 블록을 함께 씁니다.
+
 ## 준비
 
 Terraform `1.17.1`, AWS CLI, `jq`가 필요합니다. 다른 계정에서 사용하려면 도메인과 기존 AWS 리소스 참조도 맞춰야 합니다.

@@ -1,5 +1,3 @@
-# aws_lb
-
 resource "aws_lb" "public" {
   name = var.name
 
@@ -28,8 +26,3 @@ resource "aws_lb" "public" {
   }
 }
 
-# output
-
-output "public" {
-  value = aws_lb.public.dns_name
-}

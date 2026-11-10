@@ -1,5 +1,3 @@
-# exit node
-
 resource "aws_instance" "exit_node" {
   ami                         = data.aws_ami.al2023.id
   instance_type               = "t4g.nano"
