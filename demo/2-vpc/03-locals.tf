@@ -1,5 +1,8 @@
 locals {
-  azs = [for az in var.azs : format("%s%s", var.region, az)]
+  # The backend and remote state blocks cannot read locals and repeat this region.
+  region = "ap-northeast-2"
+
+  azs = [for az in var.azs : format("%s%s", local.region, az)]
 
   public_subnets  = [for az in var.azs : var.az_subnets[az].public]
   private_subnets = [for az in var.azs : var.az_subnets[az].private]

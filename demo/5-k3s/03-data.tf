@@ -13,7 +13,7 @@ data "aws_vpc" "default" {
 data "aws_subnet" "default" {
   vpc_id = data.aws_vpc.default.id
   # 기존 k3s 노드의 AZ 를 유지하여 subnet 변경에 따른 EC2 교체를 방지합니다.
-  availability_zone = "${var.region}d"
+  availability_zone = "${local.region}d"
 
   filter {
     name   = "default-for-az"

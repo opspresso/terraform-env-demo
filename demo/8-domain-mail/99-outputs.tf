@@ -3,7 +3,7 @@ output "mail_address" {
 }
 
 output "smtp_host" {
-  value = "email-smtp.${var.region}.amazonaws.com"
+  value = "email-smtp.${local.region}.amazonaws.com"
 }
 
 output "smtp_iam_user" {

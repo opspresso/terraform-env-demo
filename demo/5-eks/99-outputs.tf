@@ -16,7 +16,7 @@ output "cluster_certificate_authority_data" {
 }
 
 output "cluster_region" {
-  value = var.region
+  value = local.region
 }
 
 output "cluster_iam_role_name" {

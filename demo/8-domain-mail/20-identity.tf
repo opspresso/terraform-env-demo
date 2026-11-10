@@ -25,7 +25,7 @@ resource "aws_route53_record" "mail_from_mx" {
   name    = local.mail_from
   type    = "MX"
   ttl     = 300
-  records = ["10 feedback-smtp.${var.region}.amazonses.com"]
+  records = ["10 feedback-smtp.${local.region}.amazonses.com"]
 }
 
 resource "aws_route53_record" "mail_from_spf" {

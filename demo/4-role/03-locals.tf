@@ -1,4 +1,10 @@
 locals {
+  # The backend and remote state blocks cannot read locals and repeat this region.
+  region = "ap-northeast-2"
+
+  # Pod Identity role names are <prefix_name>--<policy>; changing it replaces every role.
+  prefix_name = "pod-role"
+
   account_id = data.aws_caller_identity.current.account_id
 
   # policies/*.json 파일 하나당 인라인 정책 1개를 만듭니다.

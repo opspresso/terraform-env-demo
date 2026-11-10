@@ -1,9 +1,3 @@
-variable "region" {
-  description = "생성될 리전을 입력 합니다. e.g: ap-northeast-2"
-  type        = string
-  default     = "ap-northeast-2"
-}
-
 variable "k3s_go_memory_limit_mib" {
   description = "Soft Go runtime memory budget for the single-node k3s server; not a process or Pod hard limit."
   type        = number

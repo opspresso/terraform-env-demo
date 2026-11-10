@@ -1,9 +1,3 @@
-variable "region" {
-  description = "SES sending region."
-  type        = string
-  default     = "ap-northeast-2"
-}
-
 variable "cloudflare_mx_records" {
   description = "Exact MX records assigned by Cloudflare Email Routing, mirrored in the former Route 53 zone during DNS cache expiry."
   type        = list(string)

@@ -21,6 +21,8 @@ $RECYCLE.BIN/
 terraform.tfstate.backup
 terraform.tfstate
 terraform.tfplan
+# Local overrides for private values; committed values live in variable defaults.
+private.auto.tfvars
 
 # Maven
 target/
