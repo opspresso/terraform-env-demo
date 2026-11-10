@@ -41,9 +41,10 @@ resource "kubernetes_manifest" "baseline_zone" {
             name  = "default"
           }
 
-          # 고정 용량을 계산할 수 있도록 4 vCPU(xlarge: m 16Gi, r 32Gi)로 고정합니다.
+          # 고정 용량을 계산할 수 있도록 2 vCPU(large: m 8Gi, r 16Gi)로 고정합니다. 작은 노드를 여러 대 두어
+          # Spot 회수 한 번에 빠지는 용량을 줄입니다.
           requirements = concat(local.graviton_requirements, [
-            { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["4"] },
+            { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["2"] },
             { key = "topology.kubernetes.io/zone", operator = "In", values = [each.key] },
           ])
         }
@@ -77,7 +78,8 @@ resource "kubernetes_manifest" "general" {
           }
 
           requirements = concat(local.graviton_requirements, [
-            { key = "eks.amazonaws.com/instance-cpu", operator = "Gt", values = ["2"] },
+            # baseline과 같은 large만 씁니다.
+            { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["2"] },
           ])
         }
       }

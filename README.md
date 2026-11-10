@@ -10,7 +10,7 @@ AWS 데모 인프라를 관리합니다. `demo/`의 각 디렉터리를 따로 �
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | 앱에서 사용할 IAM 역할 |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 2개), 증가분 dynamic pool, 제한된 Workspace pool, rovr sandbox pool, GitHub Actions runner pool, Agent Runway amd64 build pool(`delivery-amd64`) |
+| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 3개), 증가분 dynamic pool, 제한된 Workspace pool, rovr sandbox pool, GitHub Actions runner pool, Agent Runway amd64 build pool(`delivery-amd64`) |
 | [5-k3s](demo/5-k3s/README.md) | 삭제한 k3s 서버의 보관용 코드. 적용하지 않음 |
 | [8-domain-mail](demo/8-domain-mail/README.md) | Cloudflare 수신 전달과 SES SMTP 발신, 이전 수신 원본 보관 |
 | [9-tailscale-exit](demo/9-tailscale-exit/README.md) | Tailscale exit node |
@@ -21,12 +21,12 @@ EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 `eks-demo`의 모든 노드는 Graviton(arm64, m·r 7세대 이상)이다. 서비스 이미지는 `linux/arm64`로
 게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
 
-기본 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 xlarge(4 vCPU, m 16Gi·r 32Gi) Spot 노드 4개(AZ마다 2개,
-`auto_mode_baseline_replicas_per_zone=2`)에서 실행한다. 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다.
-requests 합계는 약 3.7 vCPU·19Gi(앱·addon·sidecar·DaemonSet, 2026-11 측정)다. AZ마다 노드가 2개이므로 Spot 회수로 한 대가 빠져도
+기본 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 large(2 vCPU, m 8Gi·r 16Gi) Spot 노드 6개(AZ마다 3개,
+`auto_mode_baseline_replicas_per_zone=3`)에서 실행한다. 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다.
+requests 합계는 약 3.7 vCPU·19Gi(앱·addon·sidecar·DaemonSet, 2026-11 측정)다. AZ마다 노드가 3개이므로 Spot 회수로 한 대가 빠져도
 그 AZ에 노드가 남아 EBS PersistentVolume을 쓰는 Pod가 같은 AZ에서 바로 다시 실행된다. 한 AZ의 노드가 모두 빠지면 `general`
 NodePool이 같은 AZ에 Spot 노드를 추가한다. 해당 AZ에 맞는 Spot 용량이 없으면 용량이 생길 때까지 EBS 기반 Pod가 대기한다.
-rollout surge나 증가분은 dynamic `general` NodePool(`general_max_cpu`, 기본 16 vCPU)이 추가 노드로 처리하고,
+rollout surge나 증가분은 dynamic `general` NodePool(`general_max_cpu`, 기본 16 vCPU)이 같은 large 노드를 추가해 처리하고,
 비거나 활용도가 낮으면 회수한다. 기준 용량에는 유휴 시간에도 비용이 발생한다.
 requests·sidecar·DaemonSet 예약을 합산하고 남은 노드의 allocatable과 비교해 조정한다.
 
