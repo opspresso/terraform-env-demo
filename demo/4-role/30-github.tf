@@ -17,18 +17,3 @@ resource "aws_iam_openid_connect_provider" "github" {
 locals {
   github_oidc_provider_arn = one(concat(aws_iam_openid_connect_provider.github[*].arn, data.aws_iam_openid_connect_provider.github[*].arn))
 }
-
-# terraform-env-opsp demo/7-shared adopted these by import; forget them without deleting the AWS resources.
-removed {
-  from = aws_iam_role.github_ecr_public_pull
-  lifecycle {
-    destroy = false
-  }
-}
-
-removed {
-  from = aws_iam_role_policy.github_ecr_public_pull
-  lifecycle {
-    destroy = false
-  }
-}
