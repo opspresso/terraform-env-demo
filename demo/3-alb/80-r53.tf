@@ -33,7 +33,7 @@ resource "aws_route53_record" "internal" {
 }
 
 # The wildcard previously pointed at the k3s node and was owned by 8-agent-studio. Before importing,
-# confirm the record is no longer in the terraform-env-apps/demo/8-agent-studio state.
+# confirm the record is no longer in the terraform-env-opsp/demo/8-agent-studio state.
 import {
   to = aws_route53_record.public["*.agrt.dev"]
   id = "Z01936462SJ924LB2O65K_*.agrt.dev_A"

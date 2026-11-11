@@ -37,9 +37,7 @@ jobs:
           - demo/3-alb
           - demo/4-role
           - demo/5-eks
-          - demo/5-k3s
           - demo/6-eks-node
-          - demo/8-domain-mail
     defaults:
       run:
         working-directory: ${{ matrix.directory }}

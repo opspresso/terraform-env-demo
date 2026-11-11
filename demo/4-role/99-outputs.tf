@@ -9,7 +9,7 @@ output "role_arns" {
   value       = { for key, role in aws_iam_role.this : key => role.arn }
 }
 
-output "github_ecr_public_pull_role_arn" {
-  description = "argocd-env-addons CI 가 public.ecr.aws chart 를 인증해서 받을 때 assume 하는 역할."
-  value       = aws_iam_role.github_ecr_public_pull.arn
+output "github_oidc_provider_arn" {
+  description = "GitHub Actions OIDC provider ARN. terraform-env-opsp 의 GitHub Actions 역할이 신뢰합니다."
+  value       = local.github_oidc_provider_arn
 }
