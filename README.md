@@ -10,7 +10,7 @@ AWS 데모 환경의 공통 인프라(VPC, ALB, EKS, 기본 노드, addon 공통
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | addon 공통 Pod Identity 역할(external-dns, external-secrets, atlantis, ACK)과 GitHub Actions OIDC provider |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 기준 노드(2a·2c 각 3개), 증가분 dynamic pool, GitHub Actions runner pool |
+| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 on-demand 중요 서비스 노드(`core-2a`·`core-2c` 각 1개), AZ별 Spot 기준 노드(2a·2c 각 3개), 증가분 dynamic pool, GitHub Actions runner pool |
 
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 opspresso 전용 리소스는 [terraform-env-opsp](https://github.com/opspresso/terraform-env-opsp)가 관리합니다. 서비스 Pod Identity 역할과 association, 전용 NodePool(Workspace, rovr sandbox, Agent Runway amd64 build, Agent PostgreSQL), `opspresso.com` 메일, 보관용 k3s 코드가 여기에 해당합니다.
@@ -18,7 +18,16 @@ opspresso 전용 리소스는 [terraform-env-opsp](https://github.com/opspresso/
 `eks-demo`의 모든 노드는 Graviton(arm64, m·r 7세대 이상)이다. 서비스 이미지는 `linux/arm64`로
 게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
 
-기본 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 large(2 vCPU, m 8Gi·r 16Gi) Spot 노드 6개(AZ마다 3개,
+재시작이 작업을 끊는 중요 서비스는 AZ별 `core-2a`·`core-2c` NodePool의 on-demand large(2 vCPU, m 8Gi) 노드 2개(AZ마다 1개)에서 실행한다.
+대상은 공유 Agent PostgreSQL, 로그인 경로(LLDAP·Dex), Istio ingress·istiod, Agent 서비스(Studio·Memory·Models·Runway·Forge·Knowledge)와 rovr다.
+Spot 회수는 2분 예고 뒤 같은 AZ의 노드 여러 대를 한꺼번에 가져가기도 하므로, 이 서비스는 Spot 복제본을 늘리는 대신 on-demand에 둔다.
+노드에는 label과 taint `opspresso.com/tier=core`가 있다. Pod는 toleration과 node affinity로 들어온다.
+복제본이 하나인 stateful 서비스(PostgreSQL·LLDAP)는 required affinity를 쓴다. EBS volume이 `ap-northeast-2c`에 있으므로 `core-2c`에서 실행된다.
+복제본이 여럿인 서비스는 preferred affinity와 zone topology spread를 쓴다. 기본 복제본은 AZ마다 core에 놓이고, HPA 증가분과 rollout surge는 Spot으로 넘친다.
+core requests 합계는 약 0.8 vCPU·6.1Gi(DaemonSet 포함, 2026-11-11 측정)로 두 노드 allocatable(각 1780m·7.0Gi)의 절반 이하다.
+AMI drift에 따른 core 노드 교체는 03:00–05:00 KST(18:00–20:00 UTC)에만 허용한다. 노드 만료(expireAfter)는 budget과 관계없이 진행된다.
+
+그 밖의 workload는 재시작해도 데이터나 진행 중인 작업을 잃지 않는다(Argo CD, 관측 도구, GitLab, 샘플 앱 등). 이 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 large(2 vCPU, m 8Gi·r 16Gi) Spot 노드 6개(AZ마다 3개,
 `auto_mode_baseline_replicas_per_zone=3`)에서 실행한다. 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다.
 requests 합계는 약 3.7 vCPU·19Gi(앱·addon·sidecar·DaemonSet, 2026-11 측정)다. AZ마다 노드가 3개이므로 Spot 회수로 한 대가 빠져도
 그 AZ에 노드가 남아 EBS PersistentVolume을 쓰는 Pod가 같은 AZ에서 바로 다시 실행된다. 한 AZ의 노드가 모두 빠지면 `general`

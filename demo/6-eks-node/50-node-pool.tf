@@ -1,5 +1,5 @@
-# EKS Auto Mode capacity on Graviton (arm64) Spot
-# Every custom NodePool in this root is Spot-only, except agent-database (65-agent-database.tf). A reclaimed node is replaced by Karpenter; a reclaimed
+# EKS Auto Mode capacity on Graviton (arm64) Spot for workloads a restart does not harm
+# Services a restart interrupts run on the on-demand core NodePools (51-core-node-pool.tf). A reclaimed node is replaced by Karpenter; a reclaimed
 # baseline node leaves its AZ without a baseline node until Spot capacity returns.
 # baseline은 AZ마다 기준 노드 수를 고정하고, 증가분은 같은 조건의 dynamic `general` NodePool이 처리합니다.
 # 정적 NodePool은 노드를 AZ에 분산하지 않으므로 AZ별 NodePool을 둡니다. 한 AZ가 장애 나도 다른 AZ의 노드가 남습니다.
