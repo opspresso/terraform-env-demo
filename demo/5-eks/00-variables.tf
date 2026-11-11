@@ -21,3 +21,9 @@ variable "ip_family" {
   type        = string
   default     = "ipv4" # ipv4, ipv6
 }
+
+variable "sso_admin_permission_sets" {
+  description = "클러스터 관리자 권한을 줄 IAM Identity Center permission set 이름입니다. 이 계정에 역할이 없는 이름은 건너뜁니다."
+  type        = list(string)
+  default     = ["sso-opspresso"]
+}

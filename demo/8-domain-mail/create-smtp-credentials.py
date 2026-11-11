@@ -30,8 +30,6 @@ def main():
                                  *command, "--output", "json"], capture_output=True, text=True, check=True)
         return json.loads(result.stdout or "{}")
 
-    if aws("sts", "get-caller-identity")["Account"] != "396608815058":
-        raise SystemExit("Unexpected AWS account")
     if aws("iam", "list-access-keys", "--user-name", user)["AccessKeyMetadata"]:
         raise SystemExit("SMTP user already has a key; inspect or rotate it explicitly")
     args.output.parent.mkdir(mode=0o700, parents=True, exist_ok=True)

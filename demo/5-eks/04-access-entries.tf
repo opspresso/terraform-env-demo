@@ -1,12 +1,16 @@
-locals {
-  access_sso_ids = {
-    # IAM Identity Center permission set used for the AWS console (me@nalbam.com).
-    sso_opspresso = "sso-opspresso_c9c6de2d660a92e8"
-  }
+# IAM Identity Center creates one role per permission set with a random suffix. A permission set without a
+# role in this account (not assigned, or another account) gets no access entry instead of failing the plan.
+data "aws_iam_roles" "sso_admin" {
+  for_each = toset(var.sso_admin_permission_sets)
 
+  name_regex  = format("^AWSReservedSSO_%s_[0-9a-f]+$", each.value)
+  path_prefix = "/aws-reserved/sso.amazonaws.com/"
+}
+
+locals {
   access_entries = {
-    for key, value in local.access_sso_ids : key => {
-      principal_arn = format("arn:aws:iam::%s:role/aws-reserved/sso.amazonaws.com/ap-northeast-2/AWSReservedSSO_%s", local.account_id, value)
+    for name, roles in data.aws_iam_roles.sso_admin : replace(name, "-", "_") => {
+      principal_arn = one(roles.arns)
       type          = "STANDARD"
 
       policy_associations = {
@@ -17,6 +21,6 @@ locals {
           }
         }
       }
-    }
+    } if length(roles.arns) > 0
   }
 }
