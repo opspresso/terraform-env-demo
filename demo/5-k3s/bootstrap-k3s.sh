@@ -118,7 +118,8 @@ cat > /usr/local/sbin/refresh-k3s-ecr-secret <<'EOF'
 set -euo pipefail
 
 region="${AWS_REGION:-ap-northeast-2}"
-account_id="${AWS_ACCOUNT_ID:-396608815058}"
+# The node role belongs to the account that owns the ECR repositories (5-k3s reads them from the same account).
+account_id="${AWS_ACCOUNT_ID:-$(aws sts get-caller-identity --query Account --output text)}"
 registry="${account_id}.dkr.ecr.${region}.amazonaws.com"
 kubectl=(k3s kubectl)
 
@@ -147,7 +148,6 @@ Requires=k3s.service
 [Service]
 Type=oneshot
 Environment=AWS_REGION=ap-northeast-2
-Environment=AWS_ACCOUNT_ID=396608815058
 ExecStart=/usr/local/sbin/refresh-k3s-ecr-secret
 EOF
 
