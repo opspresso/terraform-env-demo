@@ -33,6 +33,17 @@ variable "general_max_cpu" {
   }
 }
 
+variable "general_amd64_max_cpu" {
+  description = "dynamic general-amd64 NodePool이 amd64 앱 Pod를 위해 추가할 수 있는 최대 vCPU 수입니다."
+  type        = number
+  default     = 16
+
+  validation {
+    condition     = var.general_amd64_max_cpu >= 2 && floor(var.general_amd64_max_cpu) == var.general_amd64_max_cpu
+    error_message = "general_amd64_max_cpu는 2 이상의 정수여야 합니다."
+  }
+}
+
 variable "gha_runner_max_runners" {
   description = "GitHub Actions runner Pod capacity; keep aligned with maxRunners in argocd-env-addons charts/arc-runners. Each Pod reserves 3.5 CPU and 14Gi memory."
   type        = number
