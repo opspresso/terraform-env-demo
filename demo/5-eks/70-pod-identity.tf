@@ -21,49 +21,12 @@ locals {
     }
   }
 
-  # 이 클러스터에만 있는 것.
+  # 이 클러스터의 addon. opspresso 서비스 전용 association은 terraform-env-opsp demo/7-shared가 관리합니다.
   demo_targets = {
-    "agent-studio" = {
-      namespace       = "agent-studio"
-      service_account = "agent-studio"
-    }
-    # Agent Runway manages tenant variables (SSM), object credentials and tenant Pod Identity.
-    "agent-runway" = {
-      namespace       = "agent-runway"
-      service_account = "agent-runway"
-    }
-    # Memory and Forge need no AWS data-plane identity.
-    # Agent Knowledge stores sources in its own bucket.
-    "agent-knowledge" = {
-      namespace       = "agent-knowledge"
-      service_account = "agent-knowledge"
-    }
-    "mcp-cloudwatch" = {
-      namespace       = "agent-mcps"
-      service_account = "mcp-cloudwatch"
-    }
-    # The Delivery registry step creates projects/* repositories and assumes the per-Project push role.
-    "app-delivery" = {
-      namespace       = "app-delivery"
-      service_account = "delivery-registry"
-    }
-    # The steps of the VM Target Workflows (argocd-env-projects app-deploy-eb/-asg, app-remove-eb/-asg, image-bake)
-    # assume the roles agent-runway-target-deploy and agent-runway-target-bake of the Target account
-    # (terraform-env-apps demo/8-runway-target).
-    "delivery-target" = {
-      namespace       = "app-delivery"
-      service_account = "delivery-target"
-    }
     # Atlantis (argocd-env-addons charts/atlantis) runs Terraform for the terraform-* repositories.
     "atlantis" = {
       namespace       = "addon-atlantis"
       service_account = "atlantis"
-    }
-    # GitLab (argocd-env-addons charts/gitlab) keeps its objects in the opspresso-gitlab-* buckets
-    # (terraform-env-apps demo/8-gitlab). Every GitLab Pod uses the one ServiceAccount gitlab.
-    "gitlab" = {
-      namespace       = "addon-gitlab"
-      service_account = "gitlab"
     }
     # ACK controllers (argocd-env-addons charts/aws-controllers) share one namespace. Each controller keeps its own
     # ServiceAccount ack-<service>-controller and role pod-role--ack-<service>.
