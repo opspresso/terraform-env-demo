@@ -6,14 +6,15 @@ state(`backend/demo/k3s-demo/terraform.tfstate`)는 비어 있다.
 
 | 파일 | 내용 |
 | --- | --- |
-| `86-k3s.tf` | EC2(m6i.xlarge, AL2023, gp3 120Gi), IAM role·instance profile, security group, `*.demo.agrt.dev` 레코드, Pod용 정책 연결 |
+| `86-k3s.tf` | EC2(m6i.xlarge, AL2023, gp3 120Gi), IAM role·instance profile, security group, `*.<ingress_domain>` 레코드(기본 `*.demo.opsp.dev`), Pod용 정책 연결 |
 | `85-k3s-iam.tf` | ECR pull(`var.ecr_repositories`)·`/k8s/common/*` SSM 읽기 정책 |
 | `87-k3s-resources.tf`, `configure-k3s-resources.sh` | k3s Go 메모리 목표·kubelet image GC를 매일 반영하는 SSM association |
 | `bootstrap-k3s.sh` | 최초 설치 user_data |
 
 ## 다시 만들 때 확인할 것
 
-- EKS가 `*.agrt.dev`(3-alb)와 `*.demo.rovr.dev`(3-alb)를 소유한다. k3s에 연결할 host를 먼저 정한다.
+- 데모 도메인은 `demo.opsp.dev`다. 지금은 EKS가 `*.demo.opsp.dev`(3-alb public ALB 레코드)와 `*.agrt.dev`를 소유한다.
+  k3s를 `demo.opsp.dev`로 만들려면 3-alb의 `*.demo.opsp.dev` 레코드를 먼저 옮긴다. 같은 이름의 A 레코드가 있으면 apply가 실패한다.
 - 노드 role이 Pod용 정책을 IMDS로 모든 Pod에 노출한다(hop limit 2). 테넌트 workload를 올리기 전에 Pod별 IAM을 설계한다.
 - 이미지 build runner(`ec2-linux-x64`)는 더 이상 이 호스트에 없다. CI는 Mac runner를 쓴다.
 
