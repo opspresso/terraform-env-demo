@@ -15,7 +15,7 @@ AWS 데모 환경의 공통 인프라(VPC, ALB, EKS, 기본 노드, addon 공통
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 opspresso 전용 리소스는 [terraform-env-opsp](https://github.com/opspresso/terraform-env-opsp)가 관리합니다. 서비스 Pod Identity 역할과 association, 전용 NodePool(Workspace, rovr sandbox, Agent Runway amd64 build, Agent PostgreSQL), `opspresso.com` 메일, 보관용 k3s 코드가 여기에 해당합니다.
 
-`eks-demo`의 노드는 `general-amd64`를 빼고 모두 Graviton(arm64, m·r 7세대 이상)이다. 서비스 이미지는 `linux/arm64`로
+`6-eks-node`의 NodePool은 `general-amd64`를 빼고 모두 Graviton(arm64, m·r 7세대 이상)이다. 내장 `system` pool의 노드 구성은 EKS Auto Mode가 정한다. 서비스 이미지는 `linux/arm64`로
 게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
 
 Agent Runway에서 architecture `amd64`를 고른 앱 Pod는 dynamic `general-amd64` NodePool의 amd64 large(2 vCPU, c·m·r 7세대 이상)
