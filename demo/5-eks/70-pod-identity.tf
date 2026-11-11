@@ -21,7 +21,7 @@ locals {
     }
   }
 
-  # 이 클러스터의 addon. opspresso 서비스 전용 association은 terraform-env-opsp demo/7-shared가 관리합니다.
+  # 이 클러스터의 addon. opspresso 서비스 전용 association은 terraform-env-opsp demo/7-eks-shared가 관리합니다.
   demo_targets = {
     # Atlantis (argocd-env-addons charts/atlantis) runs Terraform for the terraform-* repositories.
     "atlantis" = {
