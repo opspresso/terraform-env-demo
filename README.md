@@ -10,13 +10,18 @@ AWS 데모 환경의 공통 인프라(VPC, ALB, EKS, 기본 노드, addon 공통
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | addon 공통 Pod Identity 역할(external-dns, external-secrets, atlantis, ACK)과 GitHub Actions OIDC provider |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 on-demand 중요 서비스 노드(`core-2a`·`core-2c` 각 1개), AZ별 Spot 기준 노드(2a·2c 각 2개), 증가분 dynamic pool, GitHub Actions runner pool |
+| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 on-demand 중요 서비스 노드(`core-2a`·`core-2c` 각 1개), AZ별 Spot 기준 노드(2a·2c 각 2개), 증가분 dynamic pool, amd64 앱용 dynamic pool, GitHub Actions runner pool |
 
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 opspresso 전용 리소스는 [terraform-env-opsp](https://github.com/opspresso/terraform-env-opsp)가 관리합니다. 서비스 Pod Identity 역할과 association, 전용 NodePool(Workspace, rovr sandbox, Agent Runway amd64 build, Agent PostgreSQL), `opspresso.com` 메일, 보관용 k3s 코드가 여기에 해당합니다.
 
-`eks-demo`의 모든 노드는 Graviton(arm64, m·r 7세대 이상)이다. 서비스 이미지는 `linux/arm64`로
+`eks-demo`의 노드는 `general-amd64`를 빼고 모두 Graviton(arm64, m·r 7세대 이상)이다. 서비스 이미지는 `linux/arm64`로
 게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
+
+Agent Runway에서 architecture `amd64`를 고른 앱 Pod는 dynamic `general-amd64` NodePool의 amd64 large(2 vCPU, c·m·r 7세대 이상)
+Spot 노드에서 실행한다(`general_amd64_max_cpu`, 기본 16 vCPU). 노드에는 taint `opspresso.com/arch=amd64:NoSchedule`가 있고,
+`argocd-env-projects`의 `app-deploy`가 그 앱 Pod에만 toleration과 nodeSelector `kubernetes.io/arch=amd64`를 쓴다.
+그런 앱이 없으면 노드가 없고, 노드가 비면 5분 뒤 회수한다.
 
 재시작이 작업을 끊는 중요 서비스는 AZ별 `core-2a`·`core-2c` NodePool의 on-demand large(2 vCPU, m 8Gi) 노드 2개(AZ마다 1개)에서 실행한다.
 대상은 공유 Agent PostgreSQL, 로그인 경로(LLDAP·Dex), Istio ingress·istiod, Agent 서비스(Studio·Memory·Models·Runway·Forge·Knowledge)와 rovr다.
