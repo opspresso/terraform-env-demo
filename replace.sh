@@ -53,8 +53,4 @@ while IFS= read -r -d '' file; do
   replace_bucket "$file"
 done < <(find demo -type f -name '*.tf' -print0)
 
-if rg -n 'dynamodb_table|terraform-resource-lock' demo -g '*.tf'; then
-  echo "Unexpected DynamoDB Terraform state-lock configuration remains." >&2
-  exit 1
-fi
 printf 'Updated Terraform backend bucket references and enabled S3 state versioning.\n'

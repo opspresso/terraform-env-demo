@@ -107,9 +107,9 @@ aws configure get region
 ./replace.sh
 ```
 
-`replace.sh`는 state 저장용 S3 bucket을 만들고 코드의 bucket 이름을 변경합니다. 현재 스크립트가 만드는 DynamoDB 잠금 테이블은 사용하지 않습니다.
+`replace.sh`는 state 저장용 S3 bucket을 만들고 코드의 bucket 이름을 변경합니다.
 
-`6-eks-node`와 `8-domain-mail`은 `use_lockfile = true`로 S3 state 잠금을 사용합니다.
+모든 root는 `use_lockfile = true`로 S3 state 잠금을 사용합니다. DynamoDB 잠금 테이블은 사용하지 않습니다.
 실행 역할은 state 객체 외에 같은 key의 `.tflock` 객체를 읽고 쓰고 삭제할 수 있어야 합니다.
 [공식 문서](https://developer.hashicorp.com/terraform/language/backend/s3#state-locking)
 
