@@ -96,7 +96,7 @@ Terraform apply와 실제 장애 주입은 별도 승인 뒤 진행한다.
 
 ## 준비
 
-Terraform `1.17.1`, AWS CLI, `jq`가 필요합니다. 다른 계정에서 사용하려면 도메인과 기존 AWS 리소스 참조도 맞춰야 합니다.
+Terraform `1.17.1`, AWS CLI, `jq`, `git`이 필요합니다.
 
 새 backend를 만들 때 저장소 루트에서 실행합니다. AWS profile의 리전은 `ap-northeast-2`로 설정합니다.
 
@@ -107,7 +107,24 @@ aws configure get region
 ./replace.sh
 ```
 
-`replace.sh`는 state 저장용 S3 bucket을 만들고 코드의 bucket 이름을 변경합니다.
+`replace.sh`는 다음을 수행합니다.
+
+- state 저장용 S3 bucket `terraform-workshop-<계정 ID>`를 만들고 public access 차단, 암호화, 버전 관리를 설정합니다. lifecycle 설정이 없으면 이전 state 버전을 90일 뒤 삭제하는 규칙을 추가합니다.
+- `demo/2-vpc/02-backend.tf`의 bucket 이름에서 현재 코드의 계정 ID를 읽고, Git이 추적하는 모든 파일에서 그 값을 인증된 계정 ID로 바꿉니다.
+- 바꾼 뒤 이전 계정 ID가 남아 있으면 실패합니다. 마지막에 `git diff --stat`으로 바뀐 파일을 보여 줍니다.
+
+### 다른 계정에서 사용
+
+`replace.sh`는 계정 ID만 바꿉니다. 아래 리소스는 계정에 미리 있어야 하거나 변수로 맞춰야 합니다.
+
+| root | 필요한 것 | 맞추는 방법 |
+| --- | --- | --- |
+| `3-alb` | `domains`의 키인 Route53 public hosted zone. `issued_certificates`에 없는 인증서 도메인(현재 `agrt.dev`)의 ACM 인증서 | `domains`·`primary_domain`·`issued_certificates` 기본값 |
+| `4-role` | GitHub Actions OIDC provider | 없으면 `create_github_oidc_provider = true` |
+| `4-role` | GitLab 저장용 S3 bucket 이름 `opspresso-gitlab-*` | 다른 이름을 쓰면 `policies/gitlab.json`의 Resource |
+| `5-eks` | 관리자로 등록할 IAM Identity Center permission set | `sso_admin_permission_sets`. 이 계정에 역할이 없는 이름은 건너뛰고, 클러스터 생성자는 항상 관리자입니다 |
+| `5-k3s` | Route53 public hosted zone, ECR repository, default VPC의 `ap-northeast-2d` subnet, EC2 key pair | `ingress_zone`·`ingress_domain`·`cert_manager_zones`·`ecr_repositories`·`key_name` |
+| `8-domain-mail` | `opspresso.com` Route53 zone과 Cloudflare Email Routing | `03-locals.tf`의 `domain`, `cloudflare_mx_records` |
 
 모든 root는 `use_lockfile = true`로 S3 state 잠금을 사용합니다. DynamoDB 잠금 테이블은 사용하지 않습니다.
 실행 역할은 state 객체 외에 같은 key의 `.tflock` 객체를 읽고 쓰고 삭제할 수 있어야 합니다.

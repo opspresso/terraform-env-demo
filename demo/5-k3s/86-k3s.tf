@@ -89,7 +89,7 @@ resource "aws_instance" "k3s" {
   subnet_id                   = data.aws_subnet.default.id
   vpc_security_group_ids      = [aws_security_group.k3s.id]
   iam_instance_profile        = aws_iam_instance_profile.k3s.name
-  key_name                    = "nalbam-bruce"
+  key_name                    = var.key_name
   ebs_optimized               = true
   associate_public_ip_address = true
 
@@ -128,8 +128,8 @@ resource "aws_instance" "k3s" {
 }
 
 resource "aws_route53_record" "k3s_agrt_wildcard" {
-  zone_id = data.aws_route53_zone.k3s_agrt.zone_id
-  name    = "*.demo.agrt.dev"
+  zone_id = data.aws_route53_zone.k3s[var.ingress_zone].zone_id
+  name    = "*.${var.ingress_domain}"
   type    = "A"
   ttl     = 300
   records = [aws_instance.k3s.public_ip]
@@ -170,13 +170,10 @@ resource "aws_iam_role_policy" "k3s_cert_manager_route53" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "ChangeK3sHostedZone"
-        Effect = "Allow"
-        Action = "route53:ChangeResourceRecordSets"
-        Resource = [
-          "arn:aws:route53:::hostedzone/${data.aws_route53_zone.k3s_rovr.zone_id}",
-          "arn:aws:route53:::hostedzone/${data.aws_route53_zone.k3s_agrt.zone_id}",
-        ]
+        Sid      = "ChangeK3sHostedZone"
+        Effect   = "Allow"
+        Action   = "route53:ChangeResourceRecordSets"
+        Resource = [for zone in var.cert_manager_zones : "arn:aws:route53:::hostedzone/${data.aws_route53_zone.k3s[zone].zone_id}"]
       },
       {
         Sid    = "ReadRoute53ForDns01"

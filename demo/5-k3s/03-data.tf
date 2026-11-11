@@ -51,12 +51,9 @@ data "aws_ami" "al2023" {
   }
 }
 
-data "aws_route53_zone" "k3s_rovr" {
-  name         = "rovr.dev"
-  private_zone = false
-}
+data "aws_route53_zone" "k3s" {
+  for_each = toset(concat([var.ingress_zone], var.cert_manager_zones))
 
-data "aws_route53_zone" "k3s_agrt" {
-  name         = "agrt.dev"
+  name         = each.value
   private_zone = false
 }
