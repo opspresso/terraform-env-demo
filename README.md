@@ -35,8 +35,6 @@ AMI drift에 따른 core 노드 교체는 03:00–05:00 KST(18:00–20:00 UTC)�
 그 밖의 workload는 재시작해도 데이터나 진행 중인 작업을 잃지 않는다(Argo CD, 관측 도구, GitLab, 샘플 앱 등). 이 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 r large(2 vCPU·16Gi) Spot 노드 2개(AZ마다 1개,
 `auto_mode_baseline_replicas_per_zone=1`)에서 실행한다. 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다.
 이 workload는 메모리가 노드 수를 정하고 r large의 Spot 가격은 m large(8Gi)와 비슷하므로 baseline은 r만 쓴다.
-Auto Mode 기본 NodeClass는 large 노드의 Pod 수를 27개로 제한해 Pod 약 65개(DaemonSet 포함)가 2대에 들어가지 않는다.
-그래서 baseline과 `general`은 기본 NodeClass와 같은 role·subnet·security group에 kubelet `maxPods`만 올린 NodeClass `dense`(`dense_max_pods`, 기본 58)를 쓴다.
 core 밖 requests 합계는 약 2.9 vCPU·19.0Gi(DaemonSet 포함, 2026-11-13 측정)로 2대 allocatable(3.56 vCPU·29.2Gi)의 CPU 82%·메모리 65%다.
 Spot 회수로 한 AZ의 baseline 노드가 빠지면 `general` NodePool이 같은 AZ에 Spot 노드를 추가하고, 그동안 EBS PersistentVolume을 쓰는 Pod는 대기한다.
 해당 AZ에 맞는 Spot 용량이 없으면 용량이 생길 때까지 EBS 기반 Pod가 대기한다.

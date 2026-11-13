@@ -17,32 +17,6 @@ locals {
   ]
 }
 
-# Auto Mode's default NodeClass caps a large node at 27 Pods (the ENI formula), so two large nodes hold 54 Pods while
-# the restartable workloads run about 65 with DaemonSets (2026-11-13). Pods, not CPU or memory, then decided the node count.
-# This class is the default one (same role, subnets and security group) with a higher kubelet maxPods. Prefix
-# delegation gives a large node far more Pod IPs than this, and Auto Mode clamps the value at 110.
-resource "kubernetes_manifest" "dense_node_class" {
-  manifest = {
-    apiVersion = "eks.amazonaws.com/v1"
-    kind       = "NodeClass"
-    metadata   = { name = "dense" }
-    spec = {
-      role                       = data.terraform_remote_state.eks.outputs.workspace_node_role_name
-      subnetSelectorTerms        = [for id in data.terraform_remote_state.eks.outputs.workspace_subnet_ids : { id = id }]
-      securityGroupSelectorTerms = [{ id = data.terraform_remote_state.eks.outputs.workspace_security_group_id }]
-      networkPolicy              = "DefaultAllow"
-      ephemeralStorage = {
-        size       = "80Gi"
-        iops       = 3000
-        throughput = 125
-      }
-      advancedCompute = {
-        kubelet = { maxPods = var.dense_max_pods }
-      }
-    }
-  }
-}
-
 resource "kubernetes_manifest" "baseline_zone" {
   for_each = toset(var.baseline_zones)
 
@@ -63,7 +37,7 @@ resource "kubernetes_manifest" "baseline_zone" {
           nodeClassRef = {
             group = "eks.amazonaws.com"
             kind  = "NodeClass"
-            name  = kubernetes_manifest.dense_node_class.manifest.metadata.name
+            name  = "default"
           }
 
           # 고정 용량을 계산할 수 있도록 r large(2 vCPU·16Gi)로 고정합니다. 이 workload는 메모리가 노드 수를
@@ -100,7 +74,7 @@ resource "kubernetes_manifest" "general" {
           nodeClassRef = {
             group = "eks.amazonaws.com"
             kind  = "NodeClass"
-            name  = kubernetes_manifest.dense_node_class.manifest.metadata.name
+            name  = "default"
           }
 
           # m·r large. r은 같은 vCPU에 메모리가 두 배라 m 기준 배치가 그대로 맞고, 후보 Spot pool을 늘려
