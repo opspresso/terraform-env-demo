@@ -12,9 +12,9 @@ variable "baseline_zones" {
 variable "auto_mode_baseline_replicas_per_zone" {
   description = "EKS Auto Mode가 AZ마다 유지할 기준 노드 수를 입력합니다."
   type        = number
-  # Two 2-vCPU Spot nodes per AZ hold the restartable workloads; the critical services run on the core NodePools.
-  # One Spot reclaim takes a quarter of this capacity, and general adds nodes until Spot returns.
-  default = 2
+  # One 2-vCPU r Spot node (16Gi) per AZ holds the restartable workloads; the critical services run on the core
+  # NodePools. One Spot reclaim takes half of this capacity, and general adds nodes until Spot returns.
+  default = 1
 
   validation {
     condition     = var.auto_mode_baseline_replicas_per_zone >= 1 && floor(var.auto_mode_baseline_replicas_per_zone) == var.auto_mode_baseline_replicas_per_zone
@@ -45,7 +45,7 @@ variable "general_amd64_max_cpu" {
 }
 
 variable "gha_runner_max_runners" {
-  description = "GitHub Actions runner Pod capacity; keep aligned with maxRunners in argocd-env-addons charts/arc-runners. Each Pod reserves 3.5 CPU and 14Gi memory."
+  description = "GitHub Actions runner Pod capacity; keep aligned with maxRunners in argocd-env-addons charts/arc-runners. Each Pod reserves 2.5 CPU and 9Gi memory."
   type        = number
   default     = 6
   validation {

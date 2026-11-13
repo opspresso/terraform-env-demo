@@ -1,8 +1,8 @@
 locals {
-  # An 8-CPU m node (32Gi; r 64Gi) holds two runner Pods (runner + dind sidecar,
-  # 3.5 CPU / 14Gi requests) after kubelet and DaemonSets. One extra node
+  # An 8-CPU m node (32Gi; r 64Gi) holds three runner Pods (runner + dind sidecar,
+  # 2.5 CPU / 9Gi requests) after kubelet and DaemonSets. One extra node
   # permits replacement.
-  gha_runner_node_limit = ceil(var.gha_runner_max_runners / 2) + 1
+  gha_runner_node_limit = ceil(var.gha_runner_max_runners / 3) + 1
 }
 
 # GitHub Actions runners (argocd-env-addons charts/arc-runners). Runner Pods

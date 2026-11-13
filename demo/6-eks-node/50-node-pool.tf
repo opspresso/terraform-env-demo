@@ -1,20 +1,18 @@
 # EKS Auto Mode capacity on Graviton (arm64) Spot for workloads a restart does not harm
 # Services a restart interrupts run on the on-demand core NodePools (51-core-node-pool.tf). A reclaimed node is replaced by Karpenter; a reclaimed
 # baseline node leaves its AZ without a baseline node until Spot capacity returns.
-# baseline은 AZ마다 기준 노드 수를 고정하고, 증가분은 같은 조건의 dynamic `general` NodePool이 처리합니다.
+# baseline은 AZ마다 기준 노드 수를 고정하고, 증가분은 같은 large 크기의 dynamic `general` NodePool이 처리합니다.
 # 정적 NodePool은 노드를 AZ에 분산하지 않으므로 AZ별 NodePool을 둡니다. 한 AZ가 장애 나도 다른 AZ의 노드가 남습니다.
 # 5-eks는 내장 general-purpose pool을 켜지 않으므로 앱 Pod는 이 arm64 노드에서 실행됩니다.
 # amd64 이미지를 고른 Agent Runway 앱 Pod만 taint를 허용해 dynamic `general-amd64` NodePool에서 실행됩니다.
 # plan 시점에 EKS API가 필요하므로 5-eks를 먼저 적용합니다.
 
 locals {
-  # m·r 7세대 이상 Graviton 인스턴스. r은 같은 vCPU에 메모리가 두 배라 m 기준 배치가 그대로 맞고,
-  # 후보 Spot pool을 늘려 회수와 용량 부족을 줄입니다.
-  graviton_requirements = [
+  # 7세대 이상 Graviton Spot 인스턴스.
+  graviton_spot_requirements = [
     { key = "kubernetes.io/arch", operator = "In", values = ["arm64"] },
     { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
     { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
-    { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m", "r"] },
     { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
   ]
 }
@@ -42,9 +40,10 @@ resource "kubernetes_manifest" "baseline_zone" {
             name  = "default"
           }
 
-          # 고정 용량을 계산할 수 있도록 2 vCPU(large: m 8Gi, r 16Gi)로 고정합니다. 작은 노드를 여러 대 두어
-          # Spot 회수 한 번에 빠지는 용량을 줄입니다.
-          requirements = concat(local.graviton_requirements, [
+          # 고정 용량을 계산할 수 있도록 r large(2 vCPU·16Gi)로 고정합니다. 이 workload는 메모리가 노드 수를
+          # 정하고, r large의 Spot 가격은 m large(8Gi)와 비슷합니다.
+          requirements = concat(local.graviton_spot_requirements, [
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["r"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["2"] },
             { key = "topology.kubernetes.io/zone", operator = "In", values = [each.key] },
           ])
@@ -78,8 +77,10 @@ resource "kubernetes_manifest" "general" {
             name  = "default"
           }
 
-          requirements = concat(local.graviton_requirements, [
-            # baseline과 같은 large만 씁니다.
+          # m·r large. r은 같은 vCPU에 메모리가 두 배라 m 기준 배치가 그대로 맞고, 후보 Spot pool을 늘려
+          # 회수와 용량 부족을 줄입니다.
+          requirements = concat(local.graviton_spot_requirements, [
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m", "r"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["2"] },
           ])
         }
