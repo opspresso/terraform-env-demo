@@ -22,6 +22,17 @@ variable "auto_mode_baseline_replicas_per_zone" {
   }
 }
 
+variable "dense_max_pods" {
+  description = "kubelet maxPods for the baseline and general nodes (NodeClass dense). Auto Mode clamps it to the Pod IPs of the instance and 110."
+  type        = number
+  default     = 58
+
+  validation {
+    condition     = var.dense_max_pods >= 27 && var.dense_max_pods <= 110 && floor(var.dense_max_pods) == var.dense_max_pods
+    error_message = "dense_max_pods는 27 이상 110 이하의 정수여야 합니다."
+  }
+}
+
 variable "general_max_cpu" {
   description = "dynamic general NodePool이 baseline 밖에서 추가할 수 있는 최대 vCPU 수입니다."
   type        = number
