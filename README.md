@@ -36,6 +36,8 @@ AMI drift에 따른 core 노드 교체는 03:00–05:00 KST(18:00–20:00 UTC)�
 `auto_mode_baseline_replicas_per_zone=1`)에서 실행한다. 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다.
 이 workload는 메모리가 노드 수를 정하고 r large의 Spot 가격은 m large(8Gi)와 비슷하므로 baseline은 r만 쓴다.
 core 밖 requests 합계는 약 2.9 vCPU·19.0Gi(DaemonSet 포함, 2026-11-13 측정)로 2대 allocatable(3.56 vCPU·29.2Gi)의 CPU 82%·메모리 65%다.
+노드 수는 Pod 수가 정한다. EKS Auto Mode는 노드당 Pod를 110과 `ENI 수 × (ENI당 IP − 1)` 중 작은 값으로 제한해 large는 27개이고, kubelet `maxPods`로 올릴 수 없다.
+core 밖 Pod는 DaemonSet 포함 약 70개라 baseline 2대(54개)를 넘는 분량을 `general`이 large 노드 1대 이상으로 받는다.
 Spot 회수로 한 AZ의 baseline 노드가 빠지면 `general` NodePool이 같은 AZ에 Spot 노드를 추가하고, 그동안 EBS PersistentVolume을 쓰는 Pod는 대기한다.
 해당 AZ에 맞는 Spot 용량이 없으면 용량이 생길 때까지 EBS 기반 Pod가 대기한다.
 rollout surge나 증가분은 dynamic `general` NodePool(`general_max_cpu`, 기본 16 vCPU)이 m·r large 노드를 추가해 처리하고,
