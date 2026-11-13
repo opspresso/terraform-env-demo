@@ -32,20 +32,21 @@ Spot 회수는 2분 예고 뒤 같은 AZ의 노드 여러 대를 한꺼번에 �
 core requests 합계는 약 0.8 vCPU·6.1Gi(DaemonSet 포함, 2026-11-11 측정)로 두 노드 allocatable(각 1780m·7.0Gi)의 절반 이하다.
 AMI drift에 따른 core 노드 교체는 03:00–05:00 KST(18:00–20:00 UTC)에만 허용한다. 노드 만료(expireAfter)는 budget과 관계없이 진행된다.
 
-그 밖의 workload는 재시작해도 데이터나 진행 중인 작업을 잃지 않는다(Argo CD, 관측 도구, GitLab, 샘플 앱 등). 이 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 large(2 vCPU, m 8Gi·r 16Gi) Spot 노드 4개(AZ마다 2개,
-`auto_mode_baseline_replicas_per_zone=2`)에서 실행한다. 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다.
-core 밖 requests 합계는 약 3.5 vCPU·18.8Gi(DaemonSet 포함, 2026-11-11 측정)로 m 기준 4대 allocatable(7.1 vCPU·27.5Gi)의 메모리 68%다. AZ마다 노드가 2개이므로 Spot 회수로 한 대가 빠져도
-그 AZ에 노드가 남아 EBS PersistentVolume을 쓰는 Pod가 같은 AZ에서 바로 다시 실행된다. 한 AZ의 노드가 모두 빠지면 `general`
-NodePool이 같은 AZ에 Spot 노드를 추가한다. 해당 AZ에 맞는 Spot 용량이 없으면 용량이 생길 때까지 EBS 기반 Pod가 대기한다.
-rollout surge나 증가분은 dynamic `general` NodePool(`general_max_cpu`, 기본 16 vCPU)이 같은 large 노드를 추가해 처리하고,
+그 밖의 workload는 재시작해도 데이터나 진행 중인 작업을 잃지 않는다(Argo CD, 관측 도구, GitLab, 샘플 앱 등). 이 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 r large(2 vCPU·16Gi) Spot 노드 2개(AZ마다 1개,
+`auto_mode_baseline_replicas_per_zone=1`)에서 실행한다. 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다.
+이 workload는 메모리가 노드 수를 정하고 r large의 Spot 가격은 m large(8Gi)와 비슷하므로 baseline은 r만 쓴다.
+core 밖 requests 합계는 약 2.9 vCPU·19.0Gi(DaemonSet 포함, 2026-11-13 측정)로 2대 allocatable(3.56 vCPU·29.2Gi)의 CPU 82%·메모리 65%다.
+Spot 회수로 한 AZ의 baseline 노드가 빠지면 `general` NodePool이 같은 AZ에 Spot 노드를 추가하고, 그동안 EBS PersistentVolume을 쓰는 Pod는 대기한다.
+해당 AZ에 맞는 Spot 용량이 없으면 용량이 생길 때까지 EBS 기반 Pod가 대기한다.
+rollout surge나 증가분은 dynamic `general` NodePool(`general_max_cpu`, 기본 16 vCPU)이 m·r large 노드를 추가해 처리하고,
 비거나 활용도가 낮으면 회수한다. 기준 용량에는 유휴 시간에도 비용이 발생한다.
 requests·sidecar·DaemonSet 예약을 합산하고 남은 노드의 allocatable과 비교해 조정한다.
 
 GitHub Actions runner pool(`gha-runners`)은 `argocd-env-addons`의 ARC runner scale set(`charts/arc-runners`)이 쓴다.
 전용 `gha-runners` NodeClass는 Workspace와 같은 node 역할·subnet·security group을 쓰지만, image build와 kind가
 외부 registry에 접근하도록 `DefaultAllow`이고 Docker 저장소용 200Gi ephemeral disk를 둔다. taint `opspresso.com/gha-runner`로
-runner Pod만 받는다. runner Pod 하나는 runner와 dind sidecar를 합쳐 3.5 CPU·14Gi를 요청하므로 8-CPU m·r 노드(32Gi 이상)에 2개씩 배치한다.
-한도는 `gha_runner_max_runners=6`에서 노드 4대(CPU 32개·메모리 256Gi)이며 교체용 노드 1대를 포함한다. 이 값은
+runner Pod만 받는다. runner Pod 하나는 runner와 dind sidecar를 합쳐 2.5 CPU·9Gi를 요청하므로 8-CPU m·r 노드(32Gi 이상)에 3개씩 배치한다.
+한도는 `gha_runner_max_runners=6`에서 노드 3대(CPU 24개·메모리 192Gi)이며 교체용 노드 1대를 포함한다. 이 값은
 `charts/arc-runners`의 `maxRunners`와 같게 유지한다. job이 있을 때만 Spot 노드를 만들고(Spot이 부족하면 job이 대기한다), 비면 10분 뒤 회수한다.
 runner Pod는 `karpenter.sh/do-not-disrupt`를 달아 통합 회수가 job을 끊지 않는다. Spot 회수는 실행 중인 job을 실패시킨다.
 
