@@ -100,7 +100,7 @@ resource "kubernetes_manifest" "general" {
   }
 }
 
-# Agent Runway에서 architecture amd64를 고른 앱 Pod를 받습니다(agent-platform docs/DELIVERY_V5.md).
+# Agent Runway에서 architecture amd64를 고른 앱 Pod를 받습니다(agent-platform docs/APP_DELIVERY.md, Workflow).
 # app-deploy가 nodeSelector kubernetes.io/arch=amd64와 이 taint의 toleration을 씁니다. 다른 Pod는 들어오지 않으므로
 # 그런 앱이 없으면 노드도 없습니다.
 resource "kubernetes_manifest" "general_amd64" {
