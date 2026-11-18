@@ -89,6 +89,23 @@ Terraform apply와 실제 장애 주입은 별도 승인 뒤 진행한다.
 - 주석은 코드만으로 알 수 없는 이유·제약·외부 연결을 설명합니다. 파일 이름이나 블록 종류를 반복하는 머리 주석(`# variable`, `# output` 등)은 쓰지 않습니다.
 - 파일 이름을 바꾸거나 블록을 다른 파일로 옮겨도 state 주소는 바뀌지 않습니다. 리소스 이름을 바꿀 때는 `moved` 블록을 함께 씁니다.
 
+### IAM 정책
+
+IAM 정책 문서는 `.tf`에 쓰지 않고 각 root의 `policies/` 아래 JSON 파일로 둡니다. 대상은 IAM 역할의 신뢰 정책(`assume_role_policy`)과 `aws_iam_policy`·`aws_iam_role_policy`·`aws_iam_user_policy`·`aws_iam_group_policy`의 `policy`입니다.
+
+| 파일 | 내용 |
+| --- | --- |
+| `policies/<이름>.json` | 권한 정책 |
+| `policies/trust/<이름>.json` | IAM 역할의 신뢰 정책 |
+
+- 고정된 정책은 `file("${path.module}/policies/<이름>.json")`로 읽습니다.
+- 계정 ID·ARN 같은 Terraform 값이 들어가는 정책은 `templatefile()`로 읽습니다. JSON 문자열 안에 `${account_id}` 같은 자리 표시자를 두고, 목록 값은 `${jsonencode(<목록>)}`으로 넣습니다.
+- `templatefile()`로 읽는 파일에서는 IAM 정책 변수를 `$${aws:PrincipalTag/...}`처럼 `$$`로 씁니다. `$`가 하나이면 `templatefile()`이 Terraform 식으로 해석해 오류가 납니다.
+- JSON에는 주석을 쓸 수 없습니다. 정책의 이유와 제약은 정책 파일을 읽는 리소스 위에 주석으로 씁니다.
+- `4-role`은 `policies/*.json` 파일마다 Pod Identity 역할을 만듭니다. 그 역할의 권한 정책이 아닌 파일은 `policies/trust/`처럼 하위 디렉터리에 둡니다.
+- `scripts/check-layout.sh`는 `data "aws_iam_policy_document"`와 `file()`·`templatefile()`로 읽지 않은 IAM 정책을 오류로 보고합니다.
+- S3 bucket policy 같은 리소스 기반 정책은 이 규칙의 대상이 아닙니다.
+
 ## 준비
 
 Terraform `1.17.1`, AWS CLI, `jq`, `git`이 필요합니다.
