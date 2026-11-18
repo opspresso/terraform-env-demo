@@ -3,7 +3,9 @@ resource "aws_iam_role" "this" {
 
   name = format("%s--%s", local.prefix_name, each.key)
 
-  assume_role_policy = data.aws_iam_policy_document.this.json
+  # 같은 계정의 EKS Pod Identity 만 이 역할을 맡을 수 있도록 제한합니다.
+  # 클러스터 단위로 더 좁히려면 aws:SourceArn 에 클러스터 ARN 을 추가합니다.
+  assume_role_policy = templatefile("${path.module}/policies/trust/pod-identity.json", { account_id = local.account_id })
 
   tags = {
     Name = format("%s--%s", local.prefix_name, each.key)
