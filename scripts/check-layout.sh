@@ -25,16 +25,18 @@ only_blocks() {
 
 # iam_policies <dir>: IAM policy documents live in JSON files under policies/ and are read with file() or templatefile().
 iam_policies() {
-  local dir="$1" location line
-  while IFS=$'\t' read -r location line; do
-    err "$location" "IAM policy belongs in policies/*.json, read with file() or templatefile(): $line"
-  done < <(awk '
+  local dir="$1" findings location line
+  findings="$(awk '
     /^resource "aws_iam_(role|policy|role_policy|user_policy|group_policy)" / { iam = 1 }
     /^}/ { iam = 0 }
-    /^data "aws_iam_policy_document" / || (iam && /^  (assume_role_)?policy *= / && !/= (file|templatefile)\(/) {
+    /^data "aws_iam_policy_document" / || (iam && /^  (assume_role_)?policy *= / && !/^  (assume_role_)?policy *= *(file|templatefile)\(/) {
       print FILENAME ",line=" FNR "\t" $0
     }
-  ' "$dir"/*.tf)
+  ' "$dir"/*.tf)" || { err "$dir" "IAM policy scan failed"; return; }
+  while IFS=$'\t' read -r location line; do
+    [[ -n "$location" ]] || continue
+    err "$location" "IAM policy belongs in policies/*.json, read with file() or templatefile(): $line"
+  done <<<"$findings"
 }
 
 for root in demo/*/; do
