@@ -5,9 +5,17 @@
 # 정적 NodePool은 노드를 AZ에 분산하지 않으므로 AZ별 NodePool을 둡니다. 한 AZ가 장애 나도 다른 AZ의 노드가 남습니다.
 # 5-eks는 내장 general-purpose pool을 켜지 않으므로 앱 Pod는 이 arm64 노드에서 실행됩니다.
 # amd64 이미지를 고른 Agent Runway 앱 Pod만 taint를 허용해 dynamic `general-amd64` NodePool에서 실행됩니다.
+# large 노드에 들어가지 않는 큰 앱 Pod(Agent Runway 크기 xlarge 이상)는 `general-large`·`general-large-amd64`가 받습니다.
+# 두 pool은 weight가 낮아 large에 들어가는 Pod는 지금처럼 `general`·`general-amd64`에서 실행됩니다.
 # plan 시점에 EKS API가 필요하므로 5-eks를 먼저 적용합니다.
 
 locals {
+  # large(2 vCPU) pool이 큰 pool보다 먼저 선택됩니다. Karpenter는 weight가 높은 NodePool부터 고르고, 없으면 0입니다.
+  large_pool_weight = 10
+  # 큰 앱 Pod를 받는 노드 크기. Agent Runway 크기의 Pod는 같은 이름 instance의 vCPU 절반을 요청하므로
+  # (4xlarge는 8 CPU·16Gi) 같은 이름의 노드에 DaemonSet과 함께 들어갑니다. 8xlarge rollout은 32 vCPU 노드 두 대를 씁니다.
+  large_pod_instance_cpus = ["4", "8", "16", "32"]
+
   # 7세대 이상 Graviton Spot 인스턴스.
   graviton_spot_requirements = [
     { key = "kubernetes.io/arch", operator = "In", values = ["arm64"] },
@@ -69,6 +77,8 @@ resource "kubernetes_manifest" "general" {
     }
 
     spec = {
+      weight = local.large_pool_weight
+
       template = {
         spec = {
           nodeClassRef = {
@@ -113,6 +123,8 @@ resource "kubernetes_manifest" "general_amd64" {
     }
 
     spec = {
+      weight = local.large_pool_weight
+
       template = {
         spec = {
           nodeClassRef = {
@@ -145,6 +157,95 @@ resource "kubernetes_manifest" "general_amd64" {
       limits = {
         cpu    = tostring(var.general_amd64_max_cpu)
         memory = "${var.general_amd64_max_cpu * 8}Gi"
+      }
+    }
+  }
+}
+
+# large(2 vCPU) 노드에 들어가지 않는 arm64 앱 Pod를 받습니다(Agent Runway 크기 xlarge 이상, agent-platform docs/APP_DELIVERY.md
+# "크기"). weight가 `general`보다 낮아 large에 들어가는 Pod는 오지 않습니다.
+resource "kubernetes_manifest" "general_large" {
+  manifest = {
+    apiVersion = "karpenter.sh/v1"
+    kind       = "NodePool"
+
+    metadata = {
+      name = "general-large"
+    }
+
+    spec = {
+      template = {
+        spec = {
+          nodeClassRef = {
+            group = "eks.amazonaws.com"
+            kind  = "NodeClass"
+            name  = "default"
+          }
+
+          # c(2Gi/vCPU)를 더해 큰 크기의 후보 Spot pool을 늘립니다. 크기 Pod의 메모리는 vCPU당 2Gi입니다.
+          requirements = concat(local.graviton_spot_requirements, [
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["c", "m", "r"] },
+            { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = local.large_pod_instance_cpus },
+          ])
+        }
+      }
+
+      # 큰 Pod 하나가 노드 대부분을 쓰므로 통합 이동으로 재시작하지 않습니다. 마지막 Pod가 떠나면 5분 뒤 회수합니다.
+      disruption = {
+        consolidationPolicy = "WhenEmpty"
+        consolidateAfter    = "5m"
+        budgets             = [{ nodes = "1" }]
+      }
+
+      limits = {
+        cpu    = tostring(var.general_large_max_cpu)
+        memory = "${var.general_large_max_cpu * 8}Gi"
+      }
+    }
+  }
+}
+
+# `general-large`의 amd64 짝입니다. `general-amd64`와 같은 taint를 달아 amd64를 고른 앱 Pod만 받습니다.
+resource "kubernetes_manifest" "general_large_amd64" {
+  manifest = {
+    apiVersion = "karpenter.sh/v1"
+    kind       = "NodePool"
+
+    metadata = {
+      name = "general-large-amd64"
+    }
+
+    spec = {
+      template = {
+        spec = {
+          nodeClassRef = {
+            group = "eks.amazonaws.com"
+            kind  = "NodeClass"
+            name  = "default"
+          }
+
+          taints = [{ key = "opspresso.com/arch", value = "amd64", effect = "NoSchedule" }]
+
+          requirements = [
+            { key = "kubernetes.io/arch", operator = "In", values = ["amd64"] },
+            { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
+            { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["c", "m", "r"] },
+            { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
+            { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = local.large_pod_instance_cpus },
+          ]
+        }
+      }
+
+      disruption = {
+        consolidationPolicy = "WhenEmpty"
+        consolidateAfter    = "5m"
+        budgets             = [{ nodes = "1" }]
+      }
+
+      limits = {
+        cpu    = tostring(var.general_large_amd64_max_cpu)
+        memory = "${var.general_large_amd64_max_cpu * 8}Gi"
       }
     }
   }

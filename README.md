@@ -23,6 +23,12 @@ Spot 노드에서 실행한다(`general_amd64_max_cpu`, 기본 16 vCPU). 노드�
 `argocd-env-projects`의 `app-deploy`가 그 앱 Pod에만 toleration과 nodeSelector `kubernetes.io/arch=amd64`를 쓴다.
 그런 앱이 없으면 노드가 없고, 노드가 비면 5분 뒤 회수한다.
 
+large(2 vCPU) 노드에 들어가지 않는 큰 앱 Pod(Agent Runway 크기 xlarge 이상)는 dynamic `general-large`(arm64)·`general-large-amd64`
+NodePool의 c·m·r 7세대 이상 Spot 노드(4·8·16·32 vCPU)에서 실행한다(`general_large_max_cpu`·`general_large_amd64_max_cpu`, 기본 64 vCPU).
+Agent Runway 크기의 Pod는 같은 이름 instance의 vCPU 절반을 요청하므로(4xlarge는 8 CPU·16Gi) 같은 이름의 노드에 들어간다.
+`general`·`general-amd64`가 weight 10, 큰 pool이 weight 0이라 large에 들어가는 Pod는 지금처럼 large 노드에 놓인다.
+`general-large-amd64`는 `general-amd64`와 같은 taint를 쓴다. 큰 pool은 통합 이동을 하지 않고, 노드가 비면 5분 뒤 회수한다.
+
 재시작이 작업을 끊는 중요 서비스는 AZ별 `core-2a`·`core-2c` NodePool의 on-demand large(2 vCPU, m 8Gi) 노드 2개(AZ마다 1개)에서 실행한다.
 대상은 공유 Agent PostgreSQL, 로그인 경로(LLDAP·Dex), Istio ingress·istiod, Agent 서비스(Studio·Memory·Models·Runway·Forge·Knowledge)와 rovr다.
 Spot 회수는 2분 예고 뒤 같은 AZ의 노드 여러 대를 한꺼번에 가져가기도 하므로, 이 서비스는 Spot 복제본을 늘리는 대신 on-demand에 둔다.

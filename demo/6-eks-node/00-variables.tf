@@ -44,6 +44,28 @@ variable "general_amd64_max_cpu" {
   }
 }
 
+variable "general_large_max_cpu" {
+  description = "dynamic general-large NodePool이 large에 들어가지 않는 arm64 앱 Pod를 위해 추가할 수 있는 최대 vCPU 수입니다. 기본값은 32 vCPU 노드 두 대(8xlarge rollout)입니다."
+  type        = number
+  default     = 64
+
+  validation {
+    condition     = var.general_large_max_cpu >= 32 && floor(var.general_large_max_cpu) == var.general_large_max_cpu
+    error_message = "general_large_max_cpu는 32 이상의 정수여야 합니다."
+  }
+}
+
+variable "general_large_amd64_max_cpu" {
+  description = "dynamic general-large-amd64 NodePool이 large에 들어가지 않는 amd64 앱 Pod를 위해 추가할 수 있는 최대 vCPU 수입니다."
+  type        = number
+  default     = 64
+
+  validation {
+    condition     = var.general_large_amd64_max_cpu >= 32 && floor(var.general_large_amd64_max_cpu) == var.general_large_amd64_max_cpu
+    error_message = "general_large_amd64_max_cpu는 32 이상의 정수여야 합니다."
+  }
+}
+
 variable "gha_runner_max_runners" {
   description = "GitHub Actions runner Pod capacity; keep aligned with maxRunners in argocd-env-addons charts/arc-runners. Each Pod reserves 2.5 CPU and 9Gi memory."
   type        = number
