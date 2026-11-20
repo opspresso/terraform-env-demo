@@ -6,7 +6,8 @@
 # 5-eks는 내장 general-purpose pool을 켜지 않으므로 앱 Pod는 이 arm64 노드에서 실행됩니다.
 # amd64 이미지를 고른 Agent Runway 앱 Pod만 taint를 허용해 dynamic `general-amd64` NodePool에서 실행됩니다.
 # large 노드에 들어가지 않는 큰 앱 Pod(Agent Runway 크기 xlarge 이상)는 `general-large`·`general-large-amd64`가 받습니다.
-# 두 pool은 weight가 낮아 large에 들어가는 Pod는 지금처럼 `general`·`general-amd64`에서 실행됩니다.
+# 두 pool은 weight가 낮아 large에 들어가는 Pod를 위해 큰 노드를 만들지 않습니다. weight는 노드를 만들 때의 우선순위라서
+# 이미 있는 큰 노드에 남는 자리에는 작은 Pod도 놓일 수 있습니다. 큰 pool의 통합이 그런 노드를 정리합니다.
 # plan 시점에 EKS API가 필요하므로 5-eks를 먼저 적용합니다.
 
 locals {
@@ -163,7 +164,7 @@ resource "kubernetes_manifest" "general_amd64" {
 }
 
 # large(2 vCPU) 노드에 들어가지 않는 arm64 앱 Pod를 받습니다(Agent Runway 크기 xlarge 이상, agent-platform docs/APP_DELIVERY.md
-# "크기"). weight가 `general`보다 낮아 large에 들어가는 Pod는 오지 않습니다.
+# "크기"). weight가 `general`보다 낮아 large에 들어가는 Pod를 위해 이 노드를 만들지 않습니다.
 resource "kubernetes_manifest" "general_large" {
   manifest = {
     apiVersion = "karpenter.sh/v1"
@@ -190,9 +191,10 @@ resource "kubernetes_manifest" "general_large" {
         }
       }
 
-      # 큰 Pod 하나가 노드 대부분을 쓰므로 통합 이동으로 재시작하지 않습니다. 마지막 Pod가 떠나면 5분 뒤 회수합니다.
+      # 큰 Pod가 떠난 뒤 남는 자리에 놓인 작은 Pod는 노드를 비우지 않으므로 활용도가 낮은 노드도 회수합니다. 큰 Pod는
+      # 들어갈 다른 노드가 있을 때만 옮겨집니다.
       disruption = {
-        consolidationPolicy = "WhenEmpty"
+        consolidationPolicy = "WhenEmptyOrUnderutilized"
         consolidateAfter    = "5m"
         budgets             = [{ nodes = "1" }]
       }
@@ -238,7 +240,7 @@ resource "kubernetes_manifest" "general_large_amd64" {
       }
 
       disruption = {
-        consolidationPolicy = "WhenEmpty"
+        consolidationPolicy = "WhenEmptyOrUnderutilized"
         consolidateAfter    = "5m"
         budgets             = [{ nodes = "1" }]
       }
