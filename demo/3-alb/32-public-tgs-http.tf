@@ -102,21 +102,3 @@ resource "aws_lb_target_group" "public_http_b" {
     "eks:eks-cluster-name" = "eks-demo-b"
   }
 }
-
-resource "aws_ssm_parameter" "public_http_0" {
-  name  = format("/k8s/common/%s/public_http_0", var.name)
-  type  = "String"
-  value = aws_lb_target_group.public_http_0.arn
-}
-
-resource "aws_ssm_parameter" "public_http_a" {
-  name  = format("/k8s/common/%s/public_http_a", var.name)
-  type  = "String"
-  value = aws_lb_target_group.public_http_a.arn
-}
-
-resource "aws_ssm_parameter" "public_http_b" {
-  name  = format("/k8s/common/%s/public_http_b", var.name)
-  type  = "String"
-  value = aws_lb_target_group.public_http_b.arn
-}
