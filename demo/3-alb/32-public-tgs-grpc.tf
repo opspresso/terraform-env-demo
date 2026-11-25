@@ -36,9 +36,3 @@ resource "aws_lb_target_group" "public_grpc_0" {
     "eks:eks-cluster-name" = "eks-demo"
   }
 }
-
-resource "aws_ssm_parameter" "public_grpc_0" {
-  name  = format("/k8s/common/%s/public_grpc_0", var.name)
-  type  = "String"
-  value = aws_lb_target_group.public_grpc_0.arn
-}
