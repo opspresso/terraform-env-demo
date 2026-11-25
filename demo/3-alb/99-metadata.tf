@@ -1,5 +1,5 @@
 # Public routing and cluster identifiers that other stacks and installers read by name.
-# The names are the earlier SSM parameter names; the values are plain strings.
+# Each secret is /k8s/common/<cluster>/<key> with a plain string value.
 locals {
   published_metadata = {
     public_grpc_0   = aws_lb_target_group.public_grpc_0.arn
