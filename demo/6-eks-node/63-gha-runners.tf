@@ -55,7 +55,9 @@ resource "kubernetes_manifest" "gha_runner_node_pool" {
             { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
             { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
             { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m", "r"] },
+            # Graviton5 (generation 9) nodes fail eBPF network policy map writes with ENOMEM on the EKS Auto Mode kernel, which blocks Pod traffic.
             { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
+            { key = "eks.amazonaws.com/instance-generation", operator = "NotIn", values = ["9"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["8"] },
           ]
           expireAfter = "336h"

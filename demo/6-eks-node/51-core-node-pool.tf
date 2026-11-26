@@ -42,7 +42,9 @@ resource "kubernetes_manifest" "core_zone" {
             { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
             { key = "karpenter.sh/capacity-type", operator = "In", values = ["on-demand"] },
             { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m"] },
+            # Graviton5 (generation 9) nodes fail eBPF network policy map writes with ENOMEM on the EKS Auto Mode kernel, which blocks Pod traffic.
             { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
+            { key = "eks.amazonaws.com/instance-generation", operator = "NotIn", values = ["9"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["2"] },
             { key = "topology.kubernetes.io/zone", operator = "In", values = [each.key] },
           ]
