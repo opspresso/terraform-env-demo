@@ -22,7 +22,9 @@ locals {
     { key = "kubernetes.io/arch", operator = "In", values = ["arm64"] },
     { key = "kubernetes.io/os", operator = "In", values = ["linux"] },
     { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
+    # 9세대 Graviton(Graviton5) 노드는 EKS Auto Mode 커널에서 network policy eBPF map 쓰기가 ENOMEM으로 실패해 Pod 통신이 막히므로 제외합니다.
     { key = "eks.amazonaws.com/instance-generation", operator = "Gt", values = ["6"] },
+    { key = "eks.amazonaws.com/instance-generation", operator = "NotIn", values = ["9"] },
   ]
 }
 
