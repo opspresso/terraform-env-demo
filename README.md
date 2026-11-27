@@ -23,7 +23,7 @@ Terraform 파일은 워크로드마다 `NN-<워크로드>.tf` 하나이고, Node
 | NodePool | 파일 | 용도 | 나눈 이유 |
 |---|---|---|---|
 | `general` | `50-general.tf` | 전용 pool이 없는 Pod(Argo CD, 관측 도구, GitLab, 샘플·Agent Runway 앱, core 서비스의 HPA 증가분) | 기본 pool, arm64 Spot |
-| `general-amd64` | `50-general.tf` | Agent Runway에서 architecture `amd64`를 고른 앱 Pod | architecture, taint `opspresso.com/arch=amd64` |
+| `general-amd64` | `50-general.tf` | Agent Runway에서 architecture `amd64`를 고른 앱 Pod | architecture, taint `agentops.clush.net/arch=amd64` |
 | `core-2c` | `51-core.tf` | 재시작이 작업을 끊는 중요 서비스 | on-demand, taint `opspresso.com/tier=core` |
 | `gha-runners` | `52-gha-runners.tf` | GitHub Actions runner | NodeClass(디스크 200Gi), taint `opspresso.com/gha-runner` |
 
@@ -35,7 +35,7 @@ Terraform 파일은 워크로드마다 `NN-<워크로드>.tf` 하나이고, Node
 `general`과 `general-amd64`는 크기별 pool 없이 m·r 2·4·8·16·32 vCPU Spot 중에서(메모리가 병목이라 c는 쓰지 않는다) Karpenter가 대기 중인 Pod에 맞는 가장 싼 instance를 고르고,
 비거나 활용도가 낮은 노드는 5분 뒤 통합한다(`general_max_cpu`, 기본 arm64 96·amd64 80 vCPU).
 Agent Runway 크기의 Pod는 같은 이름 instance의 vCPU 절반을 요청하므로(4xlarge는 8 CPU·16Gi) 같은 이름의 노드에 들어간다. 8xlarge rollout은 32 vCPU 노드 두 대를 쓴다.
-`general-amd64` 노드에는 taint `opspresso.com/arch=amd64:NoSchedule`가 있고, `argocd-env-projects`의 `app-deploy`가 그 앱 Pod에만 toleration과 nodeSelector `kubernetes.io/arch=amd64`를 쓴다.
+`general-amd64` 노드에는 taint `agentops.clush.net/arch=amd64:NoSchedule`가 있고, `argocd-env-projects`의 `app-deploy`가 그 앱 Pod에만 toleration과 nodeSelector `kubernetes.io/arch=amd64`를 쓴다.
 그런 앱이 없으면 노드가 없다.
 노드 수는 Pod 수와 요청이 정한다. EKS Auto Mode는 노드당 Pod를 110과 `ENI 수 × (ENI당 IP − 1)` 중 작은 값으로 제한해 large는 27개이고, kubelet `maxPods`로 올릴 수 없다.
 Spot 회수로 노드가 빠지면 `general`이 Spot 노드를 추가하고, 그동안 EBS PersistentVolume을 쓰는 Pod는 같은 AZ의 노드를 기다린다.
