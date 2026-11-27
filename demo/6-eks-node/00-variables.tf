@@ -1,11 +1,11 @@
 variable "core_zones" {
-  description = "core 노드를 AZ마다 1대씩 둘 AZ 목록입니다. 5-eks private subnet의 AZ와 일치해야 합니다."
+  description = "core 노드를 AZ마다 1대씩 둘 AZ 목록입니다. eks-demo는 비용 우선이라 단일 복제본 서비스의 EBS volume이 있는 ap-northeast-2c 하나만 둡니다."
   type        = list(string)
-  default     = ["ap-northeast-2a", "ap-northeast-2c"]
+  default     = ["ap-northeast-2c"]
 
   validation {
-    condition     = length(var.core_zones) >= 2 && length(distinct(var.core_zones)) == length(var.core_zones)
-    error_message = "core_zones는 서로 다른 AZ 2개 이상이어야 합니다."
+    condition     = length(var.core_zones) >= 1 && length(distinct(var.core_zones)) == length(var.core_zones)
+    error_message = "core_zones는 서로 다른 AZ 1개 이상이어야 합니다."
   }
 }
 

@@ -35,6 +35,11 @@ module "eks" {
 
   access_entries = local.access_entries
 
+  # Cost first: the api and audit control plane logs cost about $80 a month in CloudWatch ingestion.
+  # Only the authenticator log (sign-in failures) is kept, for 30 days.
+  enabled_log_types                      = ["authenticator"]
+  cloudwatch_log_group_retention_in_days = 30
+
   addons = {
     # Auto Mode에는 EBS 드라이버만 내장되어 있습니다. EFS는 정적 PV로만 쓰므로 컨트롤러에 AWS 권한을 주지 않습니다.
     aws-efs-csi-driver = {

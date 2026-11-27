@@ -2,12 +2,13 @@
 # the Istio ingress path and the Agent services. Everything else runs on the Spot general pools.
 # Separate because it is on-demand and tainted. A Spot reclaim gives two minutes of notice and often takes several
 # nodes of one AZ at once, so these services move off Spot instead of relying on more Spot replicas.
-# One static node per AZ: a static NodePool does not spread its nodes across AZs. The EBS volumes of the
-# single-replica services (PostgreSQL, LLDAP) are in ap-northeast-2c, so those Pods land on core-2c.
-# Pods opt in with the `opspresso.com/tier=core` toleration and node affinity: required for single-replica stateful
-# services, preferred for replicated ones so HPA growth and rollout surge spill over to Spot instead of waiting.
-# Requests on core are about 0.8 vCPU and 6.1Gi including DaemonSets (2026-11-11), so two large m nodes
-# (1780m, 7.0Gi allocatable each) keep room for HPA growth. The general NodeClass has the settings core needs.
+# One static node per zone in core_zones; a static NodePool does not spread its nodes across AZs. eks-demo puts cost
+# first and runs one node in ap-northeast-2c, where the EBS volumes of the single-replica services (PostgreSQL, LLDAP,
+# Nexus) are. Pods opt in with the `opspresso.com/tier=core` toleration and node affinity: required for single-replica
+# stateful services, preferred for replicated ones, so the second replica, HPA growth and rollout surge run on Spot.
+# One node holds one replica of each replicated core service, the stateful services and the DaemonSets: about 20 Pods
+# (limit 27) and 4.8Gi of requests against 6.9Gi allocatable on a large m node (2026-11-27).
+# The general NodeClass has the settings core needs.
 
 resource "kubernetes_manifest" "core_node_pool" {
   for_each = toset(var.core_zones)

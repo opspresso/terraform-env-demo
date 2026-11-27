@@ -40,11 +40,12 @@ resource "kubernetes_manifest" "general_node_pool" {
         spec = {
           nodeClassRef = { group = "eks.amazonaws.com", kind = "NodeClass", name = kubernetes_manifest.general_node_class.manifest.metadata.name }
           taints       = each.value.taints
-          # c, m and r widen the Spot pools and reduce reclaims and capacity shortages.
+          # The workload is memory-bound (about 0.8 vCPU and 18Gi used, 2026-11-27): r has 8Gi and m 4Gi per vCPU,
+          # and r large Spot often costs less than c large (2Gi per vCPU). c is left out.
           requirements = concat(local.node_requirements, [
             { key = "kubernetes.io/arch", operator = "In", values = [each.key] },
             { key = "karpenter.sh/capacity-type", operator = "In", values = ["spot"] },
-            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["c", "m", "r"] },
+            { key = "eks.amazonaws.com/instance-category", operator = "In", values = ["m", "r"] },
             { key = "eks.amazonaws.com/instance-cpu", operator = "In", values = ["2", "4", "8", "16", "32"] },
           ])
           expireAfter            = "336h"

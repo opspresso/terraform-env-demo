@@ -10,9 +10,10 @@ AWS 데모 환경의 공통 인프라(VPC, ALB, EKS, 기본 노드, addon 공통
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | addon 공통 Pod Identity 역할(external-dns, external-secrets, atlantis, ACK)과 GitHub Actions OIDC provider |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | NodePool: Spot `general`(arm64)·`general-amd64`, on-demand 중요 서비스 `core-2a`·`core-2c`, GitHub Actions `gha-runners` |
+| [6-eks-node](demo/6-eks-node/) | NodePool: Spot `general`(arm64)·`general-amd64`, on-demand 중요 서비스 `core-2c`, GitHub Actions `gha-runners` |
 
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
+eks-demo는 비용이 우선이다. EKS control plane 로그는 `authenticator`만 CloudWatch에 30일 보관한다(`api`·`audit` 수집 비용이 월 약 $80이었다).
 opspresso 전용 리소스는 [terraform-env-opsp](https://github.com/opspresso/terraform-env-opsp)가 관리합니다. 서비스 Pod Identity 역할과 association, 전용 NodePool(Workspace, rovr sandbox, Agent Runway amd64 build, Agent PostgreSQL), `opspresso.com` 메일, 보관용 k3s 코드가 여기에 해당합니다.
 
 NodePool은 NodeClass·taint·구매 방식(on-demand·Spot)·architecture가 다르거나 다른 저장소가 pool 이름을 쓸 때만 나눈다. instance 크기와 노드 수는 나눌 이유가 아니다.
@@ -23,7 +24,7 @@ Terraform 파일은 워크로드마다 `NN-<워크로드>.tf` 하나이고, Node
 |---|---|---|---|
 | `general` | `50-general.tf` | 전용 pool이 없는 Pod(Argo CD, 관측 도구, GitLab, 샘플·Agent Runway 앱, core 서비스의 HPA 증가분) | 기본 pool, arm64 Spot |
 | `general-amd64` | `50-general.tf` | Agent Runway에서 architecture `amd64`를 고른 앱 Pod | architecture, taint `opspresso.com/arch=amd64` |
-| `core-2a`·`core-2c` | `51-core.tf` | 재시작이 작업을 끊는 중요 서비스 | on-demand, taint `opspresso.com/tier=core` |
+| `core-2c` | `51-core.tf` | 재시작이 작업을 끊는 중요 서비스 | on-demand, taint `opspresso.com/tier=core` |
 | `gha-runners` | `52-gha-runners.tf` | GitHub Actions runner | NodeClass(디스크 200Gi), taint `opspresso.com/gha-runner` |
 
 모든 NodePool은 7세대 이상이고 9세대 Graviton(Graviton5)은 제외한다. 이 노드(kernel 6.18.62)에서는 network policy agent의 BPF map 쓰기가 ENOMEM으로 실패해 Pod 통신이 막힌다.
@@ -31,7 +32,7 @@ Terraform 파일은 워크로드마다 `NN-<워크로드>.tf` 하나이고, Node
 모든 노드는 `general`·`gha-runners`와 terraform-env-opsp의 NodeClass로 뜨고, 모듈이 만든 Auto Mode 노드 role을 쓴다.
 그 role의 EC2 Access Entry(`AmazonEKSAutoNodePolicy`)는 `5-eks/05-auto-node-access.tf`가 관리한다. 없으면 새 노드가 클러스터에 등록되지 않는다.
 
-`general`과 `general-amd64`는 크기별 pool 없이 c·m·r 2·4·8·16·32 vCPU Spot 중에서 Karpenter가 대기 중인 Pod에 맞는 가장 싼 instance를 고르고,
+`general`과 `general-amd64`는 크기별 pool 없이 m·r 2·4·8·16·32 vCPU Spot 중에서(메모리가 병목이라 c는 쓰지 않는다) Karpenter가 대기 중인 Pod에 맞는 가장 싼 instance를 고르고,
 비거나 활용도가 낮은 노드는 5분 뒤 통합한다(`general_max_cpu`, 기본 arm64 96·amd64 80 vCPU).
 Agent Runway 크기의 Pod는 같은 이름 instance의 vCPU 절반을 요청하므로(4xlarge는 8 CPU·16Gi) 같은 이름의 노드에 들어간다. 8xlarge rollout은 32 vCPU 노드 두 대를 쓴다.
 `general-amd64` 노드에는 taint `opspresso.com/arch=amd64:NoSchedule`가 있고, `argocd-env-projects`의 `app-deploy`가 그 앱 Pod에만 toleration과 nodeSelector `kubernetes.io/arch=amd64`를 쓴다.
@@ -39,13 +40,13 @@ Agent Runway 크기의 Pod는 같은 이름 instance의 vCPU 절반을 요청하
 노드 수는 Pod 수와 요청이 정한다. EKS Auto Mode는 노드당 Pod를 110과 `ENI 수 × (ENI당 IP − 1)` 중 작은 값으로 제한해 large는 27개이고, kubelet `maxPods`로 올릴 수 없다.
 Spot 회수로 노드가 빠지면 `general`이 Spot 노드를 추가하고, 그동안 EBS PersistentVolume을 쓰는 Pod는 같은 AZ의 노드를 기다린다.
 
-재시작이 작업을 끊는 중요 서비스는 AZ별 `core-2a`·`core-2c` NodePool의 on-demand large(2 vCPU, m 8Gi) 노드 2개(AZ마다 1개)에서 실행한다.
+재시작이 작업을 끊는 중요 서비스는 `core-2c` NodePool의 on-demand large(2 vCPU, m 8Gi) 노드 1개에서 실행한다. eks-demo는 비용이 우선이라 단일 복제본 서비스의 EBS volume이 있는 `ap-northeast-2c`에만 둔다(`core_zones`).
 대상은 공유 Agent PostgreSQL, 로그인 경로(LLDAP·Dex), Istio ingress·istiod, Agent 서비스(Studio·Memory·Models·Runway·Forge·Knowledge)와 rovr다.
 Spot 회수는 2분 예고 뒤 같은 AZ의 노드 여러 대를 한꺼번에 가져가기도 하므로, 이 서비스는 Spot 복제본을 늘리는 대신 on-demand에 둔다.
 노드에는 label과 taint `opspresso.com/tier=core`가 있다. Pod는 toleration과 node affinity로 들어온다.
-복제본이 하나인 stateful 서비스(PostgreSQL·LLDAP)는 required affinity를 쓴다. EBS volume이 `ap-northeast-2c`에 있으므로 `core-2c`에서 실행된다.
-복제본이 여럿인 서비스는 preferred affinity와 zone topology spread를 쓴다. 기본 복제본은 AZ마다 core에 놓이고, HPA 증가분과 rollout surge는 Spot으로 넘친다.
-core requests 합계는 약 0.8 vCPU·6.1Gi(DaemonSet 포함, 2026-11-11 측정)로 두 노드 allocatable(각 1780m·7.0Gi)의 절반 이하다.
+복제본이 하나인 stateful 서비스(PostgreSQL·LLDAP·Nexus)는 required affinity를 쓴다.
+복제본이 여럿인 서비스는 preferred affinity와 zone topology spread를 쓴다. 복제본 하나는 core에 놓이고, 두 번째 복제본·HPA 증가분·rollout surge는 Spot으로 넘친다.
+core 노드 하나에는 복제본 서비스마다 하나, stateful 서비스, DaemonSet을 합쳐 Pod 약 20개(상한 27)와 requests 약 4.8Gi(allocatable 6.9Gi)가 놓인다(2026-11-27 측정).
 AMI drift에 따른 core 노드 교체는 03:00–05:00 KST(18:00–20:00 UTC)에만 허용한다. 노드 만료(expireAfter)는 budget과 관계없이 진행된다.
 
 GitHub Actions runner pool(`gha-runners`)은 `argocd-env-addons`의 ARC runner scale set(`charts/arc-runners`)이 쓴다.
