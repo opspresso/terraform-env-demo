@@ -22,11 +22,15 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
-  # EKS Auto Mode. 앱 용량을 Graviton(arm64)으로 고정하려고 내장 general-purpose pool을 켜지 않습니다.
-  # 앱 용량은 6-eks-node의 baseline·general NodePool이 제공합니다.
+  # EKS Auto Mode with custom NodePools only (6-eks-node, 7-eks-shared). No built-in pool is enabled:
+  # the built-in pools cannot be edited and `system` allows arm64 Graviton5 (generation 9).
+  # On those nodes the network policy agent gets ENOMEM on BPF map writes and never applies
+  # the Pod's policy. No Pod needs the system pool: the EFS CSI controller tolerates its taint but runs elsewhere.
+  # The module still creates the Auto Mode node role; the custom NodeClasses use it, and
+  # 05-auto-node-access.tf keeps its EC2 access entry.
+  create_auto_mode_iam_resources = true
   compute_config = {
-    enabled    = true
-    node_pools = ["system"]
+    enabled = true
   }
 
   access_entries = local.access_entries

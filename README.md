@@ -10,26 +10,34 @@ AWS 데모 환경의 공통 인프라(VPC, ALB, EKS, 기본 노드, addon 공통
 | [3-alb](demo/3-alb/) | public/internal ALB와 DNS |
 | [4-role](demo/4-role/) | addon 공통 Pod Identity 역할(external-dns, external-secrets, atlantis, ACK)과 GitHub Actions OIDC provider |
 | [5-eks](demo/5-eks/) | EKS Auto Mode 클러스터 |
-| [6-eks-node](demo/6-eks-node/) | Graviton(arm64) AZ별 on-demand 중요 서비스 노드(`core-2a`·`core-2c` 각 1개), AZ별 Spot 기준 노드(2a·2c 각 2개), 증가분 dynamic pool, amd64 앱용 dynamic pool, GitHub Actions runner pool |
+| [6-eks-node](demo/6-eks-node/) | NodePool: Spot `general`(arm64)·`general-amd64`, on-demand 중요 서비스 `core-2a`·`core-2c`, GitHub Actions `gha-runners` |
 
 EKS 적용 순서: `2-vpc` → `3-alb`·`4-role` → `5-eks` → `6-eks-node`.
 opspresso 전용 리소스는 [terraform-env-opsp](https://github.com/opspresso/terraform-env-opsp)가 관리합니다. 서비스 Pod Identity 역할과 association, 전용 NodePool(Workspace, rovr sandbox, Agent Runway amd64 build, Agent PostgreSQL), `opspresso.com` 메일, 보관용 k3s 코드가 여기에 해당합니다.
 
-`6-eks-node`의 NodePool은 `general-amd64`를 빼고 모두 Graviton(arm64, m·r 7세대 이상)이다. 내장 `system` pool의 노드 구성은 EKS Auto Mode가 정한다. 서비스 이미지는 `linux/arm64`로
-게시한다. 5-eks는 내장 `general-purpose` pool을 켜지 않고 `system` pool만 사용한다.
+NodePool은 NodeClass·taint·구매 방식(on-demand·Spot)·architecture가 다르거나 다른 저장소가 pool 이름을 쓸 때만 나눈다. instance 크기와 노드 수는 나눌 이유가 아니다.
+Terraform 파일은 워크로드마다 `NN-<워크로드>.tf` 하나이고, NodeClass(`<워크로드>_node_class`)와 NodePool(`<워크로드>_node_pool`)을 이 순서로 둔다. 공통 값은 `03-locals.tf`에 있다.
+[terraform-env-opsp](https://github.com/opspresso/terraform-env-opsp) `7-eks-shared`의 NodePool도 같은 구조다.
 
-Agent Runway에서 architecture `amd64`를 고른 앱 Pod는 dynamic `general-amd64` NodePool의 amd64 large(2 vCPU, c·m·r 7세대 이상)
-Spot 노드에서 실행한다(`general_amd64_max_cpu`, 기본 16 vCPU). 노드에는 taint `opspresso.com/arch=amd64:NoSchedule`가 있고,
-`argocd-env-projects`의 `app-deploy`가 그 앱 Pod에만 toleration과 nodeSelector `kubernetes.io/arch=amd64`를 쓴다.
-그런 앱이 없으면 노드가 없고, 노드가 비면 5분 뒤 회수한다.
+| NodePool | 파일 | 용도 | 나눈 이유 |
+|---|---|---|---|
+| `general` | `50-general.tf` | 전용 pool이 없는 Pod(Argo CD, 관측 도구, GitLab, 샘플·Agent Runway 앱, core 서비스의 HPA 증가분) | 기본 pool, arm64 Spot |
+| `general-amd64` | `50-general.tf` | Agent Runway에서 architecture `amd64`를 고른 앱 Pod | architecture, taint `opspresso.com/arch=amd64` |
+| `core-2a`·`core-2c` | `51-core.tf` | 재시작이 작업을 끊는 중요 서비스 | on-demand, taint `opspresso.com/tier=core` |
+| `gha-runners` | `52-gha-runners.tf` | GitHub Actions runner | NodeClass(디스크 200Gi), taint `opspresso.com/gha-runner` |
 
-large(2 vCPU) 노드에 들어가지 않는 큰 앱 Pod(Agent Runway 크기 xlarge 이상)는 dynamic `general-large`(arm64)·`general-large-amd64`
-NodePool의 c·m·r 7세대 이상 Spot 노드(4·8·16·32 vCPU)에서 실행한다(`general_large_max_cpu`·`general_large_amd64_max_cpu`, 기본 64 vCPU).
-Agent Runway 크기의 Pod는 같은 이름 instance의 vCPU 절반을 요청하므로(4xlarge는 8 CPU·16Gi) 같은 이름의 노드에 들어간다.
-`general`·`general-amd64`가 weight 10, 큰 pool이 weight 0이라 large에 들어가는 Pod를 위해 큰 노드를 만들지 않는다.
-weight는 노드를 만들 때의 우선순위라서 이미 있는 큰 노드에 남는 자리에는 작은 Pod도 놓일 수 있다. 그런 Pod가 노드를 비우지 않으므로
-큰 pool도 `general`처럼 활용도가 낮은 노드를 통합해 회수한다(`WhenEmptyOrUnderutilized`, 5분). 큰 Pod는 들어갈 다른 노드가 있을 때만 옮겨진다.
-`general-large-amd64`는 `general-amd64`와 같은 taint를 쓴다.
+모든 NodePool은 7세대 이상이고 9세대 Graviton(Graviton5)은 제외한다. 이 노드(kernel 6.18.62)에서는 network policy agent의 BPF map 쓰기가 ENOMEM으로 실패해 Pod 통신이 막힌다.
+서비스 이미지는 `linux/arm64`로 게시한다. `5-eks`는 EKS 내장 NodePool(`system`, `general-purpose`)을 켜지 않는다. 내장 pool은 수정할 수 없고 `system`은 Graviton5도 고른다.
+모든 노드는 `general`·`gha-runners`와 terraform-env-opsp의 NodeClass로 뜨고, 모듈이 만든 Auto Mode 노드 role을 쓴다.
+그 role의 EC2 Access Entry(`AmazonEKSAutoNodePolicy`)는 `5-eks/05-auto-node-access.tf`가 관리한다. 없으면 새 노드가 클러스터에 등록되지 않는다.
+
+`general`과 `general-amd64`는 크기별 pool 없이 c·m·r 2·4·8·16·32 vCPU Spot 중에서 Karpenter가 대기 중인 Pod에 맞는 가장 싼 instance를 고르고,
+비거나 활용도가 낮은 노드는 5분 뒤 통합한다(`general_max_cpu`, 기본 arm64 96·amd64 80 vCPU).
+Agent Runway 크기의 Pod는 같은 이름 instance의 vCPU 절반을 요청하므로(4xlarge는 8 CPU·16Gi) 같은 이름의 노드에 들어간다. 8xlarge rollout은 32 vCPU 노드 두 대를 쓴다.
+`general-amd64` 노드에는 taint `opspresso.com/arch=amd64:NoSchedule`가 있고, `argocd-env-projects`의 `app-deploy`가 그 앱 Pod에만 toleration과 nodeSelector `kubernetes.io/arch=amd64`를 쓴다.
+그런 앱이 없으면 노드가 없다.
+노드 수는 Pod 수와 요청이 정한다. EKS Auto Mode는 노드당 Pod를 110과 `ENI 수 × (ENI당 IP − 1)` 중 작은 값으로 제한해 large는 27개이고, kubelet `maxPods`로 올릴 수 없다.
+Spot 회수로 노드가 빠지면 `general`이 Spot 노드를 추가하고, 그동안 EBS PersistentVolume을 쓰는 Pod는 같은 AZ의 노드를 기다린다.
 
 재시작이 작업을 끊는 중요 서비스는 AZ별 `core-2a`·`core-2c` NodePool의 on-demand large(2 vCPU, m 8Gi) 노드 2개(AZ마다 1개)에서 실행한다.
 대상은 공유 Agent PostgreSQL, 로그인 경로(LLDAP·Dex), Istio ingress·istiod, Agent 서비스(Studio·Memory·Models·Runway·Forge·Knowledge)와 rovr다.
@@ -39,18 +47,6 @@ Spot 회수는 2분 예고 뒤 같은 AZ의 노드 여러 대를 한꺼번에 �
 복제본이 여럿인 서비스는 preferred affinity와 zone topology spread를 쓴다. 기본 복제본은 AZ마다 core에 놓이고, HPA 증가분과 rollout surge는 Spot으로 넘친다.
 core requests 합계는 약 0.8 vCPU·6.1Gi(DaemonSet 포함, 2026-11-11 측정)로 두 노드 allocatable(각 1780m·7.0Gi)의 절반 이하다.
 AMI drift에 따른 core 노드 교체는 03:00–05:00 KST(18:00–20:00 UTC)에만 허용한다. 노드 만료(expireAfter)는 budget과 관계없이 진행된다.
-
-그 밖의 workload는 재시작해도 데이터나 진행 중인 작업을 잃지 않는다(Argo CD, 관측 도구, GitLab, 샘플 앱 등). 이 workload는 AZ별 `baseline-2a`·`baseline-2c` NodePool의 r large(2 vCPU·16Gi) Spot 노드 2개(AZ마다 1개,
-`auto_mode_baseline_replicas_per_zone=1`)에서 실행한다. 정적 NodePool 하나는 노드를 AZ에 분산하지 않으므로 AZ마다 NodePool을 둔다.
-이 workload는 메모리가 노드 수를 정하고 r large의 Spot 가격은 m large(8Gi)와 비슷하므로 baseline은 r만 쓴다.
-core 밖 requests 합계는 약 2.9 vCPU·19.0Gi(DaemonSet 포함, 2026-11-13 측정)로 2대 allocatable(3.56 vCPU·29.2Gi)의 CPU 82%·메모리 65%다.
-노드 수는 Pod 수가 정한다. EKS Auto Mode는 노드당 Pod를 110과 `ENI 수 × (ENI당 IP − 1)` 중 작은 값으로 제한해 large는 27개이고, kubelet `maxPods`로 올릴 수 없다.
-core 밖 Pod는 DaemonSet 포함 약 70개라 baseline 2대(54개)를 넘는 분량을 `general`이 large 노드 1대 이상으로 받는다.
-Spot 회수로 한 AZ의 baseline 노드가 빠지면 `general` NodePool이 같은 AZ에 Spot 노드를 추가하고, 그동안 EBS PersistentVolume을 쓰는 Pod는 대기한다.
-해당 AZ에 맞는 Spot 용량이 없으면 용량이 생길 때까지 EBS 기반 Pod가 대기한다.
-rollout surge나 증가분은 dynamic `general` NodePool(`general_max_cpu`, 기본 16 vCPU)이 m·r large 노드를 추가해 처리하고,
-비거나 활용도가 낮으면 회수한다. 기준 용량에는 유휴 시간에도 비용이 발생한다.
-requests·sidecar·DaemonSet 예약을 합산하고 남은 노드의 allocatable과 비교해 조정한다.
 
 GitHub Actions runner pool(`gha-runners`)은 `argocd-env-addons`의 ARC runner scale set(`charts/arc-runners`)이 쓴다.
 전용 `gha-runners` NodeClass는 Workspace와 같은 node 역할·subnet·security group을 쓰지만, image build와 kind가
