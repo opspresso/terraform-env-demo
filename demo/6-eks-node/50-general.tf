@@ -10,7 +10,7 @@
 locals {
   general_architectures = {
     arm64 = { name = "general", taints = [] }
-    amd64 = { name = "general-amd64", taints = [{ key = "opspresso.com/arch", value = "amd64", effect = "NoSchedule" }] }
+    amd64 = { name = "general-amd64", taints = [{ key = "agentops.clush.net/arch", value = "amd64", effect = "NoSchedule" }] }
   }
 }
 
