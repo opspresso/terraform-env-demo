@@ -1,68 +1,22 @@
-variable "baseline_zones" {
-  description = "기준 노드를 둘 AZ 목록입니다. default NodeClass의 private subnet AZ와 일치해야 합니다."
+variable "core_zones" {
+  description = "core 노드를 AZ마다 1대씩 둘 AZ 목록입니다. 5-eks private subnet의 AZ와 일치해야 합니다."
   type        = list(string)
   default     = ["ap-northeast-2a", "ap-northeast-2c"]
 
   validation {
-    condition     = length(var.baseline_zones) >= 2 && length(distinct(var.baseline_zones)) == length(var.baseline_zones)
-    error_message = "baseline_zones는 서로 다른 AZ 2개 이상이어야 합니다."
-  }
-}
-
-variable "auto_mode_baseline_replicas_per_zone" {
-  description = "EKS Auto Mode가 AZ마다 유지할 기준 노드 수를 입력합니다."
-  type        = number
-  # One 2-vCPU r Spot node (16Gi) per AZ holds the restartable workloads; the critical services run on the core
-  # NodePools. One Spot reclaim takes half of this capacity, and general adds nodes until Spot returns.
-  default = 1
-
-  validation {
-    condition     = var.auto_mode_baseline_replicas_per_zone >= 1 && floor(var.auto_mode_baseline_replicas_per_zone) == var.auto_mode_baseline_replicas_per_zone
-    error_message = "auto_mode_baseline_replicas_per_zone은 1 이상의 정수여야 합니다."
+    condition     = length(var.core_zones) >= 2 && length(distinct(var.core_zones)) == length(var.core_zones)
+    error_message = "core_zones는 서로 다른 AZ 2개 이상이어야 합니다."
   }
 }
 
 variable "general_max_cpu" {
-  description = "dynamic general NodePool이 baseline 밖에서 추가할 수 있는 최대 vCPU 수입니다."
-  type        = number
-  default     = 16
+  description = "architecture별 general NodePool이 만들 수 있는 최대 vCPU 수입니다. Agent Runway 8xlarge rollout은 32 vCPU 노드 두 대를 씁니다."
+  type        = map(number)
+  default     = { arm64 = 96, amd64 = 80 }
 
   validation {
-    condition     = var.general_max_cpu >= 4 && floor(var.general_max_cpu) == var.general_max_cpu
-    error_message = "general_max_cpu는 4 이상의 정수여야 합니다."
-  }
-}
-
-variable "general_amd64_max_cpu" {
-  description = "dynamic general-amd64 NodePool이 amd64 앱 Pod를 위해 추가할 수 있는 최대 vCPU 수입니다."
-  type        = number
-  default     = 16
-
-  validation {
-    condition     = var.general_amd64_max_cpu >= 2 && floor(var.general_amd64_max_cpu) == var.general_amd64_max_cpu
-    error_message = "general_amd64_max_cpu는 2 이상의 정수여야 합니다."
-  }
-}
-
-variable "general_large_max_cpu" {
-  description = "dynamic general-large NodePool이 large에 들어가지 않는 arm64 앱 Pod를 위해 추가할 수 있는 최대 vCPU 수입니다. 기본값은 32 vCPU 노드 두 대(8xlarge rollout)입니다."
-  type        = number
-  default     = 64
-
-  validation {
-    condition     = var.general_large_max_cpu >= 32 && floor(var.general_large_max_cpu) == var.general_large_max_cpu
-    error_message = "general_large_max_cpu는 32 이상의 정수여야 합니다."
-  }
-}
-
-variable "general_large_amd64_max_cpu" {
-  description = "dynamic general-large-amd64 NodePool이 large에 들어가지 않는 amd64 앱 Pod를 위해 추가할 수 있는 최대 vCPU 수입니다."
-  type        = number
-  default     = 64
-
-  validation {
-    condition     = var.general_large_amd64_max_cpu >= 32 && floor(var.general_large_amd64_max_cpu) == var.general_large_amd64_max_cpu
-    error_message = "general_large_amd64_max_cpu는 32 이상의 정수여야 합니다."
+    condition     = alltrue([for a in ["arm64", "amd64"] : contains(keys(var.general_max_cpu), a) && var.general_max_cpu[a] >= 64 && floor(var.general_max_cpu[a]) == var.general_max_cpu[a]])
+    error_message = "general_max_cpu는 arm64와 amd64 key에 64 이상의 정수를 가져야 합니다."
   }
 }
 
